@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Uber_SafeRide</string>
+
+<!--    Textos Padrões: -->
+
+    <string name="btnComecar">Começar</string>
+
+
 </resources>
