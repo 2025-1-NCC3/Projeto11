@@ -1,9 +1,11 @@
 <resources>
     <string name="app_name">Uber_SafeRide</string>
 
-<!--    Textos Padrões: -->
+    <!--    Textos Padrões: -->
 
     <string name="btnComecar">Começar</string>
-
+    <string name="Titulo"> INICIE A SUA JORNADA SEGURA </string>
+    <string name="hint_email">E-mail</string>
+    <string name="Titulo_TelaLogin"> Login</string>
 
 </resources>
