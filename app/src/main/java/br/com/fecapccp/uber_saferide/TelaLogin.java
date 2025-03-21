@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -24,6 +25,16 @@ public class TelaLogin extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        TextView txtCriarConta = findViewById(R.id.tvCriarConta);
+        txtCriarConta.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(TelaLogin.this, TelaCadastro.class);
+                startActivity(intent);
+            }
+        });
+
     }
     public void onInputClick(View view) {
         Toast.makeText(this, "Campo selecionado!", Toast.LENGTH_SHORT).show();
@@ -33,7 +44,7 @@ public class TelaLogin extends AppCompatActivity {
         Toast.makeText(this, "Botão de Login pressionado!", Toast.LENGTH_SHORT).show();
     }
 
-    public void onCriarContaClick(View view) {
-        Toast.makeText(this, "Criar Conta clicado!", Toast.LENGTH_SHORT).show();
-    }
+//    public void onCriarContaClick(View view) {
+//        Toast.makeText(this, "Criar Conta clicado!", Toast.LENGTH_SHORT).show();
+//    }
 }

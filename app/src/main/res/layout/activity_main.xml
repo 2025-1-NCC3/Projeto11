@@ -8,30 +8,35 @@
     android:background="@color/Branco"
     tools:context=".MainActivity">
 
+
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnComecar"
+
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_marginStart="40dp"
         android:layout_marginEnd="40dp"
         android:background="@drawable/button_background"
-        android:text="@string/btnComecar"
+        android:clickable="true"
+        android:focusable="true"
+        android:text="@string/app_btnComecar"
         android:textColor="@color/Branco"
-        android:textSize="20sp"
+        android:textSize="22sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/conteinerTop"
-        app:layout_constraintVertical_bias="0.50"
+
+        app:layout_constraintTop_toBottomOf="@+id/conteinerTop"
+        app:layout_constraintVertical_bias="0.566"
         app:layout_goneMarginEnd="20dp" />
 
     <View
         android:id="@+id/conteinerTop"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginBottom="170dp"
+        android:layout_marginBottom="200dp"
         android:background="@drawable/retangulo"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -43,7 +48,7 @@
         android:id="@+id/txtTitulo"
         android:layout_width="341dp"
         android:layout_height="81dp"
-        android:text="@string/Titulo"
+        android:text="@string/appTituloMain"
         android:textAlignment="center"
         android:textColor="@color/Branco"
         android:textSize="30sp"
@@ -55,8 +60,11 @@
 
     <ImageView
         android:id="@+id/icon_top"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="300dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:scaleType="centerCrop"
         android:src="@drawable/icon_conteinertop"
         app:layout_constraintBottom_toBottomOf="@+id/conteinerTop"
         app:layout_constraintEnd_toEndOf="@+id/conteinerTop"

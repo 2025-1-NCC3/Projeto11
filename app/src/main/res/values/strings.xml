@@ -1,16 +1,31 @@
 <resources>
     <string name="app_name">Uber_SafeRide</string>
 
-    <!--    Textos Padrões: -->
+    <!--    Titulos de Telas: -->
+    <string name="appTituloMain"> INICIE A SUA JORNADA SEGURA </string>
+    <string name="appTituloLogin"> Login</string>
+    <string name="appTituloCadastro">Cadastrar</string>
 
-    <string name="btnComecar">Começar</string>
-    <string name="btnLogin">Vamos lá!</string>
+    <!--Textos De Botões-->
+    <string name="app_btnComecar">Começar</string>
+    <string name="app_btnLogin">Vamos lá!</string>
+    <string name="app_btnCadastrar_se">Cadastrar-se</string>
 
-    <string name="Titulo"> INICIE A SUA JORNADA SEGURA </string>
+    <!-- TextBox-->
+    <string name="app_hint_email">E-mail:</string>
+    <string name="app_hint_senha">Senha:</string>
+    <string name="app_hint_dataNasci">Data de Nascimento:</string>
+    <string name="app_hint_CPF">CPF:</string>
+    <string name="app_hint_telefone">Telefone:</string>
+    <string name="app_hint_nome">Nome:</string>
 
-    <string name="tvCriarConta">Ainda não tem uma conta? Crie uma agora!</string>
-    <string name="hint_email">E-mail</string>
-    <string name="hint_senha">Senha</string>
-    <string name="Titulo_TelaLogin"> Login</string>
+    <!--Linha de textos -->
+    <string name="app_TxtCriarConta">Ainda não tem uma conta? Crie uma agora!</string>
+    <string name="app_TxtLoginConta">Já tem uma conta?Entrar</string>
+
+
+
+
+
 
 </resources>
