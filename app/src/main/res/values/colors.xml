@@ -10,6 +10,7 @@
     <color name="VerdeClaro"> #0BD979 </color>
     <color name="VerdeFlorecente"> #63F25E</color>
     <color name="Branco"> #F2F2F2 </color>
+    <color name="BrancoOpaco">#7FF2F2F2</color>
     <color name="Preto"> #0D0D0D </color>
 
 </resources>

@@ -10,6 +10,7 @@
     <string name="app_btnComecar">Começar</string>
     <string name="app_btnLogin">Vamos lá!</string>
     <string name="app_btnCadastrar_se">Cadastrar-se</string>
+    <string name="app_btnIniciar">Iniciar</string>
 
     <!-- TextBox-->
     <string name="app_hint_email">E-mail:</string>
@@ -18,10 +19,15 @@
     <string name="app_hint_CPF">CPF:</string>
     <string name="app_hint_telefone">Telefone:</string>
     <string name="app_hint_nome">Nome:</string>
+    <string name="app_hit_escolherPartida">Escolher pronto de partida</string>
+    <string name ="app_hit_destino">Informe o destino...</string>
 
     <!--Linha de textos -->
     <string name="app_TxtCriarConta">Ainda não tem uma conta? Crie uma agora!</string>
     <string name="app_TxtLoginConta">Já tem uma conta?Entrar</string>
+    <string name="app_TxtPerfil">Perfil</string>
+    <string name="app_TextAtividade">Atividade</string>
+    <string name="app_TextHome">Home</string>
 
 
 

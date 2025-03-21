@@ -35,6 +35,15 @@ public class TelaLogin extends AppCompatActivity {
             }
         });
 
+        Button btnIniciarViagem = findViewById(R.id.btnLogin);
+        btnIniciarViagem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(TelaLogin.this, IniciarViagem.class);
+                startActivity(intent);
+            }
+        });
+
     }
     public void onInputClick(View view) {
         Toast.makeText(this, "Campo selecionado!", Toast.LENGTH_SHORT).show();
