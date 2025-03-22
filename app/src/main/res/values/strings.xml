@@ -5,12 +5,14 @@
     <string name="appTituloMain"> INICIE A SUA JORNADA SEGURA </string>
     <string name="appTituloLogin"> Login</string>
     <string name="appTituloCadastro">Cadastrar</string>
+    <string name="appTituloModificarFoto">Segurança começa com reconhecimento!</string>
 
     <!--Textos De Botões-->
     <string name="app_btnComecar">Começar</string>
     <string name="app_btnLogin">Vamos lá!</string>
     <string name="app_btnCadastrar_se">Cadastrar-se</string>
     <string name="app_btnIniciar">Iniciar</string>
+    <string name="app_btnVoltar">Voltar</string>
 
     <!-- TextBox-->
     <string name="app_hint_email">E-mail:</string>
@@ -28,6 +30,8 @@
     <string name="app_TxtPerfil">Perfil</string>
     <string name="app_TextAtividade">Atividade</string>
     <string name="app_TextHome">Home</string>
+    <string name ="app_TextGaleria">Galeria</string>
+    <string name="app_TextCamera">Câmera</string>
 
 
 
