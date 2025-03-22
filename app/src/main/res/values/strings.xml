@@ -8,12 +8,23 @@
     <string name="appTituloModificarFoto">Segurança começa com reconhecimento!</string>
     <string name="appTituloAtividade">Ops! Você ainda não possui um histórico de viagens.</string>
 
+    <!--    SubTitulos de Telas: -->
+    <string name="appDadosCadastrais"> Dados Cadastrais </string>
+    <string name="appMaisopcoes"> Mais Opções </string>
+
+
     <!--Textos De Botões-->
     <string name="app_btnComecar">Começar</string>
     <string name="app_btnLogin">Vamos lá!</string>
     <string name="app_btnCadastrar_se">Cadastrar-se</string>
     <string name="app_btnIniciar">Iniciar</string>
     <string name="app_btnVoltar">Voltar</string>
+    <string name="app_btnEditar">Editar</string>
+    <string name="app_btnSalvar">Salvar</string>
+    <string name="app_btnSair">       Sair</string>
+    <string name="app_btnDelConta">Deletar Conta</string>
+    <string name="app_btnSim">Sim</string>
+    <string name="app_btnNao">Não</string>
 
     <!-- TextBox-->
     <string name="app_hint_email">E-mail:</string>
