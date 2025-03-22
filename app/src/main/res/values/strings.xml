@@ -6,6 +6,7 @@
     <string name="appTituloLogin"> Login</string>
     <string name="appTituloCadastro">Cadastrar</string>
     <string name="appTituloModificarFoto">Segurança começa com reconhecimento!</string>
+    <string name="appTituloAtividade">Ops! Você ainda não possui um histórico de viagens.</string>
 
     <!--Textos De Botões-->
     <string name="app_btnComecar">Começar</string>
