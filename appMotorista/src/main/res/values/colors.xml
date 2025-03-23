@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+
+<!--    Paletas de cores padrão:-->
+    <color name="VerdeEscuro"> #1D591B </color>
+    <color name="VerdeEscuroOpaco"> #801D591B </color>
+    <color name="VerdeClaro"> #0BD979 </color>
+    <color name="VerdeFlorecente"> #63F25E</color>
+    <color name="Branco"> #F2F2F2 </color>
+    <color name="BrancoOpaco">#7FF2F2F2</color>
+    <color name="Preto"> #0D0D0D </color>
+    <color name="Vermelho"> #D90B0B </color>
+
+</resources>
