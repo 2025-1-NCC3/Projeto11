@@ -26,12 +26,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import android.content.Intent;
+import android.widget.ImageView;
 
 public class ConfiguracaoPerfil extends AppCompatActivity {
 
     private LinearLayout profileHeader, dataSection, optionsSection;
     private LinearLayout dataContent, optionsContent;
-    private ImageView arrowData, arrowOptions;
+    private ImageView arrowData, arrowOptions, profileImage;
     private ImageButton btnBack;
     private Button btnEditar, btnSalvar;
     private EditText editNome, editTelefone, editEmail, editSenha;
@@ -67,6 +69,7 @@ public class ConfiguracaoPerfil extends AppCompatActivity {
         // Inicialize os layouts dos conteúdos das caixas de informação
         dataContent = findViewById(R.id.data_content);
         optionsContent = findViewById(R.id.options_content);
+        profileImage = findViewById(R.id.profile_image);
 
         // Inicialize as ImageViews das setas
         arrowData = findViewById(R.id.arrow_data);
@@ -131,6 +134,15 @@ public class ConfiguracaoPerfil extends AppCompatActivity {
                     btnSalvar.setEnabled(true);
                     btnEditar.setEnabled(false);
                 }
+            }
+        });
+
+        profileImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Cria uma Intent para iniciar ModificarFoto
+                Intent intent = new Intent(ConfiguracaoPerfil.this, ModificarFoto.class);
+                startActivity(intent);
             }
         });
 

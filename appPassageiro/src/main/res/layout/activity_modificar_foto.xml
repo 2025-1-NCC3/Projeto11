@@ -25,11 +25,6 @@
       android:scaleType="centerCrop"
       app:srcCompat="@drawable/img_background_login" />
 
-  <View
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:alpha="0.65"
-      android:background="@color/VerdeEscuro" />
  </FrameLayout>
 
     <ImageView
@@ -93,9 +88,9 @@
      android:textColor="@color/Branco"
      android:textSize="20sp"
      android:textStyle="bold"
-     app:layout_constraintBottom_toTopOf="@+id/btnLogin"
+     app:layout_constraintBottom_toTopOf="@+id/btnVoltar"
      app:layout_constraintEnd_toEndOf="parent"
-     app:layout_constraintHorizontal_bias="0.853"
+     app:layout_constraintHorizontal_bias="0.144"
      app:layout_constraintStart_toStartOf="parent"
      app:layout_constraintTop_toBottomOf="@+id/imgCamera"
      app:layout_constraintVertical_bias="0" />
@@ -110,15 +105,15 @@
      android:textColor="@color/Branco"
      android:textSize="20sp"
      android:textStyle="bold"
-     app:layout_constraintBottom_toTopOf="@+id/btnLogin"
-     app:layout_constraintEnd_toEndOf="parent"
-     app:layout_constraintHorizontal_bias="0.144"
-     app:layout_constraintStart_toStartOf="parent"
-     app:layout_constraintTop_toBottomOf="@+id/imgCamera"
-     app:layout_constraintVertical_bias="0" />
+    app:layout_constraintBottom_toTopOf="@+id/btnVoltar"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.853"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/imgCamera"
+    app:layout_constraintVertical_bias="0" />
 
  <androidx.appcompat.widget.AppCompatButton
-     android:id="@+id/btnLogin"
+     android:id="@+id/btnVoltar"
      android:layout_width="0dp"
      android:layout_height="60dp"
      android:layout_marginStart="40dp"
