@@ -33,7 +33,7 @@
     <string name="app_hint_CPF">CPF:</string>
     <string name="app_hint_telefone">Telefone:</string>
     <string name="app_hint_nome">Nome:</string>
-    <string name="app_hit_escolherPartida">Escolher pronto de partida</string>
+    <string name="app_hit_escolherPartida">Escolher ponto de partida</string>
     <string name ="app_hit_destino">Informe o destino...</string>
 
     <!--Linha de textos -->
