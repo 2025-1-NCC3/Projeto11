@@ -21,4 +21,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "Uber_SafeRide"
 include ':appPassageiro'
-include ':appMotorista'
