@@ -12,10 +12,10 @@
 
 ## Professores Orientadores: <a href="https://www.linkedin.com/in/victorbarq/">Victor Rosetti</a>, <a href="https://www.linkedin.com/in/vheltai/">Vinicius Heltai</a>, <a href="https://www.linkedin.com/in/katia-bossi/">Katia Bossi</a>, <a>Marco Aurelio</a>
 
-## Descrição
+## Descrição - Projeto Uber
 
 <p align="center">
-<img src="https://pix4free.org/assets/library/2021-01-20/originals/game.jpg" alt="NOME DO JOGO" border="0">
+<img src="https://github.com/2025-1-NCC3/Projeto11/blob/main/imagens/img_saferide.PNG" alt="SafeRide" border="0"><br>
   Project by <a>Gabriel Carvalho, Guilherme Siqueira, Rodrigo Reis, Vitória Maciel</a>
 </p>  
 
