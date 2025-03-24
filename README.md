@@ -21,6 +21,9 @@
 O SafeRide é uma funcionalidade desenvolvida para a Uber com o objetivo de aumentar a segurança de motoristas e passageiros. Através de um sistema de feedback rápido e pré-definido, os usuários podem avaliar as áreas percorridas durante suas viagens, indicando possíveis regiões de risco. Essas informações são analisadas e utilizadas para ranquear localidades, permitindo que futuras viagens exibam alertas sobre trechos avaliados negativamente.<br>
 Com base nesses dados, o SafeRide oferece aos usuários a possibilidade de escolher rotas mais seguras, minimizando riscos e garantindo uma experiência mais confiável para todos. Nossa solução busca tornar a mobilidade urbana mais segura, utilizando tecnologia e a colaboração da comunidade para identificar e evitar trajetos potencialmente perigosos. 
 
+## Figma
+<p>Veja o protótipo do nosso projeto no <a href="[https://www.linkedin.com/in/victorbarq/](https://www.figma.com/design/pZVaycOxvHu24o285go8m4/G11-PI3-UBER?node-id=0-1&p=f&t=Bxm9mognCLlNtvPn-0)">Figma</a>.</p>
+
 ## 🛠 Estrutura de pastas
 
 -Raiz<br>
