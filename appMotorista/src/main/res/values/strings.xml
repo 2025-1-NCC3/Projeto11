@@ -5,18 +5,21 @@
     <string name="appTituloMain"> INICIE A SUA JORNADA SEGURA </string>
     <string name="appTituloLogin"> Login</string>
     <string name="appTituloCadastro">Cadastrar</string>
+    <string name="appTituloVeiculo">Agora vamos cadastrar seu veículo</string>
     <string name="appTituloModificarFoto">Segurança começa com reconhecimento!</string>
     <string name="appTituloAtividade">Ops! Você ainda não possui um histórico de viagens.</string>
 
     <!--    SubTitulos de Telas: -->
     <string name="appDadosCadastrais"> Dados Cadastrais </string>
+    <string name="appDadosDoVeiculo"> Dados do Veículo </string>
     <string name="appMaisopcoes"> Mais Opções </string>
 
 
     <!--Textos De Botões-->
     <string name="app_btnComecar">Começar</string>
     <string name="app_btnLogin">Vamos lá!</string>
-    <string name="app_btnCadastrar_se">Cadastrar-se</string>
+    <string name="app_btnCadastrar_se">Próximo</string>
+    <string name="app_btnFinalizar">Finalizar</string>
     <string name="app_btnIniciar">Iniciar</string>
     <string name="app_btnVoltar">Voltar</string>
     <string name="app_btnEditar">Editar</string>
@@ -35,10 +38,14 @@
     <string name="app_hint_nome">Nome:</string>
     <string name="app_hit_escolherPartida">Escolher ponto de partida</string>
     <string name ="app_hit_destino">Informe o destino...</string>
+    <string name ="app_hint_modelo">Modelo:</string>
+    <string name ="app_hint_cor">Cor:</string>
+    <string name ="app_hint_placa">Placa:</string>
+    <string name ="app_hint_cnh">Número da CNH:</string>
 
     <!--Linha de textos -->
     <string name="app_TxtCriarConta">Ainda não tem uma conta? Crie uma agora!</string>
-    <string name="app_TxtLoginConta">Já tem uma conta?Entrar</string>
+    <string name="app_TxtLoginConta">Já tem uma conta? Entrar</string>
     <string name="app_TxtPerfil">Perfil</string>
     <string name="app_TextAtividade">Atividade</string>
     <string name="app_TextHome">Home</string>

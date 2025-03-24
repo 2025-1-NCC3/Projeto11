@@ -38,7 +38,7 @@
 
     <!--Linha de textos -->
     <string name="app_TxtCriarConta">Ainda não tem uma conta? Crie uma agora!</string>
-    <string name="app_TxtLoginConta">Já tem uma conta?Entrar</string>
+    <string name="app_TxtLoginConta">Já tem uma conta? Entrar</string>
     <string name="app_TxtPerfil">Perfil</string>
     <string name="app_TextAtividade">Atividade</string>
     <string name="app_TextHome">Home</string>

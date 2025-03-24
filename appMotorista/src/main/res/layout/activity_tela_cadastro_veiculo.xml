@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/VerdeEscuro"
-    tools:context=".TelaCadastro">
+    tools:context=".TelaCadastroVeiculo">
 
     <FrameLayout
         android:id="@+id/frameLayout"
@@ -49,7 +49,7 @@
         app:layout_constraintVertical_bias="0.0" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btnCadastrar"
+        android:id="@+id/btnCadastrarVeiculo"
         android:layout_width="0dp"
         android:layout_height="60dp"
         android:layout_marginStart="40dp"
@@ -74,9 +74,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="-20dp"
-        android:text="@string/appTituloCadastro"
+        android:text="@string/appTituloVeiculo"
+        android:textAlignment="center"
         android:textColor="@color/Branco"
-        android:textSize="40sp"
+        android:textSize="30sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -84,26 +85,9 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.1" />
 
-    <TextView
-        android:id="@+id/txtEntrar"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_marginEnd="40dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:text="@string/app_TxtLoginConta"
-        android:textColor="@color/VerdeEscuro"
-        android:textAlignment="center"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnCadastrar" />
-
 
     <EditText
-        android:id="@+id/etNome"
+        android:id="@+id/etModelo"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
@@ -114,7 +98,7 @@
         android:elevation="4dp"
         android:focusable="true"
         android:fontFamily="@font/roboto"
-        android:hint="@string/app_hint_nome"
+        android:hint="@string/app_hint_modelo"
         android:inputType="text"
         android:maxLength="150"
         android:padding="16dp"
@@ -129,9 +113,7 @@
         tools:ignore="MissingConstraints" />
 
     <EditText
-        android:id="@+id/etDataNasci"
-        android:inputType="date"
-        android:maxLength="10"
+        android:id="@+id/etCor"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
@@ -142,7 +124,9 @@
         android:elevation="4dp"
         android:focusable="true"
         android:fontFamily="@font/roboto"
-        android:hint="@string/app_hint_dataNasci"
+        android:hint="@string/app_hint_cor"
+        android:inputType="text"
+        android:maxLength="150"
         android:padding="16dp"
         android:textColor="@color/VerdeEscuroOpaco"
         android:textColorHint="@color/VerdeEscuroOpaco"
@@ -151,11 +135,11 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/view"
-        app:layout_constraintVertical_bias="0.22"
+        app:layout_constraintVertical_bias="0.224"
         tools:ignore="MissingConstraints" />
 
     <EditText
-        android:id="@+id/etCPF"
+        android:id="@+id/etPlaca"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
@@ -166,9 +150,9 @@
         android:elevation="4dp"
         android:focusable="true"
         android:fontFamily="@font/roboto"
-        android:hint="@string/app_hint_CPF"
-        android:inputType="number"
-        android:maxLength="11"
+        android:hint="@string/app_hint_placa"
+        android:inputType="text"
+        android:maxLength="150"
         android:padding="16dp"
         android:textColor="@color/VerdeEscuroOpaco"
         android:textColorHint="@color/VerdeEscuroOpaco"
@@ -177,11 +161,11 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/view"
-        app:layout_constraintVertical_bias="0.34"
+        app:layout_constraintVertical_bias="0.356"
         tools:ignore="MissingConstraints" />
 
     <EditText
-        android:id="@+id/etTelefone"
+        android:id="@+id/etCNH"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
@@ -192,68 +176,18 @@
         android:elevation="4dp"
         android:focusable="true"
         android:fontFamily="@font/roboto"
-        android:hint="@string/app_hint_telefone"
-        android:inputType="number"
-        android:maxLength="13"
+        android:hint="@string/app_hint_cnh"
+        android:inputType="text"
+        android:maxLength="150"
         android:padding="16dp"
         android:textColor="@color/VerdeEscuroOpaco"
         android:textColorHint="@color/VerdeEscuroOpaco"
-        app:layout_constraintBottom_toBottomOf="@+id/view"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/view"
-        app:layout_constraintVertical_bias="0.46"
-        tools:ignore="MissingConstraints" />
-
-    <EditText
-        android:id="@+id/etEmail"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_marginEnd="40dp"
-        android:autofillHints="emailAddress"
-        android:background="@drawable/edittext_background"
-        android:clickable="true"
-        android:elevation="4dp"
-        android:focusable="true"
-        android:fontFamily="@font/roboto"
-        android:hint="@string/app_hint_email"
-        android:inputType="textEmailAddress"
-        android:padding="16dp"
-        android:textColor="@color/VerdeEscuroOpaco"
-        android:textColorHint="@color/VerdeEscuroOpaco"
-        app:layout_constraintBottom_toBottomOf="@+id/view"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/view"
-        app:layout_constraintVertical_bias="0.58"
-        tools:ignore="MissingConstraints" />
-
-    <EditText
-        android:id="@+id/etSenha"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_marginEnd="40dp"
-        android:autofillHints="emailAddress"
-        android:background="@drawable/edittext_background"
-        android:clickable="true"
-        android:elevation="4dp"
-        android:focusable="true"
-        android:fontFamily="@font/roboto"
-        android:hint="@string/app_hint_senha"
-        android:inputType="numberPassword"
-        android:padding="16dp"
-        android:textColor="@color/VerdeEscuroOpaco"
-        android:textColorHint="@color/VerdeEscuroOpaco"
-        app:layout_constraintBottom_toBottomOf="@+id/view"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/view"
-        app:layout_constraintVertical_bias="0.70"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        app:layout_constraintVertical_bias="0.507"
         tools:ignore="MissingConstraints" />
 
 
