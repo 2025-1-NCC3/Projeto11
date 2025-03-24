@@ -4,13 +4,11 @@
 <a href= "https://www.fecap.br/"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRhZPrRa89Kma0ZZogxm0pi-tCn_TLKeHGVxywp-LXAFGR3B1DPouAJYHgKZGV0XTEf4AE&usqp=CAU" alt="FECAP - Fundação de Comércio Álvares Penteado" border="0"></a>
 </p>
 
-# SafeRide
-
-## Nome do Grupo
+# Projeto 11 - SafeRide
 
 ## Integrantes: <a href="https://www.linkedin.com/in/rluizreis/">Rodrigo Reis</a>, <a href="https://www.linkedin.com/in/gabrielcarvalhomota/">Gabriel Carvalho</a>, <a href="https://www.linkedin.com/in/sik4s/">Guilherme Siqueira</a>, <a href="https://www.linkedin.com/in/vitória-maciel-8308a42a6/">Vitória Leticia Maciel</a>.
 
-## Professores Orientadores: <a href="https://www.linkedin.com/in/victorbarq/">Victor Rosetti</a>, <a href="https://www.linkedin.com/in/vheltai/">Vinicius Heltai</a>, <a href="https://www.linkedin.com/in/katia-bossi/">Katia Bossi</a>, <a>Marco Aurelio</a>
+## Professores Orientadores: <a href="https://www.linkedin.com/in/victorbarq/">Victor Rosetti</a>, <a href="https://www.linkedin.com/in/vheltai/">Vinicius Heltai</a>, <a href="https://www.linkedin.com/in/katia-bossi/">Katia Bossi</a>, <a>Marco Aurelio</a>.
 
 ## Descrição - Projeto Uber
 
