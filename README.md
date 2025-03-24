@@ -16,16 +16,12 @@
 
 <p align="center">
 <img src="https://pix4free.org/assets/library/2021-01-20/originals/game.jpg" alt="NOME DO JOGO" border="0">
-  Game by <a href="http://www.nyphotographic.com/">Nick Youngson</a> <a rel="license" href="https://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a> <a href="http://pix4free.org/">Pix4free</a>
-</p>
+  Project by <a>Gabriel Carvalho, Guilherme Siqueira, Rodrigo Reis, Vitória Maciel</a>
+</p>  
 
-
-De um a dois parágrafos sobre o que é seu projeto e o que ele faz.
-<br><br>
-Meu projeto ajuda estudantes FECAP a configurarem seus githubs.
-<br><br>
-May the force be with you!
-<br><br>
+# **🛡️ SafeRide - Segurança em Primeiro Lugar 🚗**<br>
+O SafeRide é uma funcionalidade desenvolvida para a Uber com o objetivo de aumentar a segurança de motoristas e passageiros. Através de um sistema de feedback rápido e pré-definido, os usuários podem avaliar as áreas percorridas durante suas viagens, indicando possíveis regiões de risco. Essas informações são analisadas e utilizadas para ranquear localidades, permitindo que futuras viagens exibam alertas sobre trechos avaliados negativamente.<br>
+Com base nesses dados, o SafeRide oferece aos usuários a possibilidade de escolher rotas mais seguras, minimizando riscos e garantindo uma experiência mais confiável para todos. Nossa solução busca tornar a mobilidade urbana mais segura, utilizando tecnologia e a colaboração da comunidade para identificar e evitar trajetos potencialmente perigosos. 
 
 ## 🛠 Estrutura de pastas
 
@@ -62,7 +58,7 @@ Há também 4 pastas que seguem da seguinte forma:
 
 <b>Android:</b>
 
-Faça o Download do JOGO.apk no seu celular.
+Faça o Download do SafeRide.apk no seu celular.
 Execute o APK e siga as instruções de seu telefone.
 
 ```sh
