@@ -158,6 +158,7 @@
                         android:background="@android:color/transparent"
                         android:hint="@string/app_hint_nome"
                         android:inputType="textPersonName"
+                        android:phoneNumber="true"
                         android:singleLine="true"
                         android:textColor="@android:color/black"
                         android:textColorHint="@android:color/darker_gray"

@@ -3,12 +3,14 @@ package br.com.fecapccp.uber_saferide;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -28,6 +30,16 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import android.content.Intent;
 import android.widget.ImageView;
+import android.widget.Toast;
+
+import br.com.fecapccp.uber_saferide.dto.ResponseDTO;
+import br.com.fecapccp.uber_saferide.dto.ResponseLoginUserDTO;
+import br.com.fecapccp.uber_saferide.retrofit.ApiService;
+import br.com.fecapccp.uber_saferide.retrofit.RetrofitClient;
+import br.com.fecapccp.uber_saferide.session.SessionManager;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ConfiguracaoPerfil extends AppCompatActivity {
 
@@ -41,11 +53,17 @@ public class ConfiguracaoPerfil extends AppCompatActivity {
     private AlertDialog alertDialog;
     private TextView txtDeletarConta;
 
+    ApiService apiService;
+    SessionManager sessionManager;
+    Context context = this;
+
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        apiService = RetrofitClient.getApiService();
+        sessionManager = new SessionManager(context);
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -87,13 +105,24 @@ public class ConfiguracaoPerfil extends AppCompatActivity {
 
         // Inicialize os EditTexts
         editNome = findViewById(R.id.editTextNome);
+        editNome.setText(sessionManager.getUserNome());
+
         editTelefone = findViewById(R.id.editTextTelefone);
+        editTelefone.setText(sessionManager.getUserTelefone());
+
         editEmail = findViewById(R.id.editTextEmail);
+        editEmail.setText(sessionManager.getUserEmail());
+
         editSenha = findViewById(R.id.editTextSenha);
+        editSenha.setText(sessionManager.getUserSenha());
 
         // Inicializa os TextView
         textCPF = findViewById(R.id.textViewCPF);
+        textCPF.append("CPF: " + sessionManager.getUserCpf());
+
         textDataNascimento = findViewById(R.id.textViewDataNascimento);
+        textDataNascimento.append("Data de Nascimento: " + sessionManager.getUserDataNascimento());
+
         txtSair = findViewById(R.id.txtSair);
         txtDeletarConta = findViewById(R.id.txtDeletarConta);
 
@@ -149,9 +178,41 @@ public class ConfiguracaoPerfil extends AppCompatActivity {
         btnSalvar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setEditTextsEnabled(false);
-                btnSalvar.setEnabled(false);
-                btnEditar.setEnabled(true);
+                if(sessionManager.isLoggedIn()) {
+                    String nome = editNome.getText().toString();
+                    String email = editEmail.getText().toString();
+                    String telefone = editTelefone.getText().toString();
+
+                    Call<ResponseDTO> call = apiService.updateUser(
+                            sessionManager.getUserId(),
+                            sessionManager.getUserCpf(),
+                            nome,
+                            email,
+                            telefone
+                    );
+
+                    call.enqueue(new Callback<ResponseDTO>() {
+                        @Override
+                        public void onResponse(Call<ResponseDTO> call, Response<ResponseDTO> response) {
+                            if (response.isSuccessful() && response.body() != null) {
+                                ResponseDTO res = response.body();
+                                Toast.makeText(context, res.getMessage(), Toast.LENGTH_SHORT).show();
+                                setEditTextsEnabled(false);
+                                btnSalvar.setEnabled(false);
+                                btnEditar.setEnabled(true);
+                            }
+                            else {
+                                Toast.makeText(context, "Erro ao atualizar usuário!", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<ResponseDTO> call, Throwable t) {
+                            Log.d("Login", "Failure ");
+                            Log.e("Error", "Erro na requisição: " + t.getMessage());
+                        }
+                    });
+                }
             }
         });
         // Adiciona o OnClickListener ao TextView Sair
@@ -255,8 +316,10 @@ public class ConfiguracaoPerfil extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 alertDialog.dismiss(); // Fecha o popup
-                finishAffinity(); // Fecha todas as activities
-                System.exit(0); // Fecha o aplicativo
+                sessionManager.logoutUser();
+                Intent intent = new Intent(ConfiguracaoPerfil.this, TelaLogin.class);
+                startActivity(intent);
+                finish();
             }
         });
 
