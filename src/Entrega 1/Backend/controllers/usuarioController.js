@@ -48,18 +48,19 @@ exports.createUsuario = async (req, res) => {
         if (usuario) {
             return res.status(400).json({ message: 'CPF já cadastrado como: ' + tipo_usuario });
         }
+        
+        // if (tipo_usuario.toLowerCase() === 'motorista') {
+        //     createUsuarioMotorista(usuario);
+        // }
 
-        if (tipo_usuario.toLowerCase() === 'motorista') {
-            createUsuarioMotorista(usuario);
-        }
+        // if (tipo_usuario.toLowerCase() === 'passageiro') {
+        //     createUsuarioPassageiro(usuario);
+        // }
 
-        if (tipo_usuario.toLowerCase() === 'passageiro') {
-            createUsuarioPassageiro(usuario);
-        }
 
-        res.status(200).json({ 
-            message: 'Usuário ' + tipo_usuario + ' cadastrado com sucesso!',
-        });
+        // res.status(200).json({ 
+        //     message: 'Usuário ' + tipo_usuario + ' cadastrado com sucesso!',
+        // });
 
         bcrypt.hash(senha, 10, async (err, hashedPassword) => {
             if (err) {
@@ -77,8 +78,7 @@ exports.createUsuario = async (req, res) => {
             });
 
             res.status(200).json({ 
-                message: 'Usuário ' + tipo_usuario + ' cadastrado com sucesso!',
-                content: newUsuario.toJSON()
+                message: 'Usuário ' + tipo_usuario + ' cadastrado com sucesso!'
              });
         });
     } catch (error) {
@@ -146,47 +146,156 @@ exports.getUsuarioByCpf = async (req, res) => {
     }
 }
 
-exports.deleteUser = async (req, res) => {
-    const { cpf } = req.body;
+exports.updateUsuario = async (req, res) => {
+    const { id_usuario, cpf, nome, email, telefone, senha } = req.body;
 
-    if (!cpf) {
+    if (!cpf || !id_usuario) {
         return res.status(400).json({ message: 'CPF é obrigatório' });
     }
 
     try {
-        const usuario = await UsuarioModel.findOne({ where: { cpf: cpf }, limit: 1 });
+        const usuario = await UsuarioModel.findOne({ where: { id_usuario }, limit: 1 });
 
         if (!usuario) {
             return res.status(404).json({ message: 'Usuário não encontrado' });
         }
 
-        await UsuarioModel.destroy({ where: { cpf: cpf}, force: true });
+        if (nome) {
+            usuario.nome = nome;
+        }
 
-        return res.status(200).json({ message: 'Usuário deletado com sucesso' });
+        if (email) {
+            usuario.email = email;
+        }
+
+        if (telefone) {
+            usuario.telefone = telefone;
+        }
+
+        // if (senha) {
+        //     const samePassword = bcrypt.compare(senha, usuario.senha);
+
+        //     if (!samePassword) {
+        //         bcrypt.hash(senha, 10, async (err, hashedPassword) => {
+        //             if (err) {
+        //                 return res.status(500).json({ message: 'Erro ao criar a senha. Tente novamente.' });
+        //             }
+    
+        //             usuario.senha = hashedPassword;
+        //         });
+        //     }
+        // }
+
+        await usuario.save();
+
+        return res.status(200).json({ message: 'Usuário atualizado com sucesso' });
     } catch (error) {
-        console.error('Erro ao deletar usuário:', error);
-        return res.status(500).json({ message: 'Erro ao deletar usuário' });
+        console.error('Erro ao atualizar usuário:', error);
+        return res.status(500).json({ message: 'Erro ao atualizar usuário' });
     }
+}
+
+exports.deleteUser = async (req, res) => {
+    const { id } = req.params; // ID agora vem da URL!
+
+    if (!id) {
+        return res.status(400).json({ message: 'ID é obrigatório' });
+    }
+
+    try {
+        const usuario = await UsuarioModel.findOne({ where: { id } });
+    
+        if (!usuario) {
+            return res.status(404).json({ message: 'Usuário não encontrado' });
+        }
+    
+        const queryDelete = 'DELETE FROM usuario WHERE id_usuario = ?';
+        const queryDeleteMotorista = 'DELETE FROM motorista WHERE id_usuario = ?';
+        const queryDeletePassageiro = 'DELETE FROM passageiro WHERE id_usuario = ?';
+    
+        if (usuario.tipo_usuario.toLowerCase() === 'motorista') {
+            await db.query(queryDeleteMotorista, [id]);
+        }
+    
+        if (usuario.tipo_usuario.toLowerCase() === 'passageiro') { // Corrigi typo ("passageiro")
+            await db.query(queryDeletePassageiro, [id]);
+        }
+
+        const response = await db.query(queryDelete, [id]);
+
+        if (response[0].affectedRows > 0) {
+            return res.status(204).send({ message: 'Usuário excluído com sucesso' });
+        }
+    } catch (error) {
+        console.error('Erro detalhado:', error);
+        return res.status(500).json({ 
+            message: 'Erro interno',
+            error: error.message // Envia detalhes do erro para debug
+        });
+    }
+    // const t = await sequelize.transaction(); // Transação
+
+    // try {
+    //     const usuario = await UsuarioModel.findOne({ where: { id }, transaction: t });
+
+    //     if (!usuario) {
+    //         await t.rollback();
+    //         return res.status(404).json({ message: 'Usuário não encontrado' });
+    //     }
+
+    //     if (usuario.tipo_usuario === 'motorista') {
+    //         await MotoristaModel.destroy({ 
+    //             where: { id_usuario: id }, 
+    //             transaction: t // Associado à transação
+    //         });
+    //     }
+
+    //     if (usuario.tipo_usuario === 'passageiro') { // Corrigi typo ("passageiro")
+    //         await PassageiroModel.destroy({ 
+    //             where: { id_usuario: id }, 
+    //             transaction: t 
+    //         });
+    //     }
+
+    //     await UsuarioModel.destroy({ 
+    //         where: { id }, 
+    //         transaction: t 
+    //     });
+
+    //     await t.commit(); // Confirma tudo
+
+    //     return res.status(204).send(); // 204 = Sucesso sem conteúdo
+
+    // } catch (error) {
+    //     await t.rollback();
+    //     console.error('Erro detalhado:', error);
+    //     return res.status(500).json({ 
+    //         message: 'Erro interno',
+    //         error: error.message // Envia detalhes do erro para debug
+    //     });
+    // }
 };
+
 
 exports.loginUser = async (req, res) => {
     console.log("Início da função loginUser");
-    const { email_usuario, senha_usuario } = req.body;
-    
-    // Consulta SQL para verificar se o email existe
-    const query = 'SELECT * FROM usuario WHERE email_usuario = ?';
+    const { email, senha } = req.body;
+
+    console.log(req.body)
     
     try {
-        const [results] = await db.query(query, [email_usuario]);
+        const usuario = await UsuarioModel.findOne({ where: { email: email } });
         
-        if (results.length === 0) {
+        if (!usuario) {
             return res.status(404).json({ message: 'Usuário não encontrado. Verifique suas credenciais.' });
         }
-        
-        const user = results[0];
+
+        if (!senha || !usuario.senha) {
+            return res.status(400).json({ message: 'Senha inválida' });
+        }
         
         // Comparar as senhas 
-        bcrypt.compare(senha_usuario, user.senha_usuario, (err, result) => {
+        bcrypt.compare(senha, usuario.senha, (err, result) => {
             if (err) {
                 console.error('Erro ao comparar senhas:', err);
                 
@@ -211,7 +320,8 @@ exports.loginUser = async (req, res) => {
                 
                 return res.status(401).json({ message: 'Senha incorreta. Tente novamente.' });
             }
-            const token = generateToken(user);
+
+            const token = generateToken(usuario);
             
             // Adicionar headers CORS na resposta
             res.set({
@@ -223,6 +333,7 @@ exports.loginUser = async (req, res) => {
             // Se o login for bem-sucedido
             return res.status(200).json({ 
                 message: 'Login bem-sucedido!', 
+                usuario: usuario,
                 token: token // Inclui o token na resposta
             });
         });
@@ -245,7 +356,7 @@ function generateToken(user) {
     // 1. Definir a payload do token (dados do usuário)
     const payload = {
       id: user.cpf, // CPF do usuário
-      nome: user.nome_usuario, // Nome do usuário
+      nome: user.nome, // Nome do usuário
     };
   
     // 2. Definir o segredo do token (armazenar em .env ou variáveis de ambiente)
@@ -262,7 +373,6 @@ function generateToken(user) {
   
     return token;
 }
-
 
 exports.getNomeUsuario = async (req, res) => {
     try {
