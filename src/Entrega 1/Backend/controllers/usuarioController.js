@@ -202,78 +202,47 @@ exports.deleteUser = async (req, res) => {
         return res.status(400).json({ message: 'ID é obrigatório' });
     }
 
+    const t = await sequelize.transaction(); // Transação
+
     try {
-        const usuario = await UsuarioModel.findOne({ where: { id } });
-    
+        const usuario = await UsuarioModel.findOne({ where: { id }, transaction: t });
+
         if (!usuario) {
+            await t.rollback();
             return res.status(404).json({ message: 'Usuário não encontrado' });
         }
-    
-        const queryDelete = 'DELETE FROM usuario WHERE id_usuario = ?';
-        const queryDeleteMotorista = 'DELETE FROM motorista WHERE id_usuario = ?';
-        const queryDeletePassageiro = 'DELETE FROM passageiro WHERE id_usuario = ?';
-    
-        if (usuario.tipo_usuario.toLowerCase() === 'motorista') {
-            await db.query(queryDeleteMotorista, [id]);
-        }
-    
-        if (usuario.tipo_usuario.toLowerCase() === 'passageiro') { // Corrigi typo ("passageiro")
-            await db.query(queryDeletePassageiro, [id]);
+
+        if (usuario.tipo_usuario === 'motorista') {
+            await MotoristaModel.destroy({ 
+                where: { id_usuario: id }, 
+                transaction: t // Associado à transação
+            });
         }
 
-        const response = await db.query(queryDelete, [id]);
-
-        if (response[0].affectedRows > 0) {
-            return res.status(204).send({ message: 'Usuário excluído com sucesso' });
+        if (usuario.tipo_usuario === 'passageiro') { // Corrigi typo ("passageiro")
+            await PassageiroModel.destroy({ 
+                where: { id_usuario: id }, 
+                transaction: t 
+            });
         }
+
+        await UsuarioModel.destroy({ 
+            where: { id }, 
+            transaction: t 
+        });
+
+        await t.commit(); // Confirma tudo
+
+        return res.status(204).send(); // 204 = Sucesso sem conteúdo
+
     } catch (error) {
+        await t.rollback();
         console.error('Erro detalhado:', error);
         return res.status(500).json({ 
             message: 'Erro interno',
             error: error.message // Envia detalhes do erro para debug
         });
     }
-    // const t = await sequelize.transaction(); // Transação
-
-    // try {
-    //     const usuario = await UsuarioModel.findOne({ where: { id }, transaction: t });
-
-    //     if (!usuario) {
-    //         await t.rollback();
-    //         return res.status(404).json({ message: 'Usuário não encontrado' });
-    //     }
-
-    //     if (usuario.tipo_usuario === 'motorista') {
-    //         await MotoristaModel.destroy({ 
-    //             where: { id_usuario: id }, 
-    //             transaction: t // Associado à transação
-    //         });
-    //     }
-
-    //     if (usuario.tipo_usuario === 'passageiro') { // Corrigi typo ("passageiro")
-    //         await PassageiroModel.destroy({ 
-    //             where: { id_usuario: id }, 
-    //             transaction: t 
-    //         });
-    //     }
-
-    //     await UsuarioModel.destroy({ 
-    //         where: { id }, 
-    //         transaction: t 
-    //     });
-
-    //     await t.commit(); // Confirma tudo
-
-    //     return res.status(204).send(); // 204 = Sucesso sem conteúdo
-
-    // } catch (error) {
-    //     await t.rollback();
-    //     console.error('Erro detalhado:', error);
-    //     return res.status(500).json({ 
-    //         message: 'Erro interno',
-    //         error: error.message // Envia detalhes do erro para debug
-    //     });
-    // }
 };
 
 
