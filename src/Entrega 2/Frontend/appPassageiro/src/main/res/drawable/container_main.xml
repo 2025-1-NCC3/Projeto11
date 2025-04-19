@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle" >
+
+
+    <solid android:color="#1D591B"/>
+
+            <!-- Bordas arredondadas -->
+            <!-- bottom = serve para arredondar a borda inferior do shape -->
+            <!-- top = serve para arredondar a borda superior do shape   -->
+            <corners
+                android:bottomLeftRadius="130dp"
+                android:bottomRightRadius="130dp"/>
+
+</shape>
+
+

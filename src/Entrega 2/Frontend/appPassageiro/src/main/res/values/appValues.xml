@@ -1,0 +1,90 @@
+<resources>
+    <string name="app_name">Uber_SafeRide</string>
+
+    <!--    Titulos de Telas: -->
+    <string name="appTituloMain"> INICIE A SUA JORNADA SEGURA </string>
+    <string name="appTituloLogin"> Login</string>
+    <string name="appTituloCadastro">Cadastrar</string>
+    <string name="appTituloModificarFoto">Segurança começa com reconhecimento!</string>
+    <string name="appTituloAtividade">Ops! Você ainda não possui um histórico de viagens.</string>
+    <string name="appTituloMetodoPagamento">Opções de Pagamento</string>
+    <string name="appTituloFeedback">Feedback do Percurso</string>
+
+    <!--    SubTitulos de Telas: -->
+    <string name="appDadosCadastrais"> Dados Cadastrais </string>
+    <string name="appMaisopcoes"> Mais Opções </string>
+
+
+    <!--Textos De Botões-->
+    <string name="app_btnComecar">Começar</string>
+    <string name="app_btnLogin">Vamos lá!</string>
+    <string name="app_btnCadastrar_se">Cadastrar-se</string>
+    <string name="app_btnIniciar">Iniciar</string>
+    <string name="app_btnVoltar">Voltar</string>
+    <string name="app_btnEditar">Editar</string>
+    <string name="app_btnSalvar">Salvar</string>
+    <string name="app_btnSair">       Sair</string>
+    <string name="app_btnDelConta">Deletar Conta</string>
+    <string name="app_btnSim">Sim</string>
+    <string name="app_btnNao">Não</string>
+    <string name="app_btnMudar">Mudar trajeto</string>
+    <string name="app_btnStart">Iniciar</string>
+    <string name="app_btnCancelar">Cancelar</string>
+    <string name="app_btnContinuar">Continuar</string>
+    <string name="app_btnFinalizar">Finalizar</string>
+
+    <!-- TextBox-->
+    <string name="app_hint_email">E-mail:</string>
+    <string name="app_hint_senha">Senha:</string>
+    <string name="app_hint_dataNasci">Data de Nascimento:</string>
+    <string name="app_hint_CPF">CPF:</string>
+    <string name="app_hint_telefone">Telefone:</string>
+    <string name="app_hint_nome">Nome:</string>
+    <string name="app_hit_escolherPartida">Escolher ponto de partida</string>
+    <string name="app_hit_destino">Informe o destino...</string>
+
+    <!--Linha de textos -->
+    <string name="app_TxtCriarConta">Ainda não tem uma conta? Crie uma agora!</string>
+    <string name="app_TxtLoginConta">Já tem uma conta? Entrar</string>
+    <string name="app_TxtPerfil">Perfil</string>
+    <string name="app_TextAtividade">Atividade</string>
+    <string name="app_TextHome">Home</string>
+    <string name="app_TextGaleria">Galeria</string>
+    <string name="app_TextCamera">Câmera</string>
+    <string name="app_TextInfMotorista">Informações do Motorista</string>
+    <string name="app_TextNomeMotorista">Namo</string>
+    <string name="app_TextModeloCarro">Modelo do Carro</string>
+    <string name="app_TextPlaca">Placa</string>
+    <string name="app_TextNumeroPlaca">xxx-xxxx</string>
+    <string name="app_TextCusto">Custo</string>
+    <string name="app_TextValorCusto">R$00,00</string>
+    <string name="app_TextCancelar">Cancelar</string>
+    <string name="app_TextInfoPercurso">Principais informações do percurso</string>
+    <string name="app_TextPrimeiraInfoPrincipal">A Primeira informação principal</string>
+    <string name="app_TextSegundaInfoPrincipal">A Segunda informação principal</string>
+    <string name="app_TextFeedback1Positivo">Ruas bem iluminadas.</string>
+    <string name="app_TextFeedback2Positivo">Movimentação constante de pessoas.</string>
+    <string name="app_TextFeedback3Positivo">Pistas bem conservadas e sinalizadas.</string>
+    <string name="app_TextFeedback4Positivo">Pistas bem conservadas e sinalizadas.</string>
+    <string name="app_TextFeedback1Neutro">Caminho pouco convencional.</string>
+    <string name="app_TextFeedback2Neutro">Trechos longos sem estabelecimentos.</string>
+    <string name="app_TextFeedback3Neutro">Muitas curvas ou ruas estreitas.</string>
+    <string name="app_TextFeedback1Negativo">Risco de assalto.</string>
+    <string name="app_TextFeedback2Negativo">Local muito escuro.</string>
+    <string name="app_TextFeedback3Negativo">Pouca movimentação, ruas desertas.</string>
+    <string name="app_TextFeedback4Negativo">Falta de sinalização ou vias mal cuidadas.</string>
+    <string name="app_TextFeedback5Negativo">Presença de moradores de ruas ou usuários de drogas.</string>
+    <string name="app_TextPositivoFeedback">Positivo</string>
+    <string name="app_TextNeutroFeedback">Neutro</string>
+    <string name="app_TextNegativoFeedback">Negativo</string>
+
+    <!--RadioGroup-->
+    <string name="appTextRbStar1">Péssimo</string>
+    <string name="appTextRbStar2">Ruim</string>
+    <string name="appTextRbStar3">Neutro</string>
+    <string name="appTextRbStar4">Bom</string>
+    <string name="appTextRbStar5">Perfeito</string>
+
+
+
+</resources>
