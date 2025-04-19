@@ -33,6 +33,9 @@ Com base nesses dados, o SafeRide oferece aos usuários a possibilidade de escol
 │   ├── Entrega1/
 │   │   ├── Analise Descritiva de Dados/
 │   │   └── Programacao Orientada a Objetos e Estrutura de Dados/
+│   ├── Entrega2/
+│   │   ├── Analise Descritiva de Dados/
+│   │   └── Programacao Orientada a Objetos e Estrutura de Dados/
 │   ├── Documentação.docx/
 ├── imagens/
 ├── src/
