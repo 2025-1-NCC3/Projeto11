@@ -4,7 +4,7 @@
 <a href= "https://www.fecap.br/"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRhZPrRa89Kma0ZZogxm0pi-tCn_TLKeHGVxywp-LXAFGR3B1DPouAJYHgKZGV0XTEf4AE&usqp=CAU" alt="FECAP - Fundação de Comércio Álvares Penteado" border="0"></a>
 </p>
 
-# Projeto 11 - SafeRide
+# Projeto 11 - SafeRide 🚗🛡️
 
 ## Integrantes: <a href="https://www.linkedin.com/in/rluizreis/">Rodrigo Reis</a>, <a href="https://www.linkedin.com/in/gabrielcarvalhomota/">Gabriel Carvalho</a>, <a href="https://www.linkedin.com/in/sik4s/">Guilherme Siqueira</a>, <a href="https://www.linkedin.com/in/vitória-maciel-8308a42a6/">Vitória Leticia Maciel</a>.
 
@@ -22,39 +22,38 @@ O SafeRide é uma funcionalidade desenvolvida para a Uber com o objetivo de aume
 Com base nesses dados, o SafeRide oferece aos usuários a possibilidade de escolher rotas mais seguras, minimizando riscos e garantindo uma experiência mais confiável para todos. Nossa solução busca tornar a mobilidade urbana mais segura, utilizando tecnologia e a colaboração da comunidade para identificar e evitar trajetos potencialmente perigosos.
 <br>
 
-## Figma
-<p>Veja o protótipo do nosso projeto no <a href="https://www.figma.com/design/pZVaycOxvHu24o285go8m4/G11-PI3-UBER?node-id=0-1&p=f&t=Bxm9mognCLlNtvPn-0">Figma</a>.</p>
+## 📲 Figma
+<p>🎨 Veja o protótipo do nosso projeto no <a href="https://www.figma.com/design/pZVaycOxvHu24o285go8m4/G11-PI3-UBER?node-id=0-1&p=f&t=Bxm9mognCLlNtvPn-0">Figma</a>.</p>
 
 ## 🛠 Estrutura de pastas
 
--Raiz<br>
-|<br>
-|-->documentos<br>
-  &emsp;|-->antigos<br>
-  &emsp;|Documentação.docx<br>
-|-->executáveis<br>
-  &emsp;|-->windows<br>
-  &emsp;|-->android<br>
-  &emsp;|-->HTML<br>
-|-->imagens<br>
-|-->src<br>
-  &emsp;|-->Backend<br>
-  &emsp;|-->Frontend<br>
-|readme.md<br>
+```
+├── documentos/
+│   ├── BD/
+│   ├── Entrega1/
+│   │   ├── Analise Descritiva de Dados/
+│   │   └── Programacao Orientada a Objetos e Estrutura de Dados/
+│   ├── Documentação.docx/
+├── imagens/
+├── src/
+│   ├── Entrega1/
+│   │   ├── frontend/
+│   │   └── backend/
+│   ├── Entrega2/
+│   │   ├── frontend/
+│   │   └── backend/
+└── readme.md<br>
+```
 
-A pasta raiz contem dois arquivos que devem ser alterados:
-
-<b>README.MD</b>: Arquivo que serve como guia e explicação geral sobre seu projeto. O mesmo que você está lendo agora.
+<b>📄 README.MD</b>: Arquivo que serve como guia e explicação geral sobre o projeto.
 
 Há também 4 pastas que seguem da seguinte forma:
 
-<b>documentos</b>: Toda a documentação estará nesta pasta.
+<b>🗂️ Documentos</b>: Toda a documentação geral do projeto e o banco de dados estará nesta pasta. Além das entregas das disciplinas "Análise Descritiva de Dados" e "Programação Orientada a Objetos e Estrutura de Dados".
 
-<b>executáveis</b>: Binários e executáveis do projeto devem estar nesta pasta.
+<b>📷 imagens</b>: Imagens utilizadas para documentação e explicação do projeto.
 
-<b>imagens</b>: Imagens do sistema
-
-<b>src</b>: Pasta que contém o código fonte.
+<b>🧑‍💻 src</b>: Pasta que contém o código fonte (frontend e backend).
 
 ## 🛠 Instalação
 
@@ -65,20 +64,11 @@ Execute o APK e siga as instruções de seu telefone.
 
 ## 💻 Configuração para Desenvolvimento
 
-Descreva como instalar todas as dependências para desenvolvimento e como rodar um test-suite automatizado de algum tipo. Se necessário, faça isso para múltiplas plataformas.
-
 Para abrir este projeto você necessita das seguintes ferramentas:
-
--<a href="https://godotengine.org/download">GODOT</a>
-
-```sh
-make install
-npm test
-Coloque código do prompt de comnando se for necessário
-```
+- <a href="https://developer.android.com/studio?hl=pt-br">Android Studio</a>
 
 ## 📋 Licença/License
-Utilize o link <https://chooser-beta.creativecommons.org/> para fazer uma licença CC BY 4.0.
+SafeRide © 2025 by Gabriel Carvalho, Guilherme Siqueira, Rodrigo Reis, Vitória Leticia Maciel is licensed under CC BY 4.0 
 
 ## 🎓 Referências
 
