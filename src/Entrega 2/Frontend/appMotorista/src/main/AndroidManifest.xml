@@ -24,6 +24,12 @@
         android:theme="@style/Theme.Uber_SafeRide"
         tools:targetApi="31">
         <activity
+            android:name=".ViagemAceitaActivity"
+            android:exported="false" />
+        <activity
+            android:name=".TempoViagemActivity"
+            android:exported="false" />
+        <activity
             android:name=".Feedback"
             android:exported="false" />
         <activity

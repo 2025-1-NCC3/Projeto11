@@ -62,6 +62,7 @@
     <string name="app_TextInfoPercurso">Principais informações do percurso</string>
     <string name="app_TextPrimeiraInfoPrincipal">A Primeira informação principal</string>
     <string name="app_TextSegundaInfoPrincipal">A Segunda informação principal</string>
+    <string name="app_TextAvalaicaoQuantitativo">Avaliação quantitativo do percurso</string>
     <string name="app_TextFeedback1Positivo">Ruas bem iluminadas.</string>
     <string name="app_TextFeedback2Positivo">Movimentação constante de pessoas.</string>
     <string name="app_TextFeedback3Positivo">Pistas bem conservadas e sinalizadas.</string>
@@ -77,6 +78,7 @@
     <string name="app_TextPositivoFeedback">Positivo</string>
     <string name="app_TextNeutroFeedback">Neutro</string>
     <string name="app_TextNegativoFeedback">Negativo</string>
+    <string name="app_TextViagemAndamento">Viagem em Andamento</string>
 
     <!--RadioGroup-->
     <string name="appTextRbStar1">Péssimo</string>
