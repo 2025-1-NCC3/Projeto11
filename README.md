@@ -78,3 +78,8 @@ SafeRide © 2025 by Gabriel Carvalho, Guilherme Siqueira, Rodrigo Reis, Vitória
 Aqui estão as referências usadas no projeto.
 
 1. <https://www.ssp.sp.gov.br/estatistica/dados-mensais>
+2. <https://www.geeksforgeeks.org/system-design-of-uber-app-uber-system-architecture/?ref=gcse_outind>
+3. <https://app.uff.br/riuff/bitstream/handle/1/25793/06-10-2021-%20MONOGRAFIA%20-PDF.pdf?sequence=1&isAllowed=y>
+4. <https://especiais.g1.globo.com/monitor-da-violencia/2023/furtos-e-roubos-de-veiculos-na-grande-sp/>
+5. <https://www.ondefuiroubado.com.br/sao-paulo/SP>
+6. <https://dados.gov.br/dados/conjuntos-dados>
