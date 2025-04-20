@@ -1,6 +1,7 @@
 package br.com.fecapccp.uber_saferide;
 
 import android.annotation.SuppressLint;
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,9 +13,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
+
 import br.com.fecapccp.uber_saferide.dto.ResponseCreateUsuarioDTO;
 import br.com.fecapccp.uber_saferide.dto.ResponseDTO;
 import br.com.fecapccp.uber_saferide.enums.TipoUsuarioEnum;
+import br.com.fecapccp.uber_saferide.models.UsuarioModel;
 import br.com.fecapccp.uber_saferide.retrofit.ApiService;
 import br.com.fecapccp.uber_saferide.retrofit.RetrofitClient;
 import br.com.fecapccp.uber_saferide.session.SessionManager;
@@ -54,10 +61,38 @@ public class TelaCadastro extends AppCompatActivity {
         // Inicializa o TextView
         txtCadastrarSe = findViewById(R.id.txtCadastrar_se); // Adicione esta linha
 
+        etDataNasci.setOnClickListener(v -> {
+            final Calendar calendar = Calendar.getInstance();
+            int year = calendar.get(Calendar.YEAR);
+            int month = calendar.get(Calendar.MONTH);
+            int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+            DatePickerDialog datePickerDialog = new DatePickerDialog(
+                    TelaCadastro.this,
+                    (view, selectedYear, selectedMonth, selectedDay) -> {
+                        // Formata a data para yyyy-MM-dd
+                        String dataFormatada = String.format(Locale.getDefault(), "%04d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay);
+                        etDataNasci.setText(dataFormatada);
+                    },
+                    year, month, day
+            );
+            datePickerDialog.show();
+        });
+
         // Define o listener para o botão
         btnCadastrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Recupera o CPF do EditText
+                String cpf = etCPF.getText().toString().trim();
+
+                // Verifica se o CPF tem exatamente 11 dígitos
+                if (cpf.length() != 11) {
+                    // Exibe uma mensagem de erro caso o CPF seja inválido
+                    Toast.makeText(context, "O CPF deve conter exatamente 11 dígitos.", Toast.LENGTH_SHORT).show();
+                    return; // Impede o envio da requisição se o CPF for inválido
+                }
+
                 // Verifica se todos os campos estão preenchidos
                 if (camposPreenchidos()) {
                     // Se todos os campos estiverem preenchidos, navega para a próxima tela
@@ -65,19 +100,27 @@ public class TelaCadastro extends AppCompatActivity {
                     String nome = etNome.getText().toString();
                     String email = etEmail.getText().toString();
                     String telefone = etTelefone.getText().toString();
-                    String cpf = etCPF.getText().toString();
                     String dataNascimento = etDataNasci.getText().toString();
                     String senha = etSenha.getText().toString();
 
-                    Call<ResponseCreateUsuarioDTO> call = apiService.createUser(
-                            nome,
-                            email,
-                            telefone,
-                            cpf,
-                            "2000-03-15",
-                            TipoUsuarioEnum.Passageiro.name(),
-                            senha
-                    );
+                    UsuarioModel usuario = new UsuarioModel();
+                    usuario.setNome(nome);
+                    usuario.setEmail(email);
+                    usuario.setTelefone(telefone);
+                    usuario.setCpf(cpf);
+
+                    try {
+                        usuario.setDataNascimento(new SimpleDateFormat("yyyy-MM-dd").parse(dataNascimento));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                        Toast.makeText(context, "Data de nascimento inválida.", Toast.LENGTH_SHORT).show();
+                        return; // Para o cadastro se a data estiver errada
+                    }
+
+                    usuario.setTipoUsuario(TipoUsuarioEnum.Passageiro);
+                    usuario.setSenha(senha);
+
+                    Call<ResponseCreateUsuarioDTO> call = apiService.createUser(usuario);
 
                     call.enqueue(new Callback<ResponseCreateUsuarioDTO>() {
                         @Override
@@ -88,8 +131,7 @@ public class TelaCadastro extends AppCompatActivity {
                                 Intent intent = new Intent(TelaCadastro.this, TelaLogin.class);
                                 startActivity(intent);
                                 finish();
-                            }
-                            else {
+                            } else {
                                 Toast.makeText(context, "Erro ao criar usuário!", Toast.LENGTH_SHORT).show();
                             }
                         }
@@ -101,6 +143,7 @@ public class TelaCadastro extends AppCompatActivity {
                         }
                     });
 
+                    // Redireciona para a tela IniciarViagem
                     Intent intent = new Intent(TelaCadastro.this, IniciarViagem.class);
                     startActivity(intent);
                 } else {

@@ -10,6 +10,7 @@ import br.com.fecapccp.uber_saferide.dto.ResponseDTO;
 import br.com.fecapccp.uber_saferide.dto.ResponseLoginUserDTO;
 import br.com.fecapccp.uber_saferide.models.UsuarioModel;
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -28,7 +29,7 @@ public interface ApiService {
     @GET("usuarios/cpf/{cpf}")
     Call<UsuarioModel> getUserByCpf();
 
-    @POST("usuarios/add")
+    /* @POST("usuarios/add")
     @FormUrlEncoded
     Call<ResponseCreateUsuarioDTO> createUser(
             @Field("nome") String nome,
@@ -38,7 +39,11 @@ public interface ApiService {
             @Field("data_nascimento") String dataNascimento,
             @Field("tipo_usuario") String tipoUsuario,
             @Field("senha") String senha
-    );
+    ); */
+
+    @POST("usuarios/add")
+    Call<ResponseCreateUsuarioDTO> createUser(@Body UsuarioModel usuario);
+
 
     @POST("usuarios/login")
     @FormUrlEncoded

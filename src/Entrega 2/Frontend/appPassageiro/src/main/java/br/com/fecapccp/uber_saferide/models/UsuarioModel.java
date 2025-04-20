@@ -6,7 +6,7 @@ import java.util.Date;
 
 import br.com.fecapccp.uber_saferide.enums.TipoUsuarioEnum;
 
-public class UsuarioModel {
+public class    UsuarioModel {
     @SerializedName("id_usuario")
     private int idUsuario;
 
@@ -30,6 +30,12 @@ public class UsuarioModel {
 
     @SerializedName("senha")
     private String senha;
+
+    @SerializedName("cnh")
+    private String cnh;
+
+    @SerializedName("validade_carteira")
+    private String validadeCarteira;
 
     public int getIdUsuario() {
         return idUsuario;
@@ -93,5 +99,21 @@ public class UsuarioModel {
 
     public void setSenha(String senha) {
         this.senha = senha;
+    }
+
+    public String getCnh() {
+        return cnh;
+    }
+
+    public void setCnh(String cnh) {
+        this.cnh = cnh;
+    }
+
+    public String getValidadeCarteira() {
+        return validadeCarteira;
+    }
+
+    public void setValidadeCarteira(String validadeCarteira) {
+        this.validadeCarteira = validadeCarteira;
     }
 }
