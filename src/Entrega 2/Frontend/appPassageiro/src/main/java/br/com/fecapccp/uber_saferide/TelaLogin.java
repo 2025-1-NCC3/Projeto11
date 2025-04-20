@@ -108,15 +108,4 @@ public class TelaLogin extends AppCompatActivity {
         });
 
     }
-
-    public void onInputClick(View view) {
-        Toast.makeText(this, "Campo selecionado!", Toast.LENGTH_SHORT).show();
-    }
-
-    public void onLoginClick(View view) {
-        Toast.makeText(this, "Botão de Login pressionado!", Toast.LENGTH_SHORT).show();
-    }
-    /*    public void onCriarContaClick(View view) {
-        Toast.makeText(this, "Criar Conta clicado!", Toast.LENGTH_SHORT).show();
-    }*/
 }
