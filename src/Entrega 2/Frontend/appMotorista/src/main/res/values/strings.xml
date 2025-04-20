@@ -77,6 +77,10 @@
     <string name="app_TextInfoPercurso">Principais informações do percurso</string>
     <string name="app_TextInfMotorista">Informações do Percurso</string>
 
+    <!--Card RecyclerView-->
+    <string name="app_SocilitouMensagem">XXXX solicitou uma Corrida!</string>
+    <string name="app_TempoViagem">Há XXmin</string>
+
 
     <!--RadioGroup-->
     <string name="appTextRbStar1">Péssimo</string>
