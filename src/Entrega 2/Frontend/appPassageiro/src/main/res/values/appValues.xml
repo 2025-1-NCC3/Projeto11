@@ -79,6 +79,10 @@
     <string name="app_TextNeutroFeedback">Neutro</string>
     <string name="app_TextNegativoFeedback">Negativo</string>
     <string name="app_TextViagemAndamento">Viagem em Andamento</string>
+    <string name="app_TextRua">Rua</string>
+    <string name="app_TextData">05 de Fev.</string>
+    <string name="app_TextHora">00:00</string>
+    <string name="app_TextAtividades">Atividades</string>
 
     <!--RadioGroup-->
     <string name="appTextRbStar1">Péssimo</string>

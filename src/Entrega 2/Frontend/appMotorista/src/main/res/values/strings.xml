@@ -76,6 +76,10 @@
     <string name="app_TextSegundaInfoPrincipal">A Segunda informação principal</string>
     <string name="app_TextInfoPercurso">Principais informações do percurso</string>
     <string name="app_TextInfMotorista">Informações do Percurso</string>
+    <string name="app_TextRua">Rua</string>
+    <string name="app_TextData">05 de Fev.</string>
+    <string name="app_TextHora">00:00</string>
+    <string name="app_TextAtividades">Atividades</string>
 
     <!--Card RecyclerView-->
     <string name="app_SocilitouMensagem">XXXX solicitou uma Corrida!</string>
