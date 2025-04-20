@@ -25,9 +25,6 @@
     <string name="app_btnDelConta">Deletar Conta</string>
     <string name="app_btnSim">Sim</string>
     <string name="app_btnNao">Não</string>
-    <string name="app_btnMudar">Mudar trajeto</string>
-    <string name="app_btnStart">Iniciar</string>
-    <string name="app_btnCancelar">Cancelar</string>
 
 
 
@@ -49,24 +46,6 @@
     <string name="app_TextHome">Home</string>
     <string name="app_TextGaleria">Galeria</string>
     <string name="app_TextCamera">Câmera</string>
-    <string name="app_TextInfMotorista">Informações do Motorista</string>
-    <string name="app_TextNomeMotorista">Namo</string>
-    <string name="app_TextModeloCarro">Modelo do Carro</string>
-    <string name="app_TextPlaca">Placa</string>
-    <string name="app_TextNumeroPlaca">xxx-xxxx</string>
-    <string name="app_TextCusto">Custo</string>
-    <string name="app_TextValorCusto">R$00,00</string>
-    <string name="app_TextCancelar">Cancelar</string>
-    <string name="app_TextInfoPercurso">Principais informações do percurso</string>
-    <string name="app_TextPrimeiraInfoPrincipal">A Primeira informação principal</string>
-    <string name="app_TextSegundaInfoPrincipal">A Segunda informação principal</string>
-
-    <!--RadioGroup-->
-    <string name="appTextRbStar1">Péssimo</string>
-    <string name="appTextRbStar2">Ruim</string>
-    <string name="appTextRbStar3">Neutro</string>
-    <string name="appTextRbStar4">Bom</string>
-    <string name="appTextRbStar5">Perfeito</string>
 
 
 
