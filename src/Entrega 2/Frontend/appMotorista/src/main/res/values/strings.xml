@@ -36,6 +36,7 @@
     <!-- TextBox-->
     <string name="app_hint_email">E-mail:</string>
     <string name="app_hint_senha">Senha:</string>
+    <string name="app_hint_ValidadeCNH">Validade da CNH:</string>
     <string name="app_hint_dataNasci">Data de Nascimento:</string>
     <string name="app_hint_CPF">CPF:</string>
     <string name="app_hint_telefone">Telefone:</string>

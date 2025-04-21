@@ -30,7 +30,7 @@ public class IniciarViagem extends AppCompatActivity {
 
         setContentView(R.layout.activity_iniciar_viagem);
 
-        btnComecar2 = findViewById(R.id.btnComecar2);
+        //btnComecar2 = findViewById(R.id.btnComecar2);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());

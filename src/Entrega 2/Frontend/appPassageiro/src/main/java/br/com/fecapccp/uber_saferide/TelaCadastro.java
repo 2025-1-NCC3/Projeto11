@@ -33,7 +33,7 @@ public class TelaCadastro extends AppCompatActivity {
 
     private EditText etNome, etDataNasci, etCPF, etTelefone, etEmail, etSenha;
     private Button btnCadastrar;
-    private TextView txtCadastrarSe; // Adicione esta linha
+    private TextView txtCadastrarSe;
     ApiService apiService;
     SessionManager sessionManager;
     Context context = this;
@@ -42,24 +42,19 @@ public class TelaCadastro extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tela_cadastro); // Layout da TelaCadastroActivity
+        setContentView(R.layout.activity_tela_cadastro);
 
         apiService = RetrofitClient.getApiService();
         sessionManager = new SessionManager(context);
 
-        // Inicializa os campos de texto
         etNome = findViewById(R.id.etNome);
         etDataNasci = findViewById(R.id.etDataNasci);
         etCPF = findViewById(R.id.etCPF);
         etTelefone = findViewById(R.id.etTelefone);
         etEmail = findViewById(R.id.etEmail);
         etSenha = findViewById(R.id.etSenha);
-
-        // Inicializa o botão
         btnCadastrar = findViewById(R.id.btnCadastrar);
-
-        // Inicializa o TextView
-        txtCadastrarSe = findViewById(R.id.txtCadastrar_se); // Adicione esta linha
+        txtCadastrarSe = findViewById(R.id.txtCadastrar_se);
 
         etDataNasci.setOnClickListener(v -> {
             final Calendar calendar = Calendar.getInstance();
@@ -83,12 +78,9 @@ public class TelaCadastro extends AppCompatActivity {
         btnCadastrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Recupera o CPF do EditText
                 String cpf = etCPF.getText().toString().trim();
 
-                // Verifica se o CPF tem exatamente 11 dígitos
                 if (cpf.length() != 11) {
-                    // Exibe uma mensagem de erro caso o CPF seja inválido
                     Toast.makeText(context, "O CPF deve conter exatamente 11 dígitos.", Toast.LENGTH_SHORT).show();
                     return; // Impede o envio da requisição se o CPF for inválido
                 }
