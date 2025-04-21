@@ -41,7 +41,7 @@ public class adapter_IniciarViagem extends RecyclerView.Adapter<adapter_IniciarV
 
         holder.btnComecar.setOnClickListener(v -> {
             Intent intent = new Intent(context, ViagemAceitaActivity.class);
-            intent.putExtra("id_corrida", IniciarViagemModel.getId()); // Supondo que 'getId()' exista
+            intent.putExtra("id_corrida", IniciarViagemModel.getId());
             context.startActivity(intent);
         });
     }
