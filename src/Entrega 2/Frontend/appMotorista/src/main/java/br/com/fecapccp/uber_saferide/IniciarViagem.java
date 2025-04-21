@@ -14,10 +14,21 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import br.com.fecapccp.uber_saferide.adapter.adapter_IniciarViagem;
+import br.com.fecapccp.uber_saferide.model.IniciarViagemModel;
 
 public class IniciarViagem extends AppCompatActivity {
 
-    private Button btnComecar2;
+    private RecyclerView recyclerViewCorridas;
+    private adapter_IniciarViagem adapter;
+    private List<IniciarViagemModel> listaCorridas;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,10 +38,19 @@ public class IniciarViagem extends AppCompatActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
         setContentView(R.layout.activity_iniciar_viagem);
 
-        //btnComecar2 = findViewById(R.id.btnComecar2);
+        recyclerViewCorridas = findViewById(R.id.recyclerViewCorridas);
+        recyclerViewCorridas.setLayoutManager(new LinearLayoutManager(this));
+
+        // lista de corridas fictícias
+        listaCorridas = new ArrayList<>();
+        listaCorridas.add(new IniciarViagemModel("Carlos", "5 min"));
+        listaCorridas.add(new IniciarViagemModel("Julia", "7 min"));
+        listaCorridas.add(new IniciarViagemModel("Rafael", "3 min"));
+
+        adapter = new adapter_IniciarViagem(this, listaCorridas);
+        recyclerViewCorridas.setAdapter(adapter);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.telaCorridas), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
