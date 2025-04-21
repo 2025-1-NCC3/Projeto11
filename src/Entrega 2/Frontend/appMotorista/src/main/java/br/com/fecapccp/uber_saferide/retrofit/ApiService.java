@@ -19,8 +19,8 @@ import retrofit2.http.Path;
 
 public interface ApiService {
 
-    @POST("usuarios/add")
-    Call<ResponseCreateUsuarioDTO> createMotorista(@Body MotoristaModel motorista);
+    /*POST("usuarios/add")
+    Call<ResponseCreateUsuarioDTO> createMotorista(@Body MotoristaModel motorista);*/
     @GET("usuarios")
     Call<List<UsuarioModel>> getUsers();
 
@@ -30,7 +30,7 @@ public interface ApiService {
     @GET("usuarios/cpf/{cpf}")
     Call<UsuarioModel> getUserByCpf();
 
-    /* @POST("usuarios/add")
+    @POST("usuarios/add")
     @FormUrlEncoded
     Call<ResponseCreateUsuarioDTO> createUser(
             @Field("nome") String nome,
@@ -39,11 +39,16 @@ public interface ApiService {
             @Field("cpf") String cpf,
             @Field("data_nascimento") String dataNascimento,
             @Field("tipo_usuario") String tipoUsuario,
-            @Field("senha") String senha
-    ); */
+            @Field("senha") String senha,
+            @Field("cnh") String cnh,
+            @Field("validade_carteira") String validade_carteira,
+            @Field("placa") String placa,
+            @Field("cor") String cor,
+            @Field("modelo") String modelo
+    );
 
-    @POST("usuarios/add")
-    Call<ResponseCreateUsuarioDTO> createUser(@Body UsuarioModel usuario);
+//    @POST("usuarios/add")
+//    Call<ResponseCreateUsuarioDTO> createUser(@Body UsuarioModel usuario);
 
 
     @POST("usuarios/login")

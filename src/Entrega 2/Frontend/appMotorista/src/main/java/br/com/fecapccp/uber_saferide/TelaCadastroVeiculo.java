@@ -103,7 +103,19 @@ public class TelaCadastroVeiculo extends AppCompatActivity {
                 motorista.setIdUsuario(usuario); // Associa o usuário ao motorista
 
                 // Chama a API para cadastrar o motorista e o veículo
-                Call<ResponseCreateUsuarioDTO> call = apiService.createMotorista(motorista);
+                Call<ResponseCreateUsuarioDTO> call = apiService.createUser(usuario.getNome(),
+                        usuario.getEmail(),
+                        usuario.getTelefone(),
+                        usuario.getCpf(),
+                        usuario.getDataNascimento().toString(),
+                        "MOTORISTA",
+                        usuario.getSenha(),
+                        cnh,
+                        motorista.getValidadeCarteira().toString(),
+                        placa,
+                        cor,
+                        modelo
+                );
 
                 call.enqueue(new Callback<ResponseCreateUsuarioDTO>() {
                     @Override

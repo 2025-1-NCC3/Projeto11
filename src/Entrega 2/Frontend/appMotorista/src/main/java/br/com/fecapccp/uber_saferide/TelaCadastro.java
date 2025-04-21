@@ -22,7 +22,7 @@ import br.com.fecapccp.uber_saferide.models.MotoristaModel;
 
 public class TelaCadastro extends AppCompatActivity {
 
-    private EditText etNome, etDataNasci, etTelefone, etEmail, etSenha;
+    private EditText etNome, etDataNasci, etTelefone, etEmail, etSenha, etCPF;
     private Button btnCadastrar;
     private TextView txtEntrar;
 
@@ -39,6 +39,7 @@ public class TelaCadastro extends AppCompatActivity {
         etSenha = findViewById(R.id.etSenha);
         btnCadastrar = findViewById(R.id.btnCadastrar);
         txtEntrar = findViewById(R.id.txtEntrar);
+        etCPF = findViewById(R.id.etCPF);
 
         // Configura o DatePicker para a data de nascimento
         etDataNasci.setOnClickListener(v -> {
@@ -60,18 +61,21 @@ public class TelaCadastro extends AppCompatActivity {
 
         // Botão para cadastrar e enviar para a TelaCadastroVeiculo
         btnCadastrar.setOnClickListener(v -> {
+
             if (camposPreenchidos()) {
                 String nome = etNome.getText().toString();
                 String email = etEmail.getText().toString();
                 String telefone = etTelefone.getText().toString();
                 String dataNascimento = etDataNasci.getText().toString();
                 String senha = etSenha.getText().toString();
+                String cpf = etCPF.getText().toString();
 
                 UsuarioModel usuario = new UsuarioModel();
                 usuario.setNome(nome);
                 usuario.setEmail(email);
                 usuario.setTelefone(telefone);
                 usuario.setSenha(senha);
+                usuario.setCpf(cpf);
 
                 try {
                     usuario.setDataNascimento(new SimpleDateFormat("yyyy-MM-dd").parse(dataNascimento));

@@ -6,11 +6,10 @@ import java.util.Date;
 
 public class MotoristaModel implements Serializable {
 
-    @SerializedName("id_motorista")
-    private String idMotorista;
-
     @SerializedName("cnh")
     private String cnh;
+    @SerializedName("id_motorista")
+    private String idMotorista;
 
     @SerializedName("validade_carteira")
     private Date validadeCarteira;
@@ -21,7 +20,6 @@ public class MotoristaModel implements Serializable {
     @SerializedName("id_usuario")
     private UsuarioModel idUsuario;
 
-    // Novos atributos relacionados ao veículo
     @SerializedName("modelo")
     private String modelo;
 
