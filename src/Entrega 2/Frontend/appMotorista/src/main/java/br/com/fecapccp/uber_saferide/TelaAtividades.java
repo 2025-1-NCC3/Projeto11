@@ -26,7 +26,6 @@ public class TelaAtividades extends AppCompatActivity {
     private RecyclerView recyclerView;
     private List<AtividadeModel> ListaAtividade = new ArrayList<AtividadeModel>();
     private adapter adapter;
-
     private TextView textRua;
     private TextView textData;
     private TextView textHorario;

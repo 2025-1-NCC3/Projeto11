@@ -54,7 +54,7 @@ public class adapter extends RecyclerView.Adapter<adapter.MyViewHolder> {
             super(itemView);
             textRua = itemView.findViewById(R.id.textRua);
             textData = itemView.findViewById(R.id.textData);
-            textHoras = itemView.findViewById(R.id.textHorario);
+            textHoras = itemView.findViewById(R.id.textHoras);
         }
     }
 }
