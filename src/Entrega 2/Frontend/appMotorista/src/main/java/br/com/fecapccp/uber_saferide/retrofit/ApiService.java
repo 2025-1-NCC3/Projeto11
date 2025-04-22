@@ -50,10 +50,9 @@ public interface ApiService {
 //    @POST("usuarios/add")
 //    Call<ResponseCreateUsuarioDTO> createUser(@Body UsuarioModel usuario);
 
-
-    @POST("usuarios/login")
+    @POST("usuarios/motorista/login")
     @FormUrlEncoded
-    Call<ResponseLoginUserDTO> loginUser(
+    Call<ResponseLoginUserDTO> loginMotorista(
             @Field("email") String email,
             @Field("senha") String senha
     );

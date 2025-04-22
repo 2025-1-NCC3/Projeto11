@@ -81,7 +81,7 @@ public class TelaLogin extends AppCompatActivity {
                 String senha = etSenha.getText().toString();
 
                 Log.d("Login", "Attempting login with email: " + email);
-                Call<ResponseLoginUserDTO> call = apiService.loginUser(email, senha);
+                Call<ResponseLoginUserDTO> call = apiService.loginPassageiro(email, senha);
 
                 call.enqueue(new Callback<ResponseLoginUserDTO>() {
                     @Override
