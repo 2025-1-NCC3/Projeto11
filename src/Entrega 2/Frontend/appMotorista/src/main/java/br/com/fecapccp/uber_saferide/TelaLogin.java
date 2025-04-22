@@ -85,6 +85,7 @@ public class TelaLogin extends AppCompatActivity {
                             ResponseLoginUserDTO res = response.body();
                             Log.d("User", "Message: " + res.getMessage() + ", Token: " + res.getToken());
                             sessionManager.createSession(res.getUsuario(), res.getToken());
+                            sessionManager.saveMotorista(res.getMotorista());
                             startActivity(intent);
                             finish();
                         } else {

@@ -5,10 +5,8 @@ import java.util.List;
 import br.com.fecapccp.uber_saferide.dto.ResponseCreateUsuarioDTO;
 import br.com.fecapccp.uber_saferide.dto.ResponseDTO;
 import br.com.fecapccp.uber_saferide.dto.ResponseLoginUserDTO;
-import br.com.fecapccp.uber_saferide.models.MotoristaModel;
 import br.com.fecapccp.uber_saferide.models.UsuarioModel;
 import retrofit2.Call;
-import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -66,6 +64,16 @@ public interface ApiService {
         @Field("email") String email,
         @Field("telefone") String telefone
     );
+    @PUT("usuarios/updateVeiculoMotorista")
+    @FormUrlEncoded
+    Call<ResponseDTO> updateVeiculoMotorista (
+            @Field("id_motorista") int idMotorista,
+            @Field("modelo") String modelo,
+            @Field("cor") String cor,
+            @Field("placa") String placa,
+            @Field("cnh") String cnh,
+            @Field("validade_carteira") String ValCNH
+);
 
     @DELETE("usuarios/{id}")
     Call<ResponseDTO> deleteUser(@Path("id") int userId);

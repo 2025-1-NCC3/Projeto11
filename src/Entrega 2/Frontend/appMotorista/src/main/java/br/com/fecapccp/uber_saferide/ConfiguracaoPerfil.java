@@ -3,6 +3,8 @@ package br.com.fecapccp.uber_saferide;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -12,6 +14,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -23,6 +26,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
@@ -31,6 +35,17 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.util.Calendar;
+import java.util.Locale;
+
+import br.com.fecapccp.uber_saferide.dto.ResponseDTO;
+import br.com.fecapccp.uber_saferide.retrofit.ApiService;
+import br.com.fecapccp.uber_saferide.retrofit.RetrofitClient;
+import br.com.fecapccp.uber_saferide.session.SessionManager;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class ConfiguracaoPerfil extends AppCompatActivity {
 
     private LinearLayout profileHeader, dataSection, optionsSection;
@@ -38,16 +53,23 @@ public class ConfiguracaoPerfil extends AppCompatActivity {
     private ImageView arrowData, arrowOptions, profileImage, arrowCarData;
     private ImageButton btnBack;
     private Button btnEditar, btnSalvar, btnEditarVeiculo, btnSalvarVeiculo;
-    private EditText editNome, editTelefone, editEmail, editSenha, editTextCor, editTextPlaca, editTextModelo, editTextCNH;
+    private EditText editNome, editTelefone, editEmail, editSenha, editTextCor, editTextPlaca, editTextModelo, editTextCNH, editTextValCNH;
     private TextView textCPF, textDataNascimento, txtSair;
     private AlertDialog alertDialog;
     private TextView txtDeletarConta;
+
+    ApiService apiService;
+    SessionManager sessionManager;
+    Context context = this;
 
 
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        apiService = RetrofitClient.getApiService();
+        sessionManager = new SessionManager(context);
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -91,17 +113,56 @@ public class ConfiguracaoPerfil extends AppCompatActivity {
 
         // Inicialize os EditTexts
         editNome = findViewById(R.id.editTextNome);
+        editNome.setText(sessionManager.getUserNome());
+
         editTelefone = findViewById(R.id.editTextTelefone);
+        editTelefone.setText(sessionManager.getUserTelefone());
+
         editEmail = findViewById(R.id.editTextEmail);
+        editEmail.setText(sessionManager.getUserEmail());
+
         editSenha = findViewById(R.id.editTextSenha);
+        editSenha.setText(sessionManager.getUserSenha());
+
         editTextCor = findViewById(R.id.editTextCor);
+        editTextCor.setText(sessionManager.getMotoristaCor());
+
         editTextPlaca = findViewById(R.id.editTextPlaca);
+        editTextPlaca.setText(sessionManager.getMotoristaPlaca());
+
         editTextModelo = findViewById(R.id.editTextModelo);
+        editTextModelo.setText(sessionManager.getMotoristaModelo());
+
         editTextCNH = findViewById(R.id.editTextCNH);
+        editTextCNH.setText(sessionManager.getMotoristaCnh());
+
+        editTextValCNH = findViewById(R.id.editTextValCNH);
+        editTextValCNH.setText(sessionManager.getMotoristaValidadeCnh());
+
+        editTextValCNH.setOnClickListener(v -> {
+            final Calendar calendar = Calendar.getInstance();
+            int year = calendar.get(Calendar.YEAR);
+            int month = calendar.get(Calendar.MONTH);
+            int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+            DatePickerDialog datePickerDialog = new DatePickerDialog(
+                    ConfiguracaoPerfil.this,
+                    (view, selectedYear, selectedMonth, selectedDay) -> {
+                        String dataFormatada = String.format(Locale.getDefault(), "%04d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay);
+                        editTextValCNH.setText(dataFormatada);
+                    },
+                    year, month, day
+            );
+            datePickerDialog.show();
+        });
 
         // Inicializa os TextView
         textCPF = findViewById(R.id.textViewCPF);
+        textCPF.append("CPF: " + sessionManager.getUserCpf());
+
         textDataNascimento = findViewById(R.id.textViewDataNascimento);
+        textDataNascimento.append("Data de Nascimento: " + sessionManager.getUserDataNascimento());
+
         txtSair = findViewById(R.id.txtSair);
         txtDeletarConta = findViewById(R.id.txtDeletarConta);
 
@@ -179,18 +240,84 @@ public class ConfiguracaoPerfil extends AppCompatActivity {
         btnSalvar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setEditTextsEnabled(false);
-                btnSalvar.setEnabled(false);
-                btnEditar.setEnabled(true);
+                if(sessionManager.isLoggedIn()) {
+                    String nome = editNome.getText().toString();
+                    String email = editEmail.getText().toString();
+                    String telefone = editTelefone.getText().toString();
+
+                    Call<ResponseDTO> call = apiService.updateUser(
+                            sessionManager.getUserId(),
+                            sessionManager.getUserCpf(),
+                            nome,
+                            email,
+                            telefone
+                    );
+
+                    call.enqueue(new Callback<ResponseDTO>() {
+                        @Override
+                        public void onResponse(Call<ResponseDTO> call, Response<ResponseDTO> response) {
+                            if (response.isSuccessful() && response.body() != null) {
+                                ResponseDTO res = response.body();
+                                Toast.makeText(context, res.getMessage(), Toast.LENGTH_SHORT).show();
+                                setEditTextsEnabled(false);
+                                btnSalvar.setEnabled(false);
+                                btnEditar.setEnabled(true);
+                            }
+                            else {
+                                Toast.makeText(context, "Erro ao atualizar usuário!", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<ResponseDTO> call, Throwable t) {
+                            Log.d("Login", "Failure ");
+                            Log.e("Error", "Erro na requisição: " + t.getMessage());
+                        }
+                    });
+                }
             }
         });
 
         btnSalvarVeiculo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setEditTextsVeiculoEnabled(false);
-                btnSalvarVeiculo.setEnabled(false);
-                btnEditarVeiculo.setEnabled(true);
+                if (sessionManager.isLoggedIn()) {
+                    String modelo = editTextModelo.getText().toString();
+                    String cor = editTextCor.getText().toString();
+                    String placa = editTextPlaca.getText().toString();
+                    String cnh = editTextCNH.getText().toString();
+                    String ValCNH = editTextValCNH.getText().toString();
+
+                    Call<ResponseDTO> call = apiService.updateVeiculoMotorista(
+                            sessionManager.getMotoristaId(),
+                            modelo,
+                            cor,
+                            placa,
+                            cnh,
+                            ValCNH
+                    );
+
+                    call.enqueue(new Callback<ResponseDTO>() {
+                        @Override
+                        public void onResponse(Call<ResponseDTO> call, Response<ResponseDTO> response) {
+                            if (response.isSuccessful() && response.body() != null) {
+                                ResponseDTO res = response.body();
+                                Toast.makeText(context, res.getMessage(), Toast.LENGTH_SHORT).show();
+                                setEditTextsEnabled(false);
+                                btnSalvar.setEnabled(false);
+                                btnEditar.setEnabled(true);
+                            } else {
+                                Toast.makeText(context, "Erro ao atualizar dados do veículo!", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<ResponseDTO> call, Throwable t) {
+                            Log.d("Login", "Failure ");
+                            Log.e("Error", "Erro na requisição: " + t.getMessage());
+                        }
+                    });
+                }
             }
         });
 
@@ -293,6 +420,9 @@ public class ConfiguracaoPerfil extends AppCompatActivity {
 
         editTextCNH.setEnabled(enabled);
         editTextCNH.setAlpha(alpha);
+
+        editTextValCNH.setEnabled(enabled);
+        editTextValCNH.setAlpha(alpha);
 
         // Habilitar/desabilitar os botões e mudar a opacidade
         btnEditarVeiculo.setEnabled(!enabled); // Inverte o estado do botão "Editar"

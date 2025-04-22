@@ -47,6 +47,7 @@
     <string name="app_hint_cor">Cor:</string>
     <string name="app_hint_placa">Placa:</string>
     <string name="app_hint_cnh">Número da CNH:</string>
+    <string name="app_hint_Valcnh">Validade da CNH:</string>
 
     <!--Linha de textos -->
     <string name="app_TxtCriarConta">Ainda não tem uma conta? Crie uma agora!</string>

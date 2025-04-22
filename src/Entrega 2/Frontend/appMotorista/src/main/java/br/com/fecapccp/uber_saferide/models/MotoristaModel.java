@@ -8,6 +8,7 @@ public class MotoristaModel implements Serializable {
 
     @SerializedName("cnh")
     private String cnh;
+
     @SerializedName("id_motorista")
     private String idMotorista;
 
@@ -18,7 +19,7 @@ public class MotoristaModel implements Serializable {
     private double avaliacaoMediaMotorista;
 
     @SerializedName("id_usuario")
-    private UsuarioModel idUsuario;
+    private int idUsuario;  // Alterado para int
 
     @SerializedName("modelo")
     private String modelo;
@@ -34,7 +35,6 @@ public class MotoristaModel implements Serializable {
     public String getIdMotorista() {
         return idMotorista;
     }
-
     public void setIdMotorista(String idMotorista) {
         this.idMotorista = idMotorista;
     }
@@ -63,11 +63,11 @@ public class MotoristaModel implements Serializable {
         this.avaliacaoMediaMotorista = avaliacaoMediaMotorista;
     }
 
-    public UsuarioModel getIdUsuario() {
+    public int getIdUsuario() {  // Alterado para int
         return idUsuario;
     }
 
-    public void setIdUsuario(UsuarioModel idUsuario) {
+    public void setIdUsuario(int idUsuario) {  // Alterado para int
         this.idUsuario = idUsuario;
     }
 
@@ -93,5 +93,9 @@ public class MotoristaModel implements Serializable {
 
     public void setPlaca(String placa) {
         this.placa = placa;
+    }
+
+    public float getAvaliacao() {
+        return (float) avaliacaoMediaMotorista;
     }
 }
