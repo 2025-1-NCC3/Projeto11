@@ -34,7 +34,7 @@ public class SessionManager {
         editor.putBoolean(IS_LOGGED_IN, true);
         editor.putInt(USER_ID, usuario.getIdUsuario());
         editor.putString(USER_CPF, usuario.getCpf());
-        editor.putString(USER_DATA_NASCIMENTO, usuario.getDataNascimento().toLocaleString());
+        editor.putString(USER_DATA_NASCIMENTO, usuario.getDataNascimento().toString());
         editor.putString(USER_NOME, usuario.getNome());
         editor.putString(USER_TELEFONE, usuario.getTelefone());
         editor.putString(USER_EMAIL, usuario.getEmail());

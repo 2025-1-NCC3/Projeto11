@@ -23,7 +23,7 @@ public class    UsuarioModel {
     private String cpf;
 
     @SerializedName("data_nascimento")
-    private Date dataNascimento;
+    private String dataNascimento;
 
     @SerializedName("tipo_usuario")
     private TipoUsuarioEnum tipoUsuario;
@@ -77,11 +77,11 @@ public class    UsuarioModel {
         this.cpf = cpf;
     }
 
-    public Date getDataNascimento() {
+    public String getDataNascimento() {
         return dataNascimento;
     }
 
-    public void setDataNascimento(Date dataNascimento) {
+    public void setDataNascimento(String dataNascimento) {
         this.dataNascimento = dataNascimento;
     }
 
