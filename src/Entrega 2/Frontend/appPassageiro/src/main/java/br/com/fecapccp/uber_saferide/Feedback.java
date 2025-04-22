@@ -31,7 +31,7 @@ public class Feedback extends AppCompatActivity {
         btnPositivos = findViewById(R.id.btnPositivos);
         layoutPositivos = findViewById(R.id.layoutPositivos);
         imgSetaPositivo = findViewById(R.id.imgSetaPositivo);
-
+//
         btnPositivos.setOnClickListener(view -> {
             isPositivosOpen = !isPositivosOpen;
             layoutPositivos.setVisibility(isPositivosOpen ? View.VISIBLE : View.GONE);

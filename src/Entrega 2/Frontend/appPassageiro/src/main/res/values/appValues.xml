@@ -59,6 +59,7 @@
     <string name="app_TextCusto">Custo</string>
     <string name="app_TextValorCusto">R$00,00</string>
     <string name="app_TextCancelar">Cancelar</string>
+
     <string name="app_TextInfoPercurso">Principais informações do percurso</string>
     <string name="app_TextPrimeiraInfoPrincipal">A Primeira informação principal</string>
     <string name="app_TextSegundaInfoPrincipal">A Segunda informação principal</string>
@@ -74,10 +75,11 @@
     <string name="app_TextFeedback2Negativo">Local muito escuro.</string>
     <string name="app_TextFeedback3Negativo">Pouca movimentação, ruas desertas.</string>
     <string name="app_TextFeedback4Negativo">Falta de sinalização ou vias mal cuidadas.</string>
-    <string name="app_TextFeedback5Negativo">Presença de moradores de ruas ou usuários de drogas.</string>
+    <string name="app_TextFeedback5Negativo">Presença de moradores de rua ou usuários de drogas.</string>
     <string name="app_TextPositivoFeedback">Positivo</string>
     <string name="app_TextNeutroFeedback">Neutro</string>
     <string name="app_TextNegativoFeedback">Negativo</string>
+
     <string name="app_TextViagemAndamento">Viagem em Andamento</string>
     <string name="app_TextRua">Rua</string>
     <string name="app_TextData">05 de Fev.</string>

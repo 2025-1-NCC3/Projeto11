@@ -17,12 +17,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/containerIniciaViagem">
 
-        <ImageView
-            android:id="@+id/imageBackgroundTelaInicio"
+<!--        <ImageView-->
+<!--            android:id="@+id/imageBackgroundTelaInicio"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:scaleType="centerCrop"-->
+<!--            app:srcCompat="@drawable/img_backgroud_tela_inicio" />-->
+
+        <fragment
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            app:srcCompat="@drawable/img_backgroud_tela_inicio" />
+            android:layout_below="@id/etDestino" />
 
     </FrameLayout>
 
@@ -61,23 +68,23 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
 
-    <EditText
+    <AutoCompleteTextView
         android:id="@+id/etPartida"
         android:layout_width="291dp"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="60dp"
         android:layout_marginEnd="60dp"
-        android:autofillHints="emailAddress"
         android:background="@drawable/edittext_background"
         android:clickable="true"
         android:elevation="4dp"
         android:focusable="true"
         android:fontFamily="@font/roboto"
         android:hint="@string/app_hit_escolherPartida"
-        android:inputType="text"
+        android:inputType="textPostalAddress"
         android:padding="16dp"
         android:textColor="@color/VerdeEscuroOpaco"
         android:textColorHint="@color/VerdeEscuroOpaco"
+        android:completionThreshold="1"
         app:layout_constraintBottom_toBottomOf="@+id/containerIniciaViagem"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -86,23 +93,23 @@
         app:layout_constraintVertical_bias="0.3"
         tools:ignore="MissingConstraints" />
 
-    <EditText
+    <AutoCompleteTextView
         android:id="@+id/etDestino"
         android:layout_width="291dp"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="60dp"
         android:layout_marginEnd="60dp"
-        android:autofillHints="emailAddress"
         android:background="@drawable/edittext_background"
         android:clickable="true"
         android:elevation="4dp"
         android:focusable="true"
         android:fontFamily="@font/roboto"
         android:hint="@string/app_hit_destino"
-        android:inputType="text"
+        android:inputType="textPostalAddress"
         android:padding="16dp"
         android:textColor="@color/VerdeEscuroOpaco"
         android:textColorHint="@color/VerdeEscuroOpaco"
+        android:completionThreshold="1"
         app:layout_constraintBottom_toBottomOf="@+id/containerIniciaViagem"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
