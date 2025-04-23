@@ -1,175 +1,234 @@
-create database saferide; 
-use saferide; 
-  
-create table usuario( 
-	id_usuario int auto_increment not null, 
-    nome varchar(500) not null, 
-    email varchar(500) not null, 
-    telefone char(11) not null, 
-    cpf int not null unique, 
-    data_nascimento date not null, 
-    tipo_usuario enum("Passageiro", "Motorista") not null, 
-    data_cadastro date not null, 
-    senha varchar(100) not null, 
-    constraint PK_idusuario primary key(id_usuario) 
-); 
 
-create table dispositivo( 
-	id_dispositivo int auto_increment not null, 
-    tipo_dispositivo varchar(500) not null, 
-    localizacao varchar(500), 
-    sistema_operacional varchar(100), 
-    modelo varchar(200) not null, 
-	id_usuario int not null, 
-    constraint PK_iddispositivo primary key(id_dispositivo), 
-    foreign key(id_usuario) references usuario(id_usuario) 
-); 
-
-create table motorista ( 
-    id_motorista int auto_increment not null, 
-    cnh varchar(20) not null unique, 
-    validade_carteira date not null, 
-    avaliacao_media_motorista decimal(2,1) not null, 
-    id_usuario int not null, 
-    constraint PK_idmotorista primary key(id_motorista), 
-    foreign key (id_usuario) references usuario(idUsuario) 
-); 
-
-create table passageiro ( 
-    id_passageiro int auto_increment not null, 
-    id_usuario int not null, 
-    avaliacao_media_passageiro decimal(2, 1) not null, 
-    constraint PK_idpassageiro primary key(id_passageiro), 
-    foreign key(id_usuario) references usuario(id_usuario) 
-); 
-
-create table carro ( 
-    id_carro int auto_increment not null, 
-    marca varchar(200) not null, 
-    placa varchar(10) not null unique, 
-    modelo varchar(200) not null, 
-    cor varchar(100) not null, 
-    ano year not null, 
-    idMotorista int not null, 
-    constraint PK_idcarro primary key(id_carro), 
-    foreign key(idMotorista) references motorista(idMotorista) 
-); 
-
-create table rota ( 
-	id_rota int auto_increment not null, 
-    descricao varchar(1000) not null, 
-    duracao time not null, 
-    distancia float not null, 
-    constraint PK_idrota primary key(id_rota) 
+CREATE TABLE usuario (
+    id_usuario BIGSERIAL NOT NULL,
+    nome VARCHAR(500) NOT NULL,
+    email VARCHAR(500) NOT NULL UNIQUE,
+    telefone CHAR(11) NOT NULL,
+    cpf CHAR(11) NOT NULL UNIQUE,
+    data_nascimento DATE NOT NULL,
+    tipo_usuario VARCHAR(10) NOT NULL CHECK (tipo_usuario IN ('Passageiro', 'Motorista')),
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    senha VARCHAR(100) NOT NULL,
+    CONSTRAINT PK_idusuario PRIMARY KEY (id_usuario)
 );
 
-create table solicitacao( 
-	id_solicitacao int auto_increment not null,
-    id_rota int not null,
-    id_passageiro int not null,
-    data_hora datetime not null,
-    status_solicitacao enum("Pendente", "Aceita", "Cancelada"),
-    constraint PK_idsolicitacao primary key(id_solicitacao),
-    foreign key(id_rota) references rota(id_rota),
-    foreign key(id_passageiro) references passageiro(id_passageiro)
-); 
+CREATE OR REPLACE FUNCTION update_atualizado_em_column()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.atualizado_em = CURRENT_TIMESTAMP;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
 
-create table pagamento(
-	id_pagamento int auto_increment not null,
-    id_passageiro int not null,
-    valor float not null,
-    data_hora datetime not null,
-    status_pagamento enum("Pendente", "Concluído, Falhou") not null,
-    metodo_pagamento enum("PIX", "Cartão", "Dinheiro"),
-    constraint PK_idpagamento primary key(id_pagamento),
-    foreign key(id_passageiro) references passageiro(id_passageiro)
+CREATE TRIGGER update_usuario_atualizado_em
+BEFORE UPDATE ON usuario
+FOR EACH ROW
+EXECUTE FUNCTION update_atualizado_em_column();
+
+CREATE TABLE motorista (
+    id_motorista BIGSERIAL NOT NULL,
+    cnh VARCHAR(20) NOT NULL UNIQUE,
+    validade_carteira DATE NOT NULL,
+    avaliacao_media_motorista DECIMAL(2,1) DEFAULT 0.0,
+    id_usuario BIGINT NOT NULL,
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT PK_idmotorista PRIMARY KEY (id_motorista),
+    FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE
 );
 
-create table corrida ( 
-    id_corrida int auto_increment not null, 
-    data_corrida date not null, 
-    dataHoraInicio datetime not null, 
-    dataHoraFim datetime, 
-    preco decimal(10, 2) not null, 
-    status_corrida enum("Concluída", "Em andamento", "Cancelada") not null, 
-    ponto_partida varchar(500) not null, 
-    porto_destino varchar(500) not null, 
-    id_motorista int not null, 
-    id_passageiro int not null,
-    id_solicitacao int not null,
-    id_pagamento int not null,
-    constraint PK_idcorrida primary key(id_corrida), 
-    foreign key(id_motorista) references motorista(id_motorista), 
-    foreign key(id_passageiro) references passageiro(id_passageiro),
-    foreign key(id_solicitacao) references solicitacao(id_solicitacao),
-    foreign key(id_pagamento) references pagamento(id_pagamento)
-);    
+CREATE TRIGGER update_motorista_atualizado_em
+BEFORE UPDATE ON motorista
+FOR EACH ROW
+EXECUTE FUNCTION update_atualizado_em_column();
 
-create table localizacao ( 
-    id_localizacao int auto_increment not null, 
-    latitude float not null, 
-    longitude float not null, 
-    registro_data_hora datetime not null, 
-    bairro varchar(300) not null, 
-    cidade varchar(300) not null, 
-    estado varchar(300) not null, 
-    pais varchar(250) not null, 
-    constraint PK_idlocalizacao primary key(id_localizacao) 
-); 
+CREATE TABLE passageiro (
+    id_passageiro BIGSERIAL NOT NULL,
+    id_usuario BIGINT NOT NULL,
+    avaliacao_media_passageiro DECIMAL(2,1) DEFAULT 0.0,
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT PK_idpassageiro PRIMARY KEY (id_passageiro),
+    FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE
+);
 
-create table avaliacao ( 
-    id_avaliacao int auto_increment not null,
-    id_passageiro int not null,
-    id_motorista int not null,
-    id_corrida int not null,
-    id_rota int not null,
-    nota int check (nota between 1 and 5), 
-    data_hora datetime not null,
-    constraint PK_idavaliacao primary key(id_avaliacao),
-    foreign key(id_passageiro) references passageiro(id_passageiro),
-    foreign key(id_motorista) references motorista(id_motorista),
-    foreign key(id_corrida) references corrida(id_corrida),
-    foreign key(id_rota) references rota(id_rota)
-); 
+CREATE TRIGGER update_passageiro_atualizado_em
+BEFORE UPDATE ON passageiro
+FOR EACH ROW
+EXECUTE FUNCTION update_atualizado_em_column();
 
-create table areaderisco ( 
-    id_areaderisco int auto_increment not null,
-    id_localizacao int not null,
-    classificacao enum("Alto", "Médio", "Baixo"),
-    constraint PK_idareaderisco primary key(id_areaderisco),
-    foreign key(id_localizacao) references localizacao(id_localizacao)
+
+CREATE TABLE localizacao (
+    id_localizacao BIGSERIAL NOT NULL,
+    place_id VARCHAR(255) NOT NULL,
+    latitude DECIMAL(17,15) NOT NULL,
+    longitude DECIMAL(18,15) NOT NULL,
+    logradouro VARCHAR(255) NOT NULL,
+    bairro VARCHAR(255) NOT NULL,
+    cidade VARCHAR(255) NOT NULL,
+    estado VARCHAR(255) NOT NULL,
+    cep CHAR(8) NOT NULL,
+    pais VARCHAR(100) NOT NULL,
+    CONSTRAINT PK_idlocalizacao PRIMARY KEY (id_localizacao)
 );
 
 
-#tabelas N:N
-create table corrida_rota( 
-    id_corrida int not null, 
-    id_rota int not null, 
-	constraint PK_idcorridarota primary key(id_corrida, id_rota), 
-    foreign key(id_corrida) references corrida(id_corrida), 
-    foreign key(id_rota) references rota(id_rota) 
+CREATE TABLE dispositivo (
+    id_dispositivo BIGSERIAL NOT NULL,
+    id_localizacao BIGINT NOT NULL,
+    id_usuario BIGINT NOT NULL,
+    tipo_dispositivo VARCHAR(500) NOT NULL,
+    sistema_operacional VARCHAR(100),
+    modelo VARCHAR(200) NOT NULL,
+    CONSTRAINT PK_id_dispositivo PRIMARY KEY (id_dispositivo),
+    FOREIGN KEY (id_localizacao) REFERENCES localizacao (id_localizacao),
+    FOREIGN KEY (id_usuario) REFERENCES usuario (id_usuario) ON DELETE CASCADE
 );
 
-create table rota_localizacao ( 
-	id_rota int not null, 
-    id_localizacao int not null, 
-    constraint PK_idrotalocalizacao primary key(id_rota, id_localizacao), 
-    foreign key(id_rota) references rota(id_rota), 
-    foreign key(id_localizacao) references localizacao(id_localizacao) 
+
+CREATE TABLE carro (
+    id_carro BIGSERIAL NOT NULL,
+    id_motorista BIGINT NOT NULL,
+    marca VARCHAR(200) NOT NULL,
+    placa VARCHAR(10) NOT NULL UNIQUE,
+    modelo VARCHAR(200) NOT NULL,
+    cor VARCHAR(100) NOT NULL,
+    ano INTEGER NOT NULL,
+    CONSTRAINT PK_idcarro PRIMARY KEY (id_carro),
+    FOREIGN KEY (id_motorista) REFERENCES motorista(id_motorista) ON DELETE CASCADE
 );
 
-create table motorista_solicitacao(
-	id_solicitacao int not null,
-    id_motorista int not null,
-    constraint PK_idmotoristasolicitacao primary key(id_solicitacao, id_motorista),
-    foreign key(id_solicitacao) references solicitacao(id_solicitacao),
-    foreign key(id_motorista) references motorista(id_motorista)
+
+CREATE TABLE rota (
+    id_rota BIGSERIAL NOT NULL,
+    maps_token VARCHAR(1000) NOT NULL, 
+    polyline TEXT NOT NULL, 
+    id_local_partida BIGINT NOT NULL,
+    id_local_destino BIGINT NOT NULL,
+    descricao VARCHAR(1000) NOT NULL,
+    duracao INTEGER NOT NULL, 
+    distancia REAL NOT NULL,
+    CONSTRAINT PK_idrota PRIMARY KEY (id_rota),
+    FOREIGN KEY (id_local_partida) REFERENCES localizacao(id_localizacao),
+    FOREIGN KEY (id_local_destino) REFERENCES localizacao(id_localizacao)
 );
 
-create table avaliacao_localizacao(
-	id_avaliacao int not null,
-    id_localizacao int not null,
-    constraint PK_idavaliacaolocalizacao primary key(id_avaliacao, id_localizacao),
-    foreign key(id_avaliacao) references avaliacao(id_avaliacao),
-    foreign key(id_localizacao) references localizacao(id_localizacao)
+CREATE TABLE trecho (
+    id_trecho BIGSERIAL NOT NULL,
+    id_rota BIGINT NOT NULL,
+    id_local_partida BIGINT NOT NULL,
+    id_local_destino BIGINT NOT NULL,
+    polyline TEXT NOT NULL,
+    order_number INTEGER NOT NULL,
+    descricao VARCHAR(1000) NOT NULL,
+    duracao INTEGER NOT NULL, 
+    distancia REAL NOT NULL,
+    CONSTRAINT PK_id_trecho PRIMARY KEY (id_trecho),
+    FOREIGN KEY (id_rota) REFERENCES rota (id_rota),
+    FOREIGN KEY (id_local_partida) REFERENCES localizacao(id_localizacao),
+    FOREIGN KEY (id_local_destino) REFERENCES localizacao(id_localizacao)
+);
+
+CREATE TABLE solicitacao_corrida (
+    id_solicitacao BIGSERIAL NOT NULL,
+    id_rota BIGINT NOT NULL,
+    id_passageiro BIGINT NOT NULL,
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    status_solicitacao VARCHAR(20) CHECK (status_solicitacao IN ('Pendente', 'Aceita', 'Cancelada', 'Em Progresso')),
+    CONSTRAINT PK_idsolicitacao PRIMARY KEY (id_solicitacao),
+    FOREIGN KEY (id_rota) REFERENCES rota(id_rota),
+    FOREIGN KEY (id_passageiro) REFERENCES passageiro(id_passageiro) 
+);
+
+CREATE TRIGGER update_solicitacao_corrida_atualizado_em
+BEFORE UPDATE ON solicitacao_corrida
+FOR EACH ROW
+EXECUTE FUNCTION update_atualizado_em_column();
+
+CREATE TABLE pagamento (
+    id_pagamento BIGSERIAL NOT NULL,
+    id_passageiro BIGINT NOT NULL,
+    valor REAL NOT NULL,
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    status_pagamento VARCHAR(20) NOT NULL CHECK (status_pagamento IN ('Pendente', 'Concluído', 'Falhou')),
+    metodo_pagamento VARCHAR(20) CHECK (metodo_pagamento IN ('PIX', 'Cartão', 'Dinheiro')),
+    CONSTRAINT PK_idpagamento PRIMARY KEY (id_pagamento),
+    FOREIGN KEY (id_passageiro) REFERENCES passageiro(id_passageiro)
+);
+
+CREATE TRIGGER update_pagamento_atualizado_em
+BEFORE UPDATE ON pagamento
+FOR EACH ROW
+EXECUTE FUNCTION update_atualizado_em_column();
+
+CREATE TABLE corrida (
+    id_corrida BIGSERIAL NOT NULL,
+    id_rota BIGINT NOT NULL,
+    data_corrida DATE NOT NULL,
+    data_hora_inicio TIMESTAMP NOT NULL,
+    data_hora_fim TIMESTAMP,
+    preco DECIMAL(10,2) NOT NULL,
+    status_corrida VARCHAR(20) NOT NULL CHECK (status_corrida IN ('Concluída', 'Em andamento', 'Cancelada')),
+    id_motorista BIGINT NOT NULL,
+    id_passageiro BIGINT NOT NULL,
+    id_solicitacao BIGINT NOT NULL,
+    id_pagamento BIGINT NOT NULL,
+    CONSTRAINT PK_idcorrida PRIMARY KEY (id_corrida),
+    FOREIGN KEY (id_motorista) REFERENCES motorista (id_motorista),
+    FOREIGN KEY (id_passageiro) REFERENCES passageiro (id_passageiro),
+    FOREIGN KEY (id_solicitacao) REFERENCES solicitacao_corrida (id_solicitacao),
+    FOREIGN KEY (id_pagamento) REFERENCES pagamento (id_pagamento),
+    FOREIGN KEY (id_rota) REFERENCES rota (id_rota)
+);
+
+CREATE TABLE avaliacao (
+    id_avaliacao BIGSERIAL NOT NULL,
+    id_usuario BIGINT NOT NULL,
+    id_corrida BIGINT NOT NULL,
+    id_rota BIGINT,
+    id_trecho BIGINT,
+    nota INTEGER CHECK (nota BETWEEN 1 AND 5),
+    comentario VARCHAR(500),
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT PK_idavaliacao PRIMARY KEY (id_avaliacao),
+    CONSTRAINT CHK_avaliacao_tipo CHECK (
+        (id_rota IS NOT NULL AND id_trecho IS NULL) OR 
+        (id_rota IS NULL AND id_trecho IS NOT NULL)
+    ),
+    FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario),
+    FOREIGN KEY (id_corrida) REFERENCES corrida(id_corrida),
+    FOREIGN KEY (id_rota) REFERENCES rota(id_rota),
+    FOREIGN KEY (id_trecho) REFERENCES trecho(id_trecho)
+);
+
+CREATE TRIGGER update_avaliacao_atualizado_em
+BEFORE UPDATE ON avaliacao
+FOR EACH ROW
+EXECUTE FUNCTION update_atualizado_em_column();
+
+CREATE TABLE feedback (
+    id_feedback BIGSERIAL NOT NULL,
+    categoria VARCHAR(10) NOT NULL CHECK (categoria IN ('Positivo', 'Negativo', 'Neutro')),
+    descricao VARCHAR(255) NOT NULL,
+    CONSTRAINT PK_idfeedback PRIMARY KEY (id_feedback)
+);
+
+CREATE TABLE avaliacao_feedback (
+    id_avaliacao BIGINT NOT NULL,
+    id_feedback BIGINT NOT NULL,
+    CONSTRAINT PK_idavaliacaofeedback PRIMARY KEY (id_avaliacao, id_feedback),
+    FOREIGN KEY (id_avaliacao) REFERENCES avaliacao(id_avaliacao),
+    FOREIGN KEY (id_feedback) REFERENCES feedback(id_feedback)
+);
+
+CREATE TABLE area_de_risco (
+    id_areaderisco BIGSERIAL NOT NULL,
+    id_localizacao BIGINT NOT NULL,
+    classificacao VARCHAR(10) CHECK (classificacao IN ('Alto', 'Médio', 'Baixo')),
+    CONSTRAINT PK_idareaderisco PRIMARY KEY (id_areaderisco),
+    FOREIGN KEY (id_localizacao) REFERENCES localizacao(id_localizacao)
 );
