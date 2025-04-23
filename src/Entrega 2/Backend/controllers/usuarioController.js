@@ -1,9 +1,9 @@
 const db = require('../config/db')
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const UsuarioModel = require('../models/usuarioModel');
-const MotoristaModel = require('../models/motoristaModel');
-const PassageiroModel = require('../models/passageiroModel');
+const Usuario = require('../models/Usuario');
+const Motorista = require('../models/Motorista');
+const Passageiro = require('../models/Passageiro');
 
 
 exports.createUsuario = async (req, res) => {
@@ -43,7 +43,7 @@ exports.createUsuario = async (req, res) => {
     }
 
     try {
-        const usuario = await UsuarioModel.findOne({ where: { cpf: cpf.toString(), tipo_usuario: tipo_usuario } });
+        const usuario = await  db.Usuario.findOne({ where: { cpf: cpf.toString(), tipo_usuario: tipo_usuario } });
 
         if (usuario) {
             return res.status(400).json({ message: 'CPF já cadastrado como: ' + tipo_usuario });
@@ -67,7 +67,7 @@ exports.createUsuario = async (req, res) => {
                 return res.status(500).json({ message: 'Erro ao criar a senha. Tente novamente.' });
             }
 
-            const newUsuario = await UsuarioModel.create({
+            const newUsuario = await db.Usuario.create({
                 nome, 
                 email,
                 telefone, 
@@ -91,7 +91,7 @@ exports.createUsuario = async (req, res) => {
 };
 
 async function createUsuarioMotorista(usuario) {
-    await MotoristaModel.create({
+    await Motorista.create({
         cnh: cnh,
         validade_carteira: validade_carteira,
         id_usuario: usuario.id_usuario
@@ -99,14 +99,14 @@ async function createUsuarioMotorista(usuario) {
 }
 
 async function createUsuarioPassageiro(usuario) {
-    await PassageiroModel.create({
+    await Passageiro.create({
         id_usuario: usuario.id_usuario
     });
 }
 
 exports.getUsuarios = async (req, res) => {
     try {
-        const usuarios = await UsuarioModel.findAll();
+        const usuarios = await db.Usuario.findAll();
         res.status(200).json(usuarios);
     } catch (error) {
         console.error('Erro ao obter usuários:', error);
@@ -118,7 +118,7 @@ exports.getUsuarioById = async (req, res) => {
     const { id } = req.params;
 
     try{
-        const usuario = await UsuarioModel.findByPk(id);
+        const usuario = await db.Usuario.findByPk(id);
         
         if (usuario) {
             return res.status(200).json(usuario);
@@ -134,7 +134,7 @@ exports.getUsuarioByCpf = async (req, res) => {
     const { cpf } = req.params;
 
     try{
-        const usuario = await UsuarioModel.findOne({where: { cpf: cpf }});
+        const usuario = await db.Usuario.findOne({where: { cpf: cpf }});
         
         if (usuario) {
             return res.status(200).json(usuario);
@@ -154,7 +154,7 @@ exports.updateUsuario = async (req, res) => {
     }
 
     try {
-        const usuario = await UsuarioModel.findOne({ where: { id_usuario }, limit: 1 });
+        const usuario = await db.Usuario.findOne({ where: { id_usuario }, limit: 1 });
 
         if (!usuario) {
             return res.status(404).json({ message: 'Usuário não encontrado' });
@@ -205,7 +205,7 @@ exports.deleteUser = async (req, res) => {
     const t = await sequelize.transaction(); // Transação
 
     try {
-        const usuario = await UsuarioModel.findOne({ where: { id }, transaction: t });
+        const usuario = await db.Usuario.findOne({ where: { id }, transaction: t });
 
         if (!usuario) {
             await t.rollback();
@@ -213,20 +213,20 @@ exports.deleteUser = async (req, res) => {
         }
 
         if (usuario.tipo_usuario === 'motorista') {
-            await MotoristaModel.destroy({ 
+            await Motorista.destroy({ 
                 where: { id_usuario: id }, 
                 transaction: t // Associado à transação
             });
         }
 
         if (usuario.tipo_usuario === 'passageiro') { // Corrigi typo ("passageiro")
-            await PassageiroModel.destroy({ 
+            await Passageiro.destroy({ 
                 where: { id_usuario: id }, 
                 transaction: t 
             });
         }
 
-        await UsuarioModel.destroy({ 
+        await Usuario.destroy({ 
             where: { id }, 
             transaction: t 
         });
@@ -253,7 +253,7 @@ exports.loginUser = async (req, res) => {
     console.log(req.body)
     
     try {
-        const usuario = await UsuarioModel.findOne({ where: { email: email } });
+        const usuario = await db.Usuario.findOne({ where: { email: email } });
         
         if (!usuario) {
             return res.status(404).json({ message: 'Usuário não encontrado. Verifique suas credenciais.' });
