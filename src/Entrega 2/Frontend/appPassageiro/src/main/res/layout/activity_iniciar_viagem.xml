@@ -28,7 +28,8 @@
             android:id="@+id/map"
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="620dp"
+            android:layout_gravity="center"
             android:layout_below="@id/etDestino" />
 
     </FrameLayout>
@@ -58,9 +59,8 @@
     <View
         android:id="@+id/containerIniciaViagem"
         android:layout_width="0dp"
-        android:layout_height="270dp"
+        android:layout_height="200dp"
         android:background="@drawable/container_iniciar_viagem_topo"
-
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -84,13 +84,12 @@
         android:padding="16dp"
         android:textColor="@color/VerdeEscuroOpaco"
         android:textColorHint="@color/VerdeEscuroOpaco"
-        android:completionThreshold="1"
         app:layout_constraintBottom_toBottomOf="@+id/containerIniciaViagem"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/containerIniciaViagem"
-        app:layout_constraintVertical_bias="0.3"
+        app:layout_constraintVertical_bias="0.15"
         tools:ignore="MissingConstraints" />
 
     <AutoCompleteTextView
@@ -109,7 +108,6 @@
         android:padding="16dp"
         android:textColor="@color/VerdeEscuroOpaco"
         android:textColorHint="@color/VerdeEscuroOpaco"
-        android:completionThreshold="1"
         app:layout_constraintBottom_toBottomOf="@+id/containerIniciaViagem"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -122,9 +120,9 @@
         android:id="@+id/toobar"
         android:layout_width="0dp"
         android:layout_height="70dp"
-        android:layout_marginStart="5dp"
+        android:layout_marginStart="0dp"
 
-        android:layout_marginEnd="5dp"
+        android:layout_marginEnd="0dp"
         android:background="@drawable/container_toobar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

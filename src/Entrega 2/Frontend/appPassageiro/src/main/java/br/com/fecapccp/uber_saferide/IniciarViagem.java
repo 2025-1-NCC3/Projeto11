@@ -4,15 +4,15 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,19 +22,36 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.net.FetchPlaceRequest;
 import com.google.android.libraries.places.api.net.PlacesClient;
 
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import br.com.fecapccp.uber_saferide.adapter.PlaceAutoSuggestAdapter;
+import br.com.fecapccp.uber_saferide.dto.CalcularRotaRequestDTO;
+import br.com.fecapccp.uber_saferide.dto.CalcularRotaResponseDTO;
+import br.com.fecapccp.uber_saferide.models.LocalizacaoModel;
+import br.com.fecapccp.uber_saferide.retrofit.ApiService;
+import br.com.fecapccp.uber_saferide.retrofit.RetrofitClient;
+import br.com.fecapccp.uber_saferide.utils.MapRoutes;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -42,10 +59,17 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
     private Button btnComecar2;
     private AutoCompleteTextView etPartida;
     private AutoCompleteTextView etDestino;
+    ApiService apiService;
+    private LocalizacaoModel origemSelecionada;
+    private LocalizacaoModel destinoSelecionado;
+    private String routePolyline;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        apiService = RetrofitClient.getApiService();
+
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_iniciar_viagem);
@@ -81,9 +105,9 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
 
         PlaceAutoSuggestAdapter adapter = new PlaceAutoSuggestAdapter(this, placesClient);
         etPartida.setAdapter(adapter);
-        etPartida.setThreshold(1);
+        etPartida.setThreshold(2);
         etDestino.setAdapter(adapter);
-        etDestino.setThreshold(1);
+        etDestino.setThreshold(2);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -92,17 +116,94 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
         });
 
         etPartida.setOnItemClickListener((parent, view, position, id) -> {
-            String origin = (String) parent.getItemAtPosition(position);
-            // Aqui você pode converter o nome para coordenadas e mover o mapa
+            String placeId = adapter.getPlaceId(position);
+
+            // Obter detalhes do local usando o Places API
+            final FetchPlaceRequest request = FetchPlaceRequest.newInstance(
+                    placeId, Arrays.asList(Place.Field.NAME, Place.Field.LAT_LNG, Place.Field.ADDRESS));
+
+            placesClient.fetchPlace(request).addOnSuccessListener((response) -> {
+                Place place = response.getPlace();
+                LatLng latLng = place.getLatLng();
+
+                if (latLng != null) {
+                    // Armazenar dados do local de origem
+                    origemSelecionada = new LocalizacaoModel(latLng.latitude, latLng.longitude);
+
+                    // Atualizar o mapa
+                    mMap.clear();
+                    mMap.addMarker(new MarkerOptions()
+                        .position(latLng)
+                        .title(place.getName()
+                    ));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+
+                    Log.d("IniciarViagem", "Origem selecionada: " + place.getName() +
+                            " (" + latLng.latitude + ", " + latLng.longitude + ")");
+                }
+            }).addOnFailureListener((exception) -> {
+                Log.e("IniciarViagem", "Erro ao buscar detalhes do local: " + exception.getMessage());
+            });
         });
 
         etDestino.setOnItemClickListener((parent, view, position, id) -> {
-            String destination = (String) parent.getItemAtPosition(position);
-            // Aqui também
+            String placeId = adapter.getPlaceId(position);
+
+            Log.d("PLACE", "onCreate: " + placeId);
+
+            // Obter detalhes do local usando o Places API
+            final FetchPlaceRequest placeRequest = FetchPlaceRequest.newInstance(
+                    placeId, Arrays.asList(Place.Field.NAME, Place.Field.LAT_LNG, Place.Field.ADDRESS));
+
+            placesClient.fetchPlace(placeRequest).addOnSuccessListener((response) -> {
+                Place place = response.getPlace();
+                LatLng latLng = place.getLatLng();
+
+                if (latLng != null) {
+                    // Armazenar dados do local de destino
+                    destinoSelecionado = new LocalizacaoModel(latLng.latitude, latLng.longitude);
+
+                    // Adicionar marcador de destino (sem limpar o mapa para manter o marcador de origem)
+                    mMap.addMarker(new MarkerOptions()
+                        .position(latLng)
+                        .title(place.getName())
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)
+                    ));
+
+                    // Ajustar zoom para mostrar ambos os marcadores
+                    if (origemSelecionada.getLatitude() != 0 && origemSelecionada.getLongitude() != 0) {
+                        CalcularRotaResponseDTO route = calcularRota();
+
+                        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                        builder.include(new LatLng(origemSelecionada.getLatitude(), origemSelecionada.getLongitude()));
+                        builder.include(latLng);
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(
+                                builder.build(), 300));
+
+                        assert route != null;
+                        List<LatLng> points =  MapRoutes.decodePolyline(route.getPolyline());
+                        PolylineOptions polylineOptions = new PolylineOptions()
+                                .addAll(points)
+                                .width(10)  // Largura da linha
+                                .color(Color.BLUE)  // Cor da linha
+                                .geodesic(true);
+                        mMap.addPolyline(polylineOptions);
+                    } else {
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+                    }
+
+                    Log.d("IniciarViagem", "Destino selecionado: " + place.getName() +
+                            " (" + latLng.latitude + ", " + latLng.longitude + ")");
+                }
+            }).addOnFailureListener((exception) -> {
+                Log.e("IniciarViagem", "Erro ao buscar detalhes do local: " + exception.getMessage());
+            });
+
+
         });
 
         btnComecar2.setOnClickListener(view -> {
-            Intent intent = new Intent(this, ViagemAceitaActivity.class);
+            Intent intent = new Intent(IniciarViagem.this, ViagemAceitaActivity.class);
             startActivity(intent);
         });
 
@@ -117,6 +218,48 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
             Intent intent = new Intent(IniciarViagem.this, TelaAtividades.class);
             startActivity(intent);
         });
+    }
+
+    private CalcularRotaResponseDTO calcularRota() {
+        if (origemSelecionada.getLatitude() == 0 || destinoSelecionado.getLatitude() == 0) {
+            Toast.makeText(this, "Por favor, selecione origem e destino", Toast.LENGTH_SHORT).show();
+            return null;
+        }
+
+        CalcularRotaRequestDTO routeRequest = new CalcularRotaRequestDTO(origemSelecionada, destinoSelecionado);
+        final CalcularRotaResponseDTO[] routeResponse = new CalcularRotaResponseDTO[1];
+        Call<CalcularRotaResponseDTO> call = apiService.calcularRota(routeRequest);
+
+        call.enqueue(new Callback<>() {
+            @Override
+            public void onResponse(Call<CalcularRotaResponseDTO> call, Response<CalcularRotaResponseDTO> response) {
+                if (response.isSuccessful()) {
+                    // Processar resposta de sucesso
+                    // Você pode armazenar a resposta em um Bundle e passar para a próxima Activity
+                    CalcularRotaResponseDTO calcularRotaResponseDTO = response.body();
+                    Log.d("RESPONSE API", "onResponse: " + response.body());
+
+                    assert calcularRotaResponseDTO != null;
+
+                    routeResponse[0] = response.body();
+                } else {
+                    // Tratar erro na resposta
+                    Toast.makeText(IniciarViagem.this,
+                            "Erro ao calcular rota: " + response.message(),
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CalcularRotaResponseDTO> call, Throwable t) {
+                // Tratar falha na comunicação
+                Toast.makeText(IniciarViagem.this,
+                        "Falha na comunicação: " + t.getMessage(),
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+        
+        return routeResponse[0];
     }
 
     // Mapa carregado

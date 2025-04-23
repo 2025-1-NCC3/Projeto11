@@ -1,10 +1,9 @@
 package br.com.fecapccp.uber_saferide.retrofit;
 
-import android.text.Editable;
-
-import java.util.Date;
 import java.util.List;
 
+import br.com.fecapccp.uber_saferide.dto.CalcularRotaRequestDTO;
+import br.com.fecapccp.uber_saferide.dto.CalcularRotaResponseDTO;
 import br.com.fecapccp.uber_saferide.dto.ResponseCreateUsuarioDTO;
 import br.com.fecapccp.uber_saferide.dto.ResponseDTO;
 import br.com.fecapccp.uber_saferide.dto.ResponseLoginUserDTO;
@@ -64,4 +63,7 @@ public interface ApiService {
 
     @DELETE("usuarios/{id}")
     Call<ResponseDTO> deleteUser(@Path("id") int userId);
+
+    @POST("rotas/calcular-rota")
+    Call<CalcularRotaResponseDTO> calcularRota(@Body CalcularRotaRequestDTO calcularRotaRequestDTO);
 }
