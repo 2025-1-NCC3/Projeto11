@@ -27,6 +27,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       avaliacao_media_motorista: {
         type: DataTypes.DECIMAL(2, 1),
+        defaultValue: 0.0,
         allowNull: false
       },
       id_usuario: {

@@ -47,10 +47,6 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING(100),
         allowNull: false
       },
-      ativo: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: true
-      },
       criado_em: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW

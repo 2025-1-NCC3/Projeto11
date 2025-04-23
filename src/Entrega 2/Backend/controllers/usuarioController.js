@@ -102,10 +102,10 @@ exports.createUsuario = async (req, res) => {
       .json({ message: "Todos os campos obrigatórios devem ser preenchidos." });
   }
 
-  const tipoUsuarioLower = tipo_usuario.toLowerCase();
+  const tipoUsuarioLower = tipo_usuario;
 
   // Validações específicas para motorista
-  if (tipoUsuarioLower === "motorista") {
+  if (tipoUsuarioLower === "Motorista") {
     if (!cnh || !validade_carteira || !placa || !cor || !modelo) {
       return res.status(400).json({
         message: "Campos obrigatórios para o motorista devem ser preenchidos.",
@@ -114,7 +114,7 @@ exports.createUsuario = async (req, res) => {
   }
 
   // Validação do tipo de usuário
-  if (tipoUsuarioLower !== "motorista" && tipoUsuarioLower !== "passageiro") {
+  if (tipoUsuarioLower !== "Motorista" && tipoUsuarioLower !== "Passageiro") {
     return res.status(400).json({ message: "Tipo de usuário inválido." });
   }
 
@@ -163,7 +163,7 @@ exports.createUsuario = async (req, res) => {
     });
 
     // Cria registro adicional para motorista se necessário
-    if (tipoUsuarioLower === "motorista") {
+    if (tipoUsuarioLower === "Motorista") {
       await createUsuarioMotorista({
         cnh,
         validade_carteira,
@@ -175,7 +175,7 @@ exports.createUsuario = async (req, res) => {
     }
 
     // Cria registro adicional para passageiro
-    if (tipoUsuarioLower === "passageiro") {
+    if (tipoUsuarioLower === "Passageiro") {
       await createUsuarioPassageiro(newUsuario.id_usuario);
     }
 
@@ -367,14 +367,14 @@ exports.deleteUser = async (req, res) => {
             return res.status(404).json({ message: 'Usuário não encontrado' });
         }
 
-        if (usuario.tipo_usuario === 'motorista') {
+        if (usuario.tipo_usuario === 'Motorista') {
             await db.Motorista.destroy({
                 where: { id_usuario: id }, 
                 transaction: t // Associado à transação
             });
         }
 
-        if (usuario.tipo_usuario === 'passageiro') { // Corrigi typo ("passageiro")
+        if (usuario.tipo_usuario === 'Passageiro') { // Corrigi typo ("passageiro")
             await db.Passageiro.destroy({
                 where: { id_usuario: id }, 
                 transaction: t 
