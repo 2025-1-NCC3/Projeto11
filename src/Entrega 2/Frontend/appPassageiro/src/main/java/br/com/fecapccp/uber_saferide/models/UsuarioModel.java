@@ -34,6 +34,9 @@ public class    UsuarioModel {
     @SerializedName("cnh")
     private String cnh;
 
+    @SerializedName("ativo")
+    private boolean ativo;
+
     @SerializedName("validade_carteira")
     private String validadeCarteira;
 

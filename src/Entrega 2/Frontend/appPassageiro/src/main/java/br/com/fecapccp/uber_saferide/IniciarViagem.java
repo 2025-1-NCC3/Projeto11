@@ -31,7 +31,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken;
@@ -63,6 +62,7 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
     private LocalizacaoModel origemSelecionada;
     private LocalizacaoModel destinoSelecionado;
     private String routePolyline;
+    private CalcularRotaResponseDTO routeResponse;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -172,28 +172,19 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
 
                     // Ajustar zoom para mostrar ambos os marcadores
                     if (origemSelecionada.getLatitude() != 0 && origemSelecionada.getLongitude() != 0) {
-                        CalcularRotaResponseDTO route = calcularRota();
-
                         LatLngBounds.Builder builder = new LatLngBounds.Builder();
                         builder.include(new LatLng(origemSelecionada.getLatitude(), origemSelecionada.getLongitude()));
                         builder.include(latLng);
                         mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(
                                 builder.build(), 300));
-
-                        assert route != null;
-                        List<LatLng> points =  MapRoutes.decodePolyline(route.getPolyline());
-                        PolylineOptions polylineOptions = new PolylineOptions()
-                                .addAll(points)
-                                .width(10)  // Largura da linha
-                                .color(Color.BLUE)  // Cor da linha
-                                .geodesic(true);
-                        mMap.addPolyline(polylineOptions);
                     } else {
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
                     }
 
                     Log.d("IniciarViagem", "Destino selecionado: " + place.getName() +
                             " (" + latLng.latitude + ", " + latLng.longitude + ")");
+
+                    calcularRota();
                 }
             }).addOnFailureListener((exception) -> {
                 Log.e("IniciarViagem", "Erro ao buscar detalhes do local: " + exception.getMessage());
@@ -220,10 +211,10 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
         });
     }
 
-    private CalcularRotaResponseDTO calcularRota() {
+    private void calcularRota() {
         if (origemSelecionada.getLatitude() == 0 || destinoSelecionado.getLatitude() == 0) {
             Toast.makeText(this, "Por favor, selecione origem e destino", Toast.LENGTH_SHORT).show();
-            return null;
+            return;
         }
 
         CalcularRotaRequestDTO routeRequest = new CalcularRotaRequestDTO(origemSelecionada, destinoSelecionado);
@@ -238,10 +229,7 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
                     // Você pode armazenar a resposta em um Bundle e passar para a próxima Activity
                     CalcularRotaResponseDTO calcularRotaResponseDTO = response.body();
                     Log.d("RESPONSE API", "onResponse: " + response.body());
-
-                    assert calcularRotaResponseDTO != null;
-
-                    routeResponse[0] = response.body();
+                    desenharPolyline(calcularRotaResponseDTO.getPolyline());
                 } else {
                     // Tratar erro na resposta
                     Toast.makeText(IniciarViagem.this,
@@ -258,8 +246,45 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
                         Toast.LENGTH_SHORT).show();
             }
         });
-        
-        return routeResponse[0];
+    }
+
+    private void desenharPolyline(String encodedPolyline) {
+        // Verificar se o mapa e a polyline estão disponíveis
+        if (mMap == null || encodedPolyline == null || encodedPolyline.isEmpty()) {
+            return;
+        }
+
+        // Decodificar a polyline
+        List<LatLng> points = MapRoutes.decodePolyline(encodedPolyline);
+
+        if (points.isEmpty()) {
+            return;
+        }
+
+        // Criar opções para a polyline
+        PolylineOptions polylineOptions = new PolylineOptions()
+                .addAll(points)
+                .width(10)  // Largura da linha
+                .color(Color.BLUE)  // Cor da linha
+                .geodesic(true);
+         // Seguir a curvatura da Terra
+
+        // Adicionar a polyline ao mapa
+        mMap.addPolyline(polylineOptions);
+
+        // Ajustar a câmera para mostrar a rota completa
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        for (LatLng ponto : points) {
+            builder.include(ponto);
+        }
+        LatLngBounds bounds = builder.build();
+
+        // Adicionar padding em torno da rota
+        int padding = 100; // em pixels
+        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+
+        // Mover a câmera suavemente
+        mMap.animateCamera(cu);
     }
 
     // Mapa carregado
