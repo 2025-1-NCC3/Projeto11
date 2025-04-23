@@ -2,14 +2,11 @@ package br.com.fecapccp.uber_saferide.retrofit;
 
 import java.util.List;
 
-import br.com.fecapccp.uber_saferide.dto.CalcularRotaRequestDTO;
-import br.com.fecapccp.uber_saferide.dto.CalcularRotaResponseDTO;
 import br.com.fecapccp.uber_saferide.dto.ResponseCreateUsuarioDTO;
 import br.com.fecapccp.uber_saferide.dto.ResponseDTO;
 import br.com.fecapccp.uber_saferide.dto.ResponseLoginUserDTO;
 import br.com.fecapccp.uber_saferide.models.UsuarioModel;
 import retrofit2.Call;
-import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -19,6 +16,9 @@ import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 public interface ApiService {
+
+    /*POST("usuarios/add")
+    Call<ResponseCreateUsuarioDTO> createMotorista(@Body MotoristaModel motorista);*/
     @GET("usuarios")
     Call<List<UsuarioModel>> getUsers();
 
@@ -28,7 +28,7 @@ public interface ApiService {
     @GET("usuarios/cpf/{cpf}")
     Call<UsuarioModel> getUserByCpf();
 
-    /* @POST("usuarios/add")
+    @POST("usuarios/add")
     @FormUrlEncoded
     Call<ResponseCreateUsuarioDTO> createUser(
             @Field("nome") String nome,
@@ -37,15 +37,20 @@ public interface ApiService {
             @Field("cpf") String cpf,
             @Field("data_nascimento") String dataNascimento,
             @Field("tipo_usuario") String tipoUsuario,
-            @Field("senha") String senha
-    ); */
+            @Field("senha") String senha,
+            @Field("cnh") String cnh,
+            @Field("validade_carteira") String validade_carteira,
+            @Field("placa") String placa,
+            @Field("cor") String cor,
+            @Field("modelo") String modelo
+    );
 
-    @POST("usuarios/add")
-    Call<ResponseCreateUsuarioDTO> createUser(@Body UsuarioModel usuario);
+//    @POST("usuarios/add")
+//    Call<ResponseCreateUsuarioDTO> createUser(@Body UsuarioModel usuario);
 
-    @POST("usuarios/passageiro/login")
+    @POST("usuarios/motorista/login")
     @FormUrlEncoded
-    Call<ResponseLoginUserDTO> loginPassageiro(
+    Call<ResponseLoginUserDTO> loginMotorista(
             @Field("email") String email,
             @Field("senha") String senha
     );
@@ -59,10 +64,17 @@ public interface ApiService {
         @Field("email") String email,
         @Field("telefone") String telefone
     );
+    @PUT("usuarios/updateVeiculoMotorista")
+    @FormUrlEncoded
+    Call<ResponseDTO> updateVeiculoMotorista (
+            @Field("id_motorista") int idMotorista,
+            @Field("modelo") String modelo,
+            @Field("cor") String cor,
+            @Field("placa") String placa,
+            @Field("cnh") String cnh,
+            @Field("validade_carteira") String ValCNH
+);
 
     @DELETE("usuarios/{id}")
     Call<ResponseDTO> deleteUser(@Path("id") int userId);
-
-    @POST("rotas/calcular-rota")
-    Call<CalcularRotaResponseDTO> calcularRota(@Body CalcularRotaRequestDTO calcularRotaRequestDTO);
 }

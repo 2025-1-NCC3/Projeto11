@@ -36,6 +36,7 @@
     <!-- TextBox-->
     <string name="app_hint_email">E-mail:</string>
     <string name="app_hint_senha">Senha:</string>
+    <string name="app_hint_ValidadeCNH">Validade da CNH:</string>
     <string name="app_hint_dataNasci">Data de Nascimento:</string>
     <string name="app_hint_CPF">CPF:</string>
     <string name="app_hint_telefone">Telefone:</string>
@@ -46,6 +47,7 @@
     <string name="app_hint_cor">Cor:</string>
     <string name="app_hint_placa">Placa:</string>
     <string name="app_hint_cnh">Número da CNH:</string>
+    <string name="app_hint_Valcnh">Validade da CNH:</string>
 
     <!--Linha de textos -->
     <string name="app_TxtCriarConta">Ainda não tem uma conta? Crie uma agora!</string>

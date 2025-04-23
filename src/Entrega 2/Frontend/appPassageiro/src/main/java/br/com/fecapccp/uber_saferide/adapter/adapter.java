@@ -1,6 +1,5 @@
 package br.com.fecapccp.uber_saferide.adapter;
 
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import br.com.fecapccp.uber_saferide.R;
-import br.com.fecapccp.uber_saferide.model.AtividadeModel;  // Corrigido o import para 'models'
+import br.com.fecapccp.uber_saferide.models.AtividadeModel;  // Corrigido o import para 'models'
 
 public class adapter extends RecyclerView.Adapter<adapter.MyViewHolder> {
 
@@ -54,7 +53,7 @@ public class adapter extends RecyclerView.Adapter<adapter.MyViewHolder> {
             super(itemView);
             textRua = itemView.findViewById(R.id.textRua);
             textData = itemView.findViewById(R.id.textData);
-            textHoras = itemView.findViewById(R.id.textHoras);
+            textHoras = itemView.findViewById(R.id.textHorario);
         }
     }
 }

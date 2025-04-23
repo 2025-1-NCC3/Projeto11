@@ -25,6 +25,7 @@ import br.com.fecapccp.uber_saferide.models.UsuarioModel;
 import br.com.fecapccp.uber_saferide.retrofit.ApiService;
 import br.com.fecapccp.uber_saferide.retrofit.RetrofitClient;
 import br.com.fecapccp.uber_saferide.session.SessionManager;
+import br.com.fecapccp.uber_saferide.utils.CaesarCipher;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -33,7 +34,7 @@ public class TelaCadastro extends AppCompatActivity {
 
     private EditText etNome, etDataNasci, etCPF, etTelefone, etEmail, etSenha;
     private Button btnCadastrar;
-    private TextView txtCadastrarSe; // Adicione esta linha
+    private TextView txtCadastrarSe;
     ApiService apiService;
     SessionManager sessionManager;
     Context context = this;
@@ -42,24 +43,19 @@ public class TelaCadastro extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tela_cadastro); // Layout da TelaCadastroActivity
+        setContentView(R.layout.activity_tela_cadastro);
 
         apiService = RetrofitClient.getApiService();
         sessionManager = new SessionManager(context);
 
-        // Inicializa os campos de texto
         etNome = findViewById(R.id.etNome);
         etDataNasci = findViewById(R.id.etDataNasci);
         etCPF = findViewById(R.id.etCPF);
         etTelefone = findViewById(R.id.etTelefone);
         etEmail = findViewById(R.id.etEmail);
         etSenha = findViewById(R.id.etSenha);
-
-        // Inicializa o botão
         btnCadastrar = findViewById(R.id.btnCadastrar);
-
-        // Inicializa o TextView
-        txtCadastrarSe = findViewById(R.id.txtCadastrar_se); // Adicione esta linha
+        txtCadastrarSe = findViewById(R.id.txtCadastrar_se);
 
         etDataNasci.setOnClickListener(v -> {
             final Calendar calendar = Calendar.getInstance();
@@ -83,43 +79,40 @@ public class TelaCadastro extends AppCompatActivity {
         btnCadastrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Recupera o CPF do EditText
                 String cpf = etCPF.getText().toString().trim();
 
-                // Verifica se o CPF tem exatamente 11 dígitos
                 if (cpf.length() != 11) {
-                    // Exibe uma mensagem de erro caso o CPF seja inválido
                     Toast.makeText(context, "O CPF deve conter exatamente 11 dígitos.", Toast.LENGTH_SHORT).show();
-                    return; // Impede o envio da requisição se o CPF for inválido
+                    return;
                 }
 
-                // Verifica se todos os campos estão preenchidos
                 if (camposPreenchidos()) {
-                    // Se todos os campos estiverem preenchidos, navega para a próxima tela
+                    int shift = 3; // Define o deslocamento da cifra
 
-                    String nome = etNome.getText().toString();
-                    String email = etEmail.getText().toString();
-                    String telefone = etTelefone.getText().toString();
-                    String dataNascimento = etDataNasci.getText().toString();
-                    String senha = etSenha.getText().toString();
+                    // 1. Criptografa todos os campos (exceto o enum)
+                    String nomeCriptografado = CaesarCipher.encrypt(etNome.getText().toString(), shift);
+                    String emailCriptografado = CaesarCipher.encrypt(etEmail.getText().toString(), shift);
+                    String telefoneCriptografado = CaesarCipher.encrypt(etTelefone.getText().toString(), shift);
+                    String senhaCriptografada = CaesarCipher.encrypt(etSenha.getText().toString(), shift);
+                    String cpfCriptografado = CaesarCipher.encrypt(cpf, shift);
+                    String dataNascimentoCriptografada = CaesarCipher.encrypt(etDataNasci.getText().toString(), shift);
 
+                    // 2. Mantém o enum original (não criptografado)
+                    TipoUsuarioEnum tipoUsuario = TipoUsuarioEnum.Passageiro;
+
+                    // 3. Cria o objeto UsuarioModel
                     UsuarioModel usuario = new UsuarioModel();
-                    usuario.setNome(nome);
-                    usuario.setEmail(email);
-                    usuario.setTelefone(telefone);
-                    usuario.setCpf(cpf);
+                    usuario.setNome(nomeCriptografado);
+                    usuario.setEmail(emailCriptografado);
+                    usuario.setTelefone(telefoneCriptografado);
+                    usuario.setSenha(senhaCriptografada);
+                    usuario.setCpf(cpfCriptografado);
+                    usuario.setTipoUsuario(tipoUsuario);
 
-                    try {
-                        usuario.setDataNascimento(new SimpleDateFormat("yyyy-MM-dd").parse(dataNascimento));
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                        Toast.makeText(context, "Data de nascimento inválida.", Toast.LENGTH_SHORT).show();
-                        return; // Para o cadastro se a data estiver errada
-                    }
+                    // Envia a data criptografada como string (o back-end fará o parse após descriptografar)
+                    usuario.setDataNascimento(dataNascimentoCriptografada); // Alterado para enviar a string criptografada
 
-                    usuario.setTipoUsuario(TipoUsuarioEnum.Passageiro);
-                    usuario.setSenha(senha);
-
+                    // 4. Envia os dados para a API (todos os campos sensíveis criptografados)
                     Call<ResponseCreateUsuarioDTO> call = apiService.createUser(usuario);
 
                     call.enqueue(new Callback<ResponseCreateUsuarioDTO>() {
@@ -143,15 +136,12 @@ public class TelaCadastro extends AppCompatActivity {
                         }
                     });
 
-                    // Redireciona para a tela IniciarViagem
-                    Intent intent = new Intent(TelaCadastro.this, IniciarViagem.class);
-                    startActivity(intent);
                 } else {
-                    // Se algum campo não estiver preenchido, exibe uma mensagem de erro
                     Toast.makeText(TelaCadastro.this, "Por favor, preencha todos os campos.", Toast.LENGTH_SHORT).show();
                 }
             }
         });
+
 
         // Define o listener para o TextView
         txtCadastrarSe.setOnClickListener(new View.OnClickListener() {

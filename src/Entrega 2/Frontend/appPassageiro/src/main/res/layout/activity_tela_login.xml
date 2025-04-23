@@ -124,7 +124,6 @@
         android:background="@drawable/button_background"
         android:clickable="true"
         android:focusable="true"
-        android:onClick="onLoginClick"
         android:text="@string/app_btnLogin"
         android:textColor="@color/Branco"
         android:textSize="22sp"

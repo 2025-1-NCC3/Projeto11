@@ -2,11 +2,13 @@ package br.com.fecapccp.uber_saferide.models;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import br.com.fecapccp.uber_saferide.enums.TipoUsuarioEnum;
 
-public class    UsuarioModel {
+public class UsuarioModel implements Serializable {
+
     @SerializedName("id_usuario")
     private int idUsuario;
 
@@ -22,20 +24,16 @@ public class    UsuarioModel {
     @SerializedName("cpf")
     private String cpf;
 
+    @SerializedName("senha")
+    private String senha;
+
     @SerializedName("data_nascimento")
-    private String dataNascimento;
+    private Date dataNascimento;
 
     @SerializedName("tipo_usuario")
     private TipoUsuarioEnum tipoUsuario;
 
-    @SerializedName("senha")
-    private String senha;
-
-    @SerializedName("cnh")
-    private String cnh;
-
-    @SerializedName("validade_carteira")
-    private String validadeCarteira;
+    // Getters e Setters
 
     public int getIdUsuario() {
         return idUsuario;
@@ -77,11 +75,19 @@ public class    UsuarioModel {
         this.cpf = cpf;
     }
 
-    public String getDataNascimento() {
+    public String getSenha() {
+        return senha;
+    }
+
+    public void setSenha(String senha) {
+        this.senha = senha;
+    }
+
+    public Date getDataNascimento() {
         return dataNascimento;
     }
 
-    public void setDataNascimento(String dataNascimento) {
+    public void setDataNascimento(Date dataNascimento) {
         this.dataNascimento = dataNascimento;
     }
 
@@ -91,29 +97,5 @@ public class    UsuarioModel {
 
     public void setTipoUsuario(TipoUsuarioEnum tipoUsuario) {
         this.tipoUsuario = tipoUsuario;
-    }
-
-    public String getSenha() {
-        return senha;
-    }
-
-    public void setSenha(String senha) {
-        this.senha = senha;
-    }
-
-    public String getCnh() {
-        return cnh;
-    }
-
-    public void setCnh(String cnh) {
-        this.cnh = cnh;
-    }
-
-    public String getValidadeCarteira() {
-        return validadeCarteira;
-    }
-
-    public void setValidadeCarteira(String validadeCarteira) {
-        this.validadeCarteira = validadeCarteira;
     }
 }
