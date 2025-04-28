@@ -70,8 +70,6 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
 
         apiService = RetrofitClient.getApiService();
 
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_iniciar_viagem);
 
         // Inicializar o fragmento do mapa

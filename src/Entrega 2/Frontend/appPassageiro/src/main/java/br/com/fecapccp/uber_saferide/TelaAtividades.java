@@ -26,7 +26,6 @@ public class TelaAtividades extends AppCompatActivity {
     private RecyclerView recyclerView;
     private List<AtividadeModel> ListaAtividade = new ArrayList<AtividadeModel>();
     private adapter adapter;
-
     private TextView textRua;
     private TextView textData;
     private TextView textHorario;
@@ -34,10 +33,6 @@ public class TelaAtividades extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_tela_atividades);
 
         recyclerView = findViewById(R.id.recyclerView);

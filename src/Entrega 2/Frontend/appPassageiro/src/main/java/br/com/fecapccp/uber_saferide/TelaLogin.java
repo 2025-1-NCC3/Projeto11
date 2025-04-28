@@ -42,10 +42,6 @@ public class TelaLogin extends AppCompatActivity {
         apiService = RetrofitClient.getApiService();
         sessionManager = new SessionManager(context);
 
-        // Configuração de tela cheia
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_tela_login);
@@ -64,7 +60,7 @@ public class TelaLogin extends AppCompatActivity {
 
         // Configuração do botão de login
         Button btnIniciarViagem = findViewById(R.id.btnLogin);
-        btnIniciarViagem.setOnClickListener(v -> fazerLogin());
+        btnIniciarViagem.setOnClickListener(v -> fazerLogin() );
     }
 
     @SuppressLint("ResourceType")

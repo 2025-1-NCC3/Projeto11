@@ -40,11 +40,6 @@ public class TelaLogin extends AppCompatActivity {
         apiService = RetrofitClient.getApiService();
         sessionManager = new SessionManager(context);
 
-        // Tela cheia
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_tela_login);
 

@@ -71,9 +71,6 @@ public class ConfiguracaoPerfil extends AppCompatActivity {
         apiService = RetrofitClient.getApiService();
         sessionManager = new SessionManager(context);
 
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_configuracao_perfil);
