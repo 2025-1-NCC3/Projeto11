@@ -5,7 +5,7 @@
     android:id="@+id/telaCorridas"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".IniciarViagem">
+    tools:context="br.fecap.pi.saferide_motorista.IniciarViagem">
 
     <LinearLayout
         android:layout_width="0dp"

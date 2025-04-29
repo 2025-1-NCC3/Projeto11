@@ -26,40 +26,40 @@
         android:theme="@style/Theme.Uber_SafeRide"
         tools:targetApi="31">
         <activity
-            android:name=".ViagemAceitaActivity"
+            android:name="br.fecap.pi.saferide_motorista.ViagemAceitaActivity"
             android:exported="false" />
         <activity
-            android:name=".TempoViagemActivity"
+            android:name="br.fecap.pi.saferide_motorista.TempoViagemActivity"
             android:exported="false" />
         <activity
-            android:name=".Feedback"
+            android:name="br.fecap.pi.saferide_motorista.Feedback"
             android:exported="false" />
         <activity
-            android:name=".ModificarFoto"
+            android:name="br.fecap.pi.saferide_motorista.ModificarFoto"
             android:exported="false" />
         <activity
-            android:name=".ConfiguracaoPerfil"
+            android:name="br.fecap.pi.saferide_motorista.ConfiguracaoPerfil"
             android:exported="false" />
         <activity
-            android:name=".IniciarViagem"
+            android:name="br.fecap.pi.saferide_motorista.IniciarViagem"
             android:exported="false" />
         <activity
-            android:name=".TelaAtividades"
+            android:name="br.fecap.pi.saferide_motorista.TelaAtividades"
             android:exported="false" />
         <activity
-            android:name=".TelaCadastro"
+            android:name="br.fecap.pi.saferide_motorista.TelaCadastro"
             android:exported="false" />
         <activity
-            android:name=".TelaCadastroVeiculo"
+            android:name="br.fecap.pi.saferide_motorista.TelaCadastroVeiculo"
             android:exported="false" />
         <activity
-            android:name=".TelaLogin"
+            android:name="br.fecap.pi.saferide_motorista.TelaLogin"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name="br.fecap.pi.saferide_motorista.MainActivity"
             android:exported="false"/>
         <activity
-            android:name=".SplashScreenActivity"
+            android:name="br.fecap.pi.saferide_motorista.SplashScreenActivity"
             android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

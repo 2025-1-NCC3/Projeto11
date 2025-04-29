@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace 'br.com.fecapccp.uber_saferide'
+    namespace 'br.fecap.pi.saferide_motorista'
     compileSdk 35
 
     defaultConfig {
-        applicationId = "br.com.fecapccp.uber_saferide.appmotorista"
+        applicationId = "br.fecap.pi.saferide_motorista"
         minSdk 24
         targetSdk 35
         versionCode 1

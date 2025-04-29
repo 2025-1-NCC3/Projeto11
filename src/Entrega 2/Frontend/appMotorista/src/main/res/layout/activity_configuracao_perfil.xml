@@ -10,7 +10,7 @@
         android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:context=".ConfiguracaoPerfil">
+        tools:context="br.fecap.pi.saferide_motorista.ConfiguracaoPerfil">
 
         <!-- Removi o FrameLayout e coloquei o conteúdo diretamente no ConstraintLayout -->
         <ImageView

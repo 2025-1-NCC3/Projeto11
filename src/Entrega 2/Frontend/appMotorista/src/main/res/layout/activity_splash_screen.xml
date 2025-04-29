@@ -8,7 +8,7 @@
     android:orientation="vertical"
     android:background="@color/Branco"
     android:gravity="center"
-    tools:context=".SplashScreenActivity">
+    tools:context="br.fecap.pi.saferide_motorista.SplashScreenActivity">
 
     <ImageView
         android:layout_width="400dp"

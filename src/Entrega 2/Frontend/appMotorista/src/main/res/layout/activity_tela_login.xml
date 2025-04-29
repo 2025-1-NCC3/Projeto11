@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/VerdeEscuro"
-    tools:context=".TelaLogin">
+    tools:context="br.fecap.pi.saferide_motorista.TelaLogin">
 
 
 

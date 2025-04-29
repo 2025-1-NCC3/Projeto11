@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace 'br.com.fecapccp.uber_saferide'
+    namespace 'br.fecap.pi.saferide_passageiro'
     compileSdk 35
 
     defaultConfig {
-        applicationId "br.com.fecapccp.uber_saferide"
+        applicationId "br.fecap.pi.saferide_passageiro"
         minSdk 24
         targetSdk 35
         versionCode 1

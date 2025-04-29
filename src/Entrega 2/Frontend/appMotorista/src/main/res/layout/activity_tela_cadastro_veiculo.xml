@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/VerdeEscuro"
-    tools:context=".TelaCadastroVeiculo">
+    tools:context="br.fecap.pi.saferide_motorista.TelaCadastroVeiculo">
 
     <FrameLayout
         android:id="@+id/frameLayout"
