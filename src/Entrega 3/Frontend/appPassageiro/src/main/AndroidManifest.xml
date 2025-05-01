@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission
+        android:name="android.permission.READ_MEDIA_IMAGES"
+        tools:ignore="SelectedPhotoAccess" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Uber_SafeRide"
+        tools:targetApi="31">
+        <activity
+            android:name="br.fecap.pi.saferide_passageiro.TempoVagemActivity"
+            android:exported="false" />
+        <activity
+            android:name="br.fecap.pi.saferide_passageiro.Feedback"
+            android:exported="false" />
+        <activity
+            android:name="br.fecap.pi.saferide_passageiro.MetodoPagamento"
+            android:exported="false" />
+        <activity
+            android:name="br.fecap.pi.saferide_passageiro.ViagemAceitaActivity"
+            android:exported="false" />
+        <activity
+            android:name="br.fecap.pi.saferide_passageiro.ModificarFoto"
+            android:exported="false" />
+        <activity
+            android:name="br.fecap.pi.saferide_passageiro.ConfiguracaoPerfil"
+            android:exported="false" />
+        <activity
+            android:name="br.fecap.pi.saferide_passageiro.IniciarViagem"
+            android:exported="false" />
+        <activity
+            android:name="br.fecap.pi.saferide_passageiro.TelaAtividades"
+            android:exported="false" />
+        <activity
+            android:name="br.fecap.pi.saferide_passageiro.TelaCadastro"
+            android:exported="false" />
+        <activity
+            android:name="br.fecap.pi.saferide_passageiro.TelaLogin"
+            android:exported="false" />
+        <activity
+            android:name="br.fecap.pi.saferide_passageiro.MainActivity"
+            android:exported="false"/>
+
+            <activity
+            android:name="br.fecap.pi.saferide_passageiro.SplashScreenActivity"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <meta-data
+            android:name="MAPS_API_KEY"
+            android:value="AIzaSyDJnwA0agCajwv4g3fRqFgjlTGMgUiykgQ" />
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDJnwA0agCajwv4g3fRqFgjlTGMgUiykgQ" />
+    </application>
+
+</manifest>
