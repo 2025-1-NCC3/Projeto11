@@ -3,6 +3,7 @@ package br.fecap.pi.saferide_passageiro.retrofit;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import br.fecap.pi.saferide_passageiro.utils.EncryptionInterceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
@@ -21,6 +22,7 @@ public class RetrofitClient {
 
             // Configura o cliente HTTP
             OkHttpClient client = new OkHttpClient.Builder()
+                    .addInterceptor(new EncryptionInterceptor())
                     .addInterceptor(loggingInterceptor) // Adiciona o logger
                     .connectTimeout(30, TimeUnit.SECONDS) // Timeout de conexão
                     .readTimeout(30, TimeUnit.SECONDS)    // Timeout de leitura

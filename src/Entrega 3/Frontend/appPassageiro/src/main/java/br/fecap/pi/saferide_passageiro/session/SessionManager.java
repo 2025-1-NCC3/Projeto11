@@ -7,11 +7,9 @@ import br.fecap.pi.saferide_passageiro.models.UsuarioModel;
 
 public class SessionManager {
 
-    // SharedPreferences para armazenar os dados
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
 
-    // Nome do arquivo de SharedPreferences
     private static final String PREF_NAME = "UserSession";
     private static final String IS_LOGGED_IN = "IsLoggedIn";
     private static final String USER_ID = "UserId";
@@ -23,13 +21,12 @@ public class SessionManager {
     private static final String USER_SENHA = "UserSenha";
     private static final String USER_TOKEN = "UserToken";
 
-    // Construtor da classe
     public SessionManager(Context context) {
         sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
     }
 
-    // Salvar dados do usuário na sessão
+    // Criar sessão completa (login ou recriar após update)
     public void createSession(UsuarioModel usuario, String token) {
         editor.putBoolean(IS_LOGGED_IN, true);
         editor.putInt(USER_ID, usuario.getIdUsuario());
@@ -38,12 +35,25 @@ public class SessionManager {
         editor.putString(USER_NOME, usuario.getNome());
         editor.putString(USER_TELEFONE, usuario.getTelefone());
         editor.putString(USER_EMAIL, usuario.getEmail());
-        editor.putString(USER_SENHA, usuario.getDataNascimento().toString());
+        // Se quiser guardar senha, adicione abaixo:
+        // editor.putString(USER_SENHA, usuario.getSenha());
         editor.putString(USER_TOKEN, token);
         editor.commit();
     }
 
-    // Verificar se o usuário está logado
+    // Atualizar apenas os dados do usuário, mantendo o token
+    public void updateUsuario(UsuarioModel usuario) {
+        editor.putInt(USER_ID, usuario.getIdUsuario());
+        editor.putString(USER_CPF, usuario.getCpf());
+        editor.putString(USER_DATA_NASCIMENTO,
+                usuario.getDataNascimento() != null ? usuario.getDataNascimento().toString() : getUserDataNascimento());
+        editor.putString(USER_NOME, usuario.getNome());
+        editor.putString(USER_TELEFONE, usuario.getTelefone());
+        editor.putString(USER_EMAIL, usuario.getEmail());
+        editor.putString(USER_SENHA, usuario.getSenha());
+        editor.commit();
+    }
+
     public boolean isLoggedIn() {
         return sharedPreferences.getBoolean(IS_LOGGED_IN, false);
     }
@@ -73,14 +83,13 @@ public class SessionManager {
     }
 
     public String getUserSenha() {
-        return sharedPreferences.getString(USER_TELEFONE, null);
+        return sharedPreferences.getString(USER_SENHA, null); // Corrigido aqui
     }
 
     public String getUserToken() {
         return sharedPreferences.getString(USER_TOKEN, null);
     }
 
-    // Limpar os dados de sessão (logout)
     public void logoutUser() {
         editor.clear();
         editor.commit();

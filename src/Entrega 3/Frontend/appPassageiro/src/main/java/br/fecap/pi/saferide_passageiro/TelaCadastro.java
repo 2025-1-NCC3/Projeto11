@@ -85,32 +85,17 @@ public class TelaCadastro extends AppCompatActivity {
                 }
 
                 if (camposPreenchidos()) {
-                    int shift = 3; // Define o deslocamento da cifra
-
-                    // 1. Criptografa todos os campos (exceto o enum)
-                    String nomeCriptografado = CaesarCipher.encrypt(etNome.getText().toString(), shift);
-                    String emailCriptografado = CaesarCipher.encrypt(etEmail.getText().toString(), shift);
-                    String telefoneCriptografado = CaesarCipher.encrypt(etTelefone.getText().toString(), shift);
-                    String senhaCriptografada = CaesarCipher.encrypt(etSenha.getText().toString(), shift);
-                    String cpfCriptografado = CaesarCipher.encrypt(cpf, shift);
-                    String dataNascimentoCriptografada = CaesarCipher.encrypt(etDataNasci.getText().toString(), shift);
-
-                    // 2. Mantém o enum original (não criptografado)
-                    TipoUsuarioEnum tipoUsuario = TipoUsuarioEnum.Passageiro;
-
-                    // 3. Cria o objeto UsuarioModel
+                    // 1. Cria o objeto UsuarioModel com os dados em texto puro
                     UsuarioModel usuario = new UsuarioModel();
-                    usuario.setNome(nomeCriptografado);
-                    usuario.setEmail(emailCriptografado);
-                    usuario.setTelefone(telefoneCriptografado);
-                    usuario.setSenha(senhaCriptografada);
-                    usuario.setCpf(cpfCriptografado);
-                    usuario.setTipoUsuario(tipoUsuario);
+                    usuario.setNome(etNome.getText().toString());
+                    usuario.setEmail(etEmail.getText().toString());
+                    usuario.setTelefone(etTelefone.getText().toString());
+                    usuario.setSenha(etSenha.getText().toString());
+                    usuario.setCpf(cpf);
+                    usuario.setTipoUsuario(TipoUsuarioEnum.Passageiro);
+                    usuario.setDataNascimento(etDataNasci.getText().toString());
 
-                    // Envia a data criptografada como string (o back-end fará o parse após descriptografar)
-                    usuario.setDataNascimento(dataNascimentoCriptografada); // Alterado para enviar a string criptografada
-
-                    // 4. Envia os dados para a API (todos os campos sensíveis criptografados)
+                    // 2. Faz a chamada para a API — o Interceptor cuida da criptografia
                     Call<ResponseCreateUsuarioDTO> call = apiService.createUser(usuario);
 
                     call.enqueue(new Callback<ResponseCreateUsuarioDTO>() {
@@ -139,6 +124,7 @@ public class TelaCadastro extends AppCompatActivity {
                 }
             }
         });
+
 
 
         // Define o listener para o TextView

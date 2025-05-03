@@ -29,8 +29,12 @@ import androidx.core.view.WindowInsetsCompat;
 import android.content.Intent;
 import android.widget.Toast;
 
+import java.time.LocalDate;
+
 import br.fecap.pi.saferide_passageiro.R;
 import br.fecap.pi.saferide_passageiro.dto.ResponseDTO;
+import br.fecap.pi.saferide_passageiro.dto.UpdateUserRequestDTO;
+import br.fecap.pi.saferide_passageiro.models.UsuarioModel;
 import br.fecap.pi.saferide_passageiro.retrofit.ApiService;
 import br.fecap.pi.saferide_passageiro.retrofit.RetrofitClient;
 import br.fecap.pi.saferide_passageiro.session.SessionManager;
@@ -177,7 +181,7 @@ public class ConfiguracaoPerfil extends AppCompatActivity {
                     String email = editEmail.getText().toString();
                     String telefone = editTelefone.getText().toString();
 
-                    Call<ResponseDTO> call = apiService.updateUser(
+                    UpdateUserRequestDTO updateUserRequestDTO = new UpdateUserRequestDTO(
                             sessionManager.getUserId(),
                             sessionManager.getUserCpf(),
                             nome,
@@ -185,17 +189,31 @@ public class ConfiguracaoPerfil extends AppCompatActivity {
                             telefone
                     );
 
+                    Call<ResponseDTO> call = apiService.updateUser(updateUserRequestDTO);
+
                     call.enqueue(new Callback<ResponseDTO>() {
                         @Override
                         public void onResponse(Call<ResponseDTO> call, Response<ResponseDTO> response) {
                             if (response.isSuccessful() && response.body() != null) {
                                 ResponseDTO res = response.body();
                                 Toast.makeText(context, res.getMessage(), Toast.LENGTH_SHORT).show();
+
+                                // Atualiza o SessionManager com os novos dados
+                                UsuarioModel usuarioAtualizado = new UsuarioModel();
+                                usuarioAtualizado.setIdUsuario(sessionManager.getUserId());
+                                usuarioAtualizado.setCpf(sessionManager.getUserCpf());
+                                usuarioAtualizado.setDataNascimento(sessionManager.getUserDataNascimento()); // importante!
+                                usuarioAtualizado.setNome(nome);
+                                usuarioAtualizado.setEmail(email);
+                                usuarioAtualizado.setTelefone(telefone);
+
+                                sessionManager.updateUsuario(usuarioAtualizado);
+
+
                                 setEditTextsEnabled(false);
                                 btnSalvar.setEnabled(false);
                                 btnEditar.setEnabled(true);
-                            }
-                            else {
+                            } else {
                                 Toast.makeText(context, "Erro ao atualizar usuário!", Toast.LENGTH_SHORT).show();
                             }
                         }
@@ -209,6 +227,8 @@ public class ConfiguracaoPerfil extends AppCompatActivity {
                 }
             }
         });
+
+
         // Adiciona o OnClickListener ao TextView Sair
         txtSair.setOnClickListener(new View.OnClickListener() {
             @Override

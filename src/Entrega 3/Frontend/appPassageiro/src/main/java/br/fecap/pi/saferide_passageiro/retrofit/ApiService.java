@@ -4,9 +4,11 @@ import java.util.List;
 
 import br.fecap.pi.saferide_passageiro.dto.CalcularRotaRequestDTO;
 import br.fecap.pi.saferide_passageiro.dto.CalcularRotaResponseDTO;
+import br.fecap.pi.saferide_passageiro.dto.LoginRequestDTO;
 import br.fecap.pi.saferide_passageiro.dto.ResponseCreateUsuarioDTO;
 import br.fecap.pi.saferide_passageiro.dto.ResponseDTO;
 import br.fecap.pi.saferide_passageiro.dto.ResponseLoginUserDTO;
+import br.fecap.pi.saferide_passageiro.dto.UpdateUserRequestDTO;
 import br.fecap.pi.saferide_passageiro.models.UsuarioModel;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -28,37 +30,14 @@ public interface ApiService {
     @GET("usuarios/cpf/{cpf}")
     Call<UsuarioModel> getUserByCpf();
 
-    /* @POST("usuarios/add")
-    @FormUrlEncoded
-    Call<ResponseCreateUsuarioDTO> createUser(
-            @Field("nome") String nome,
-            @Field("email") String email,
-            @Field("telefone") String telefone,
-            @Field("cpf") String cpf,
-            @Field("data_nascimento") String dataNascimento,
-            @Field("tipo_usuario") String tipoUsuario,
-            @Field("senha") String senha
-    ); */
-
     @POST("usuarios/add")
     Call<ResponseCreateUsuarioDTO> createUser(@Body UsuarioModel usuario);
 
     @POST("usuarios/passageiro/login")
-    @FormUrlEncoded
-    Call<ResponseLoginUserDTO> loginPassageiro(
-            @Field("email") String email,
-            @Field("senha") String senha
-    );
+    Call<ResponseLoginUserDTO> loginPassageiro(@Body LoginRequestDTO loginRequest);
 
     @PUT("usuarios/update")
-    @FormUrlEncoded
-    Call<ResponseDTO> updateUser (
-        @Field("id_usuario") int idUsuario,
-        @Field("cpf") String cpf,
-        @Field("nome") String nome,
-        @Field("email") String email,
-        @Field("telefone") String telefone
-    );
+    Call<ResponseDTO> updateUser(@Body UpdateUserRequestDTO updateUserRequestDTO);
 
     @DELETE("usuarios/{id}")
     Call<ResponseDTO> deleteUser(@Path("id") int userId);
