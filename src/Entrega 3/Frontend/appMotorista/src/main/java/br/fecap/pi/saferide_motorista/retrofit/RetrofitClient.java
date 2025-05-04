@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 
 import java.util.concurrent.TimeUnit;
 
+import br.fecap.pi.saferide_motorista.utils.EncryptionInterceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
@@ -22,6 +23,7 @@ public class RetrofitClient {
 
             // Configura o cliente HTTP
             OkHttpClient client = new OkHttpClient.Builder()
+                    .addInterceptor(new EncryptionInterceptor())
                     .addInterceptor(loggingInterceptor) // Adiciona o logger
                     .connectTimeout(30, TimeUnit.SECONDS) // Timeout de conexão
                     .readTimeout(30, TimeUnit.SECONDS)    // Timeout de leitura

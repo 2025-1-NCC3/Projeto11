@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 import br.fecap.pi.saferide_passageiro.enums.TipoUsuarioEnum;
 
-public class    UsuarioModel {
+public class UsuarioModel {
     @SerializedName("id_usuario")
     private int idUsuario;
 

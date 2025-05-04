@@ -59,12 +59,11 @@ public class TelaCadastro extends AppCompatActivity {
 
         // Botão para cadastrar e enviar para a TelaCadastroVeiculo
         btnCadastrar.setOnClickListener(v -> {
-
             if (camposPreenchidos()) {
                 String nome = etNome.getText().toString();
                 String email = etEmail.getText().toString();
                 String telefone = etTelefone.getText().toString();
-                String dataNascimento = etDataNasci.getText().toString();
+                String dataNascimento = etDataNasci.getText().toString(); // Mantém como String
                 String senha = etSenha.getText().toString();
                 String cpf = etCPF.getText().toString();
 
@@ -74,14 +73,7 @@ public class TelaCadastro extends AppCompatActivity {
                 usuario.setTelefone(telefone);
                 usuario.setSenha(senha);
                 usuario.setCpf(cpf);
-
-                try {
-                    usuario.setDataNascimento(new SimpleDateFormat("yyyy-MM-dd").parse(dataNascimento));
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                    Toast.makeText(TelaCadastro.this, "Data de nascimento inválida.", Toast.LENGTH_SHORT).show();
-                    return;
-                }
+                usuario.setDataNascimento(dataNascimento); // Envia a data como String
 
                 // Envia os dados para a TelaCadastroVeiculo
                 Intent intent = new Intent(TelaCadastro.this, TelaCadastroVeiculo.class);
@@ -91,6 +83,7 @@ public class TelaCadastro extends AppCompatActivity {
                 Toast.makeText(TelaCadastro.this, "Por favor, preencha todos os campos.", Toast.LENGTH_SHORT).show();
             }
         });
+
 
         txtEntrar.setOnClickListener(v -> {
             // Redireciona para a tela de login

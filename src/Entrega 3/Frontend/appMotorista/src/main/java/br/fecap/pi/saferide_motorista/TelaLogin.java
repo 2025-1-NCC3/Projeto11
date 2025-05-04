@@ -18,6 +18,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import br.fecap.pi.saferide_motorista.R;
+import br.fecap.pi.saferide_motorista.dto.LoginRequestDTO;
 import br.fecap.pi.saferide_motorista.dto.ResponseLoginUserDTO;
 import br.fecap.pi.saferide_motorista.retrofit.ApiService;
 import br.fecap.pi.saferide_motorista.retrofit.RetrofitClient;
@@ -70,7 +71,8 @@ public class TelaLogin extends AppCompatActivity {
 
                 Log.d("Login", "Attempting login with email: " + email);
 
-                Call<ResponseLoginUserDTO> call = apiService.loginMotorista(email, senha);
+                LoginRequestDTO loginRequest = new LoginRequestDTO(email, senha);
+                Call<ResponseLoginUserDTO> call = apiService.loginMotorista(loginRequest);
 
                 call.enqueue(new Callback<ResponseLoginUserDTO>() {
                     @Override

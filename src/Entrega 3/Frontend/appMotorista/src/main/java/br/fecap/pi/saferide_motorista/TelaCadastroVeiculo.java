@@ -16,7 +16,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import br.fecap.pi.saferide_motorista.R;
+import br.fecap.pi.saferide_motorista.dto.CreateUserRequestDTO;
 import br.fecap.pi.saferide_motorista.dto.ResponseCreateUsuarioDTO;
 import br.fecap.pi.saferide_motorista.models.MotoristaModel;
 import br.fecap.pi.saferide_motorista.models.UsuarioModel;
@@ -27,13 +27,13 @@ import retrofit2.Response;
 import br.fecap.pi.saferide_motorista.retrofit.ApiService;
 import br.fecap.pi.saferide_motorista.retrofit.RetrofitClient;
 
-
 public class TelaCadastroVeiculo extends AppCompatActivity {
 
     private EditText etModelo, etCor, etPlaca, etCNH, etValCNH;
     private Button btnCadastrarVeiculo;
     private UsuarioModel usuario;
     private ApiService apiService;
+    private SimpleDateFormat sdf;  // Agora reutilizável
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -42,9 +42,10 @@ public class TelaCadastroVeiculo extends AppCompatActivity {
         setContentView(R.layout.activity_tela_cadastro_veiculo);
 
         apiService = RetrofitClient.getApiService();
-
-        // Recupera o objeto Usuario enviado da TelaCadastro
         usuario = (UsuarioModel) getIntent().getSerializableExtra("usuario");
+
+        // Inicializa o SimpleDateFormat reutilizável
+        sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 
         etModelo = findViewById(R.id.etModelo);
         etCor = findViewById(R.id.etCor);
@@ -52,7 +53,6 @@ public class TelaCadastroVeiculo extends AppCompatActivity {
         etCNH = findViewById(R.id.etCNH);
         etValCNH = findViewById(R.id.etValCNH);
 
-        // Configura o DatePicker para a validade da CNH
         etValCNH.setOnClickListener(v -> {
             final Calendar calendar = Calendar.getInstance();
             int year = calendar.get(Calendar.YEAR);
@@ -70,7 +70,6 @@ public class TelaCadastroVeiculo extends AppCompatActivity {
             datePickerDialog.show();
         });
 
-        // Configura o botão para enviar os dados
         btnCadastrarVeiculo = findViewById(R.id.btnCadastrarVeiculo);
         btnCadastrarVeiculo.setOnClickListener(v -> {
             if (camposPreenchidos()) {
@@ -80,16 +79,14 @@ public class TelaCadastroVeiculo extends AppCompatActivity {
                 String cnh = etCNH.getText().toString();
                 String valCNH = etValCNH.getText().toString();
 
-                // Cria o objeto MotoristaModel e associa as informações
                 MotoristaModel motorista = new MotoristaModel();
                 motorista.setModelo(modelo);
                 motorista.setCor(cor);
                 motorista.setPlaca(placa);
                 motorista.setCnh(cnh);
 
-                // Converte a validade da CNH para Date
                 try {
-                    Date validadeCarteira = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(valCNH);
+                    Date validadeCarteira = sdf.parse(valCNH);  // Usa o sdf reaproveitado
                     motorista.setValidadeCarteira(validadeCarteira);
                 } catch (ParseException e) {
                     e.printStackTrace();
@@ -97,22 +94,24 @@ public class TelaCadastroVeiculo extends AppCompatActivity {
                     return;
                 }
 
-                motorista.setIdUsuario(usuario.getIdUsuario()); // Associa o usuário ao motorista
+                motorista.setIdUsuario(usuario.getIdUsuario());
 
-                // Chama a API para cadastrar o motorista e o veículo
-                Call<ResponseCreateUsuarioDTO> call = apiService.createUser(usuario.getNome(),
+                CreateUserRequestDTO request = new CreateUserRequestDTO(
+                        usuario.getNome(),
                         usuario.getEmail(),
                         usuario.getTelefone(),
                         usuario.getCpf(),
-                        usuario.getDataNascimento().toString(),
-                        "MOTORISTA",
+                        usuario.getDataNascimento(),
+                        "Motorista",
                         usuario.getSenha(),
                         cnh,
-                        motorista.getValidadeCarteira().toString(),
+                        valCNH,
                         placa,
                         cor,
                         modelo
                 );
+
+                Call<ResponseCreateUsuarioDTO> call = apiService.createUser(request);
 
                 call.enqueue(new Callback<ResponseCreateUsuarioDTO>() {
                     @Override
@@ -140,7 +139,6 @@ public class TelaCadastroVeiculo extends AppCompatActivity {
         });
     }
 
-    // Verifica se todos os campos obrigatórios estão preenchidos
     private boolean camposPreenchidos() {
         return !etModelo.getText().toString().trim().isEmpty() &&
                 !etCor.getText().toString().trim().isEmpty() &&

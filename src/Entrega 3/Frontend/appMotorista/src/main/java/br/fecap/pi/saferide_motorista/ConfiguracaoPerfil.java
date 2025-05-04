@@ -35,6 +35,8 @@ import java.util.Locale;
 
 import br.fecap.pi.saferide_motorista.R;
 import br.fecap.pi.saferide_motorista.dto.ResponseDTO;
+import br.fecap.pi.saferide_motorista.dto.UpdateUserRequestDTO;
+import br.fecap.pi.saferide_motorista.dto.UpdateVeiculoRequestDTO;
 import br.fecap.pi.saferide_motorista.retrofit.ApiService;
 import br.fecap.pi.saferide_motorista.retrofit.RetrofitClient;
 import br.fecap.pi.saferide_motorista.session.SessionManager;
@@ -238,13 +240,16 @@ public class ConfiguracaoPerfil extends AppCompatActivity {
                     String email = editEmail.getText().toString();
                     String telefone = editTelefone.getText().toString();
 
-                    Call<ResponseDTO> call = apiService.updateUser(
+                    UpdateUserRequestDTO updateRequest = new UpdateUserRequestDTO(
                             sessionManager.getUserId(),
                             sessionManager.getUserCpf(),
                             nome,
                             email,
                             telefone
                     );
+
+                    Call<ResponseDTO> call = apiService.updateUser(updateRequest);
+
 
                     call.enqueue(new Callback<ResponseDTO>() {
                         @Override
@@ -281,7 +286,7 @@ public class ConfiguracaoPerfil extends AppCompatActivity {
                     String cnh = editTextCNH.getText().toString();
                     String ValCNH = editTextValCNH.getText().toString();
 
-                    Call<ResponseDTO> call = apiService.updateVeiculoMotorista(
+                    UpdateVeiculoRequestDTO veiculoRequest = new UpdateVeiculoRequestDTO(
                             sessionManager.getMotoristaId(),
                             modelo,
                             cor,
@@ -289,6 +294,9 @@ public class ConfiguracaoPerfil extends AppCompatActivity {
                             cnh,
                             ValCNH
                     );
+
+                    Call<ResponseDTO> call = apiService.updateVeiculoMotorista(veiculoRequest);
+
 
                     call.enqueue(new Callback<ResponseDTO>() {
                         @Override

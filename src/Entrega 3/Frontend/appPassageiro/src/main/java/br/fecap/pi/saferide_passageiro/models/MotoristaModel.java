@@ -12,7 +12,7 @@ public class MotoristaModel {
     private String cnh;
 
     @SerializedName("validade_carteira")
-    private Date validadeCarteira;
+    private String validadeCarteira;
 
     @SerializedName("avaliacao_media_motorista")
     private double avaliacaoMediaMotorista;
@@ -28,11 +28,11 @@ public class MotoristaModel {
         this.cnh = cnh;
     }
 
-    public Date getValidadeCarteira() {
+    public String getValidadeCarteira() {
         return validadeCarteira;
     }
 
-    public void setValidadeCarteira(Date validadeCarteira) {
+    public void setValidadeCarteira(String validadeCarteira) {
         this.validadeCarteira = validadeCarteira;
     }
 

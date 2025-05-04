@@ -2,11 +2,16 @@ package br.fecap.pi.saferide_motorista.retrofit;
 
 import java.util.List;
 
+import br.fecap.pi.saferide_motorista.dto.CreateUserRequestDTO;
+import br.fecap.pi.saferide_motorista.dto.LoginRequestDTO;
 import br.fecap.pi.saferide_motorista.dto.ResponseCreateUsuarioDTO;
 import br.fecap.pi.saferide_motorista.dto.ResponseDTO;
 import br.fecap.pi.saferide_motorista.dto.ResponseLoginUserDTO;
+import br.fecap.pi.saferide_motorista.dto.UpdateUserRequestDTO;
+import br.fecap.pi.saferide_motorista.dto.UpdateVeiculoRequestDTO;
 import br.fecap.pi.saferide_motorista.models.UsuarioModel;
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -28,7 +33,7 @@ public interface ApiService {
     @GET("usuarios/cpf/{cpf}")
     Call<UsuarioModel> getUserByCpf();
 
-    @POST("usuarios/add")
+    /*@POST("usuarios/add")
     @FormUrlEncoded
     Call<ResponseCreateUsuarioDTO> createUser(
             @Field("nome") String nome,
@@ -44,9 +49,6 @@ public interface ApiService {
             @Field("cor") String cor,
             @Field("modelo") String modelo
     );
-
-//    @POST("usuarios/add")
-//    Call<ResponseCreateUsuarioDTO> createUser(@Body UsuarioModel usuario);
 
     @POST("usuarios/motorista/login")
     @FormUrlEncoded
@@ -73,7 +75,19 @@ public interface ApiService {
             @Field("placa") String placa,
             @Field("cnh") String cnh,
             @Field("validade_carteira") String ValCNH
-);
+);*/
+    @POST("usuarios/add")
+    Call<ResponseCreateUsuarioDTO> createUser(@Body CreateUserRequestDTO request);
+
+    @POST("usuarios/motorista/login")
+    Call<ResponseLoginUserDTO> loginMotorista(@Body LoginRequestDTO request);
+
+    @PUT("usuarios/update")
+    Call<ResponseDTO> updateUser(@Body UpdateUserRequestDTO request);
+
+    @PUT("usuarios/updateVeiculoMotorista")
+    Call<ResponseDTO> updateVeiculoMotorista(@Body UpdateVeiculoRequestDTO request);
+
 
     @DELETE("usuarios/{id}")
     Call<ResponseDTO> deleteUser(@Path("id") int userId);

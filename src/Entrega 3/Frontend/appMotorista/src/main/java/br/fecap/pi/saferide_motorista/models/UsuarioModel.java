@@ -3,7 +3,6 @@ package br.fecap.pi.saferide_motorista.models;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import br.fecap.pi.saferide_motorista.enums.TipoUsuarioEnum;
 
@@ -28,7 +27,7 @@ public class UsuarioModel implements Serializable {
     private String senha;
 
     @SerializedName("data_nascimento")
-    private Date dataNascimento;
+    private String dataNascimento;
 
     @SerializedName("tipo_usuario")
     private TipoUsuarioEnum tipoUsuario;
@@ -83,11 +82,11 @@ public class UsuarioModel implements Serializable {
         this.senha = senha;
     }
 
-    public Date getDataNascimento() {
+    public String getDataNascimento() {
         return dataNascimento;
     }
 
-    public void setDataNascimento(Date dataNascimento) {
+    public void setDataNascimento(String dataNascimento) {
         this.dataNascimento = dataNascimento;
     }
 
