@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         btnComecar.setOnClickListener(view ->{
-            Intent intent = new Intent(this, TelaAtividades.class);
+            Intent intent = new Intent(this, TelaLogin.class);
             startActivity(intent);
 
         });
