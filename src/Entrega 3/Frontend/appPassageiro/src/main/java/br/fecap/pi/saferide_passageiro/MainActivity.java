@@ -16,16 +16,16 @@ import androidx.core.view.WindowInsetsCompat;
 import br.fecap.pi.saferide_passageiro.R;
 
 public class MainActivity extends AppCompatActivity {
-
+    private Button btnComecar;
     private boolean doubleBackToExitPressedOnce = false; // variável para controlar o duplo clique
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
+
+         btnComecar = findViewById(R.id.btnComecar);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -33,14 +33,10 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        Button btnComecar = findViewById(R.id.btnComecar);
+        btnComecar.setOnClickListener(view ->{
+            Intent intent = new Intent(this, IniciarViagem.class);
+            startActivity(intent);
 
-        btnComecar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, TelaLogin.class);
-                startActivity(intent);
-            }
         });
     }
 

@@ -6,6 +6,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -62,6 +63,8 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
     private LocalizacaoModel destinoSelecionado;
     private String routePolyline;
     private CalcularRotaResponseDTO routeResponse;
+    private  ImageView imgHistorico,imgPerfil;
+    private boolean doubleBackToExitPressedOnce = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +73,13 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
         apiService = RetrofitClient.getApiService();
 
         setContentView(R.layout.activity_iniciar_viagem);
+        //local de findViewById
+        btnComecar2 = findViewById(R.id.btnComecar2);
+        etPartida = findViewById(R.id.etPartida);
+        etDestino = findViewById(R.id.etDestino);
+        imgHistorico = findViewById(R.id.imgHistorico);
+        imgPerfil = findViewById(R.id.imgPerfil);
+
 
         // Inicializar o fragmento do mapa
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -94,9 +104,6 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
 
         PlacesClient placesClient = Places.createClient(this);
 
-        btnComecar2 = findViewById(R.id.btnComecar2);
-        etPartida = findViewById(R.id.etPartida);
-        etDestino = findViewById(R.id.etDestino);
 
         AutocompleteSessionToken token = AutocompleteSessionToken.newInstance();
 
@@ -130,9 +137,9 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
                     // Atualizar o mapa
                     mMap.clear();
                     mMap.addMarker(new MarkerOptions()
-                        .position(latLng)
-                        .title(place.getName()
-                    ));
+                            .position(latLng)
+                            .title(place.getName()
+                            ));
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
 
                     Log.d("IniciarViagem", "Origem selecionada: " + place.getName() +
@@ -162,10 +169,10 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
 
                     // Adicionar marcador de destino (sem limpar o mapa para manter o marcador de origem)
                     mMap.addMarker(new MarkerOptions()
-                        .position(latLng)
-                        .title(place.getName())
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)
-                    ));
+                            .position(latLng)
+                            .title(place.getName())
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)
+                            ));
 
                     // Ajustar zoom para mostrar ambos os marcadores
                     if (origemSelecionada.getLatitude() != 0 && origemSelecionada.getLongitude() != 0) {
@@ -187,7 +194,6 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
                 Log.e("IniciarViagem", "Erro ao buscar detalhes do local: " + exception.getMessage());
             });
 
-
         });
 
         btnComecar2.setOnClickListener(view -> {
@@ -195,17 +201,17 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
             startActivity(intent);
         });
 
-        ImageView imgPerfil = findViewById(R.id.imgPerfil);
-        imgPerfil.setOnClickListener(v -> {
+        imgPerfil.setOnClickListener(view -> {
             Intent intent = new Intent(IniciarViagem.this, ConfiguracaoPerfil.class);
             startActivity(intent);
         });
 
-        ImageView imgHistorico = findViewById(R.id.imgHistorico);
-        imgHistorico.setOnClickListener(v -> {
-            Intent intent = new Intent(IniciarViagem.this, TelaAtividades.class);
+        imgHistorico.setOnClickListener(view ->{
+            Intent intent = new Intent(this, TelaAtividades.class);
             startActivity(intent);
+
         });
+
     }
 
     private void calcularRota() {
@@ -264,7 +270,7 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
                 .width(10)  // Largura da linha
                 .color(Color.BLUE)  // Cor da linha
                 .geodesic(true);
-         // Seguir a curvatura da Terra
+        // Seguir a curvatura da Terra
 
         // Adicionar a polyline ao mapa
         mMap.addPolyline(polylineOptions);
@@ -317,5 +323,17 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
                 mMap.setMyLocationEnabled(true);
             }
         }
+    }
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed(); // Sai do app normalmente
+            return;
+        }
+
+        this.doubleBackToExitPressedOnce = true;
+        Toast.makeText(this, "Pressione novamente para sair", Toast.LENGTH_SHORT).show();
+
+        new Handler().postDelayed(() -> doubleBackToExitPressedOnce = false, 2000); // Reseta em 2 segundos
     }
 }

@@ -44,8 +44,7 @@ import retrofit2.Response;
 
 public class ConfiguracaoPerfil extends AppCompatActivity {
 
-    private LinearLayout profileHeader, dataSection, optionsSection;
-    private LinearLayout dataContent, optionsContent;
+    private LinearLayout profileHeader, dataSection, optionsSection, dataContent, optionsContent;
     private ImageView arrowData, arrowOptions, profileImage;
     private ImageButton btnBack;
     private Button btnEditar, btnSalvar;
@@ -93,12 +92,10 @@ public class ConfiguracaoPerfil extends AppCompatActivity {
 
         // Inicializa o ImageButton btnBack
         btnBack = findViewById(R.id.btn_back);
-        btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Encerra a Activity atual e volta para a anterior
-                finish();
-            }
+
+        btnBack.setOnClickListener(view ->{
+          finish();
+
         });
 
         // Inicialize os EditTexts

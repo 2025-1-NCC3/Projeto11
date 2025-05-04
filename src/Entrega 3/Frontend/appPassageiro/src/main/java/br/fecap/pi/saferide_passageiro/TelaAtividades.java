@@ -28,6 +28,7 @@ public class TelaAtividades extends AppCompatActivity {
     private TextView textRua;
     private TextView textData;
     private TextView textHorario;
+    private ImageView imgPerfil,imgHome;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +39,8 @@ public class TelaAtividades extends AppCompatActivity {
         textRua = findViewById(R.id.textRua);
         textData = findViewById(R.id.textData);
         textHorario = findViewById(R.id.textHorario);
+        imgHome = findViewById(R.id.imgHome);
+        imgPerfil = findViewById(R.id.imgPerfil);
 
         EdgeToEdge.enable(this);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -46,16 +49,13 @@ public class TelaAtividades extends AppCompatActivity {
             return insets;
         });
 
-        ImageView imgPerfil = findViewById(R.id.imgPerfil);
         imgPerfil.setOnClickListener(v -> {
             Intent intent = new Intent(TelaAtividades.this, ConfiguracaoPerfil.class);
             startActivity(intent);
         });
 
-        ImageView imgHome = findViewById(R.id.imgHome);
         imgHome.setOnClickListener(v -> {
-            Intent intent = new Intent(TelaAtividades.this, IniciarViagem.class);
-            startActivity(intent);
+           finish();
         });
 
         criarAtividades();
