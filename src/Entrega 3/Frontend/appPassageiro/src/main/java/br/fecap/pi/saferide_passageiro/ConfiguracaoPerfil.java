@@ -30,6 +30,8 @@ import android.content.Intent;
 import android.widget.Toast;
 
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 
 import br.fecap.pi.saferide_passageiro.R;
 import br.fecap.pi.saferide_passageiro.dto.ResponseDTO;
@@ -367,18 +369,42 @@ public class ConfiguracaoPerfil extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 alertDialog.dismiss(); // Fecha o popup de confirmação
-                // Exibe uma mensagem de conta deletada com sucesso
-                AlertDialog.Builder successBuilder = new AlertDialog.Builder(ConfiguracaoPerfil.this);
-                successBuilder.setMessage("Conta deletada com sucesso!")
-                        .setCancelable(false)
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                finishAffinity(); // Fecha todas as activities
-                                System.exit(0); // Fecha o aplicativo
-                            }
-                        });
-                AlertDialog successDialog = successBuilder.create();
-                successDialog.show();
+
+                ApiService apiService = RetrofitClient.getApiService();
+
+                // Cria o corpo da requisição com o ID do usuário
+                Map<String, Integer> body = new HashMap<>();
+                body.put("id", sessionManager.getUserId());
+
+                // Chama a API passando o MAP corretamente
+                Call<ResponseDTO> call = apiService.deleteUser(body);
+
+                call.enqueue(new Callback<ResponseDTO>() {
+                    @Override
+                    public void onResponse(Call<ResponseDTO> call, Response<ResponseDTO> response) {
+                        if (response.isSuccessful()) {
+                            // Mostra mensagem de sucesso
+                            AlertDialog.Builder successBuilder = new AlertDialog.Builder(ConfiguracaoPerfil.this);
+                            successBuilder.setMessage("Conta deletada com sucesso!")
+                                    .setCancelable(false)
+                                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            sessionManager.logoutUser(); // limpa sessão
+                                            finishAffinity(); // Fecha todas as telas
+                                            System.exit(0); // Encerra o app
+                                        }
+                                    });
+                            successBuilder.create().show();
+                        } else {
+                            Toast.makeText(ConfiguracaoPerfil.this, "Erro ao deletar conta", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseDTO> call, Throwable t) {
+                        Toast.makeText(ConfiguracaoPerfil.this, "Erro: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         });
 
