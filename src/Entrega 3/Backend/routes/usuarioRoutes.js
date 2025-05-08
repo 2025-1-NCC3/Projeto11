@@ -11,6 +11,6 @@ router.post("/passageiro/login", usuarioController.loginPassageiro);
 router.post("/motorista/login", usuarioController.loginMotorista);
 router.put("/update", usuarioController.updateUsuario);
 router.put("/updateVeiculoMotorista", usuarioController.updateVeiculoMotorista);
-router.delete("/delete/:id", usuarioController.deleteUser);
+router.delete("/usuarios/delete", usuarioController.deleteUser);
 
 module.exports = router;

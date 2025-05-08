@@ -1,38 +1,25 @@
-const express = require('express');
-const usuarioRoutes = require('./routes/usuarioRoutes');
-const rotasRoutes = require('./routes/rotasRoutes');
+const express = require("express");
+const usuarioRoutes = require("./routes/usuarioRoutes");
+const rotasRoutes = require("./routes/rotasRoutes");
+const criptografiaMiddleware = require("./CriptografiaMiddleware");
+require("dotenv").config();
+
 const app = express();
-// const cors = require('cors');
-// const path = require('path');
-require('dotenv').config();
 
-// Middleware para processar dados no formato JSON
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// Middleware de criptografia deve vir ANTES de qualquer parsing do body
+app.use(criptografiaMiddleware);
 
-// Configuração do CORS
-// app.use(cors({
-//     origin: 'http://localhost:3000', // Permite solicitações do frontend
-//     optionsSuccessStatus: 200
-// }));
+// Não use express.json() aqui, já que estamos lidando com raw body
+// app.use(express.json()); ❌ Comentado
 
-// Porta do servidor
-const port = process.env.PORT || 5000;
-app.listen(port, () => {
-    console.log(`Servidor rodando na porta ${port}`);
+app.use("/usuarios", usuarioRoutes);
+app.use("/rotas", rotasRoutes);
+
+app.get("/", (req, res) => {
+  res.send("Servidor Funcionando");
 });
 
-app.get('/', (req, res) => {
-    res.send('Servidor Funcionando')
-})
-
-// Configurar o CORS para a rota de login (antes da rota POST)
-// app.options('/usuarios/login', cors({
-//     origin: 'http://localhost:3000', 
-//     methods: ['POST', 'GET', 'DELETE'], 
-//     allowedHeaders: ['Content-Type', 'Authorization'] 
-// }));
-
-app.use('/usuarios', usuarioRoutes);
-app.use('/rotas', rotasRoutes);
-// app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+const port = process.env.PORT || 5000;
+app.listen(port, () => {
+  console.log(`Servidor rodando na porta ${port}`);
+});
