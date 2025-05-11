@@ -11,6 +11,9 @@ import br.fecap.pi.saferide_passageiro.dto.ResponseDTO;
 import br.fecap.pi.saferide_passageiro.dto.ResponseLoginUserDTO;
 import br.fecap.pi.saferide_passageiro.dto.UpdateUserRequestDTO;
 import br.fecap.pi.saferide_passageiro.models.UsuarioModel;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -18,8 +21,10 @@ import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.HTTP;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
+import retrofit2.http.Part;
 import retrofit2.http.Path;
 
 public interface ApiService {
@@ -48,4 +53,12 @@ public interface ApiService {
 
     @POST("rotas/calcular-rota")
     Call<CalcularRotaResponseDTO> calcularRota(@Body CalcularRotaRequestDTO calcularRotaRequestDTO);
+
+    @Multipart
+    @POST("usuarios/upload-foto")
+    Call<ResponseBody> uploadFoto(
+            @Part MultipartBody.Part foto,
+            @Part("id") RequestBody id
+    );
+
 }

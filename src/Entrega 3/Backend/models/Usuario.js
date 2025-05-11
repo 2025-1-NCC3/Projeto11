@@ -10,77 +10,85 @@ const sequelize = require("../config/db");
 
 // models/Usuario.js
 module.exports = (sequelize, DataTypes) => {
-    const Usuario = sequelize.define('Usuario', {
+  const Usuario = sequelize.define(
+    "Usuario",
+    {
       id_usuario: {
         type: DataTypes.BIGINT,
         primaryKey: true,
         autoIncrement: true,
-        field: 'id_usuario'
+        field: "id_usuario",
       },
       nome: {
         type: DataTypes.STRING(500),
-        allowNull: false
+        allowNull: false,
       },
       email: {
         type: DataTypes.STRING(500),
         allowNull: false,
-        unique: true
+        unique: true,
       },
       telefone: {
         type: DataTypes.CHAR(11),
-        allowNull: false
+        allowNull: false,
       },
       cpf: {
         type: DataTypes.CHAR(11),
         allowNull: false,
-        unique: true
+        unique: true,
       },
       data_nascimento: {
         type: DataTypes.DATEONLY,
-        allowNull: false
+        allowNull: false,
       },
       tipo_usuario: {
-        type: DataTypes.ENUM('Passageiro', 'Motorista'),
-        allowNull: false
+        type: DataTypes.ENUM("Passageiro", "Motorista"),
+        allowNull: false,
       },
       senha: {
         type: DataTypes.STRING(100),
-        allowNull: false
+        allowNull: false,
       },
       criado_em: {
         type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW
+        defaultValue: DataTypes.NOW,
       },
       atualizado_em: {
         type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW
-      }
-    }, {
-      tableName: 'usuario',
-      timestamps: false // Já temos os campos personalizados criado_em e atualizado_em
+        defaultValue: DataTypes.NOW,
+      },
+      foto: {
+        type: DataTypes.STRING(1000),
+        allowNull: true,
+      },
+    },
+    {
+      tableName: "usuario",
+      timestamps: false, // Já temos os campos personalizados criado_em e atualizado_em
+    }
+  );
+
+  Usuario.associate = (models) => {
+    Usuario.hasOne(models.Motorista, {
+      foreignKey: "id_usuario",
+      as: "motorista",
     });
-  
-    Usuario.associate = (models) => {
-      Usuario.hasOne(models.Motorista, {
-        foreignKey: 'id_usuario',
-        as: 'motorista'
-      });
-      
-      Usuario.hasOne(models.Passageiro, {
-        foreignKey: 'id_usuario',
-        as: 'passageiro'
-      });
-      
-      Usuario.hasMany(models.Dispositivo, {
-        foreignKey: 'id_usuario',
-        as: 'dispositivos'
-      });
-      
-      Usuario.hasMany(models.Avaliacao, {
-        foreignKey: 'id_usuario',
-        as: 'avaliacoes'
-      });
-    };
-  
-    return Usuario;
+
+    Usuario.hasOne(models.Passageiro, {
+      foreignKey: "id_usuario",
+      as: "passageiro",
+    });
+
+    Usuario.hasMany(models.Dispositivo, {
+      foreignKey: "id_usuario",
+      as: "dispositivos",
+    });
+
+    Usuario.hasMany(models.Avaliacao, {
+      foreignKey: "id_usuario",
+      as: "avaliacoes",
+    });
   };
+
+  return Usuario;
+};

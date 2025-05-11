@@ -22,7 +22,22 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 import br.fecap.pi.saferide_passageiro.R;
+import br.fecap.pi.saferide_passageiro.retrofit.ApiService;
+import br.fecap.pi.saferide_passageiro.retrofit.RetrofitClient;
+import br.fecap.pi.saferide_passageiro.session.SessionManager;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import retrofit2.Response;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
 
 public class ModificarFoto extends AppCompatActivity {
 
@@ -57,17 +72,31 @@ public class ModificarFoto extends AppCompatActivity {
                     if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
                         Bundle extras = result.getData().getExtras();
                         Bitmap imageBitmap = (Bitmap) extras.get("data");
-                        imageView6.setImageBitmap(imageBitmap); // Atualiza o imageView6
+                        imageView6.setImageBitmap(imageBitmap);
+
+                        // Salvar imagem em arquivo temporário
+                        File imagemFile = salvarBitmapTemporariamente(imageBitmap);
+                        if (imagemFile != null) {
+                            fazerUploadImagem(imagemFile);
+                        }
+
                         Toast.makeText(this, "Imagem Capturada!", Toast.LENGTH_SHORT).show();
                     }
                 });
+
 
         galleryLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
                         Uri selectedImageUri = result.getData().getData();
-                        imageView6.setImageURI(selectedImageUri); // Atualiza o imageView6
+                        imageView6.setImageURI(selectedImageUri);
+
+                        File imagemFile = converterUriParaFile(selectedImageUri);
+                        if (imagemFile != null) {
+                            fazerUploadImagem(imagemFile);
+                        }
+
                         Toast.makeText(this, "Imagem da Galeria Selecionada!", Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -98,6 +127,71 @@ public class ModificarFoto extends AppCompatActivity {
                 abrirGaleria();
             }
         });
+    }
+
+    private void fazerUploadImagem(File file) {
+        SessionManager sessionManager = new SessionManager(getApplicationContext());
+        int userId = sessionManager.getUserId();
+
+        Log.d("UploadImagem", "ID do usuário enviado: " + userId);
+
+        RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), file);
+        MultipartBody.Part foto = MultipartBody.Part.createFormData("foto", file.getName(), requestFile);
+        RequestBody id = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(userId));
+
+        ApiService apiService = RetrofitClient.getApiService();
+        Call<ResponseBody> call = apiService.uploadFoto(foto, id);
+
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(ModificarFoto.this, "Foto enviada com sucesso!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(ModificarFoto.this, "Falha ao enviar imagem", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(ModificarFoto.this, "Erro: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private File salvarBitmapTemporariamente(Bitmap bitmap) {
+        try {
+            File arquivo = new File(getCacheDir(), "imagem_temp.jpg");
+            FileOutputStream fos = new FileOutputStream(arquivo);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            fos.flush();
+            fos.close();
+            return arquivo;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private File converterUriParaFile(Uri uri) {
+        try {
+            InputStream inputStream = getContentResolver().openInputStream(uri);
+            File arquivo = new File(getCacheDir(), "imagem_galeria.jpg");
+            FileOutputStream outputStream = new FileOutputStream(arquivo);
+
+            byte[] buffer = new byte[1024];
+            int len;
+            while ((len = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, len);
+            }
+
+            outputStream.close();
+            inputStream.close();
+            return arquivo;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     // Métodos
