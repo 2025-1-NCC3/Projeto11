@@ -119,150 +119,27 @@
                     android:id="@+id/textValorCusto"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/app_TextValorCusto"
+                    android:text="@string/app_TextCusto"
                     android:textColor="#CCCCCC"
                     android:textSize="17sp" />
             </LinearLayout>
         </LinearLayout>
 
-        <!-- Seção Verde Médio -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:background="#4E8655"
-            android:orientation="vertical"
-            android:padding="16dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="16dp"
-                android:text="@string/app_TextInfoPercurso"
-                android:textColor="#FFFFFF"
-                android:textSize="19sp"
-                android:textStyle="bold" />
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:backgroundTint="#ffffff"
-                android:elevation="0dp"
-                android:padding="12dp"
-                android:text="@string/app_TextPrimeiraInfoPrincipal"
-                android:textColor="#0F5E27"
-                android:textSize="19sp" />
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:backgroundTint="#ffffff"
-                android:elevation="0dp"
-                android:padding="12dp"
-                android:stateListAnimator="@null"
-                android:text="@string/app_TextSegundaInfoPrincipal"
-                android:textColor="#0F5E27"
-                android:textSize="19sp" />
-        </LinearLayout>
 
         <!-- Seção de Avaliação -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="180dp"
-            android:background="@drawable/background_viagem_aceita"
+            android:layout_height="480dp"
+            android:background="@color/white"
             android:gravity="center_horizontal"
             android:orientation="vertical"
             android:padding="16dp">
 
-            <TextView
-                android:id="@+id/textView2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:text="@string/app_TextAvalaicaoQuantitativo"
-                android:textColor="@color/Branco"
-                android:textSize="17sp" />
-
-            <me.zhanghai.android.materialratingbar.MaterialRatingBar
-                android:id="@+id/starBar"
-                android:layout_width="360dp"
-                android:layout_height="wrap_content"
-                android:numStars="5"
-                android:paddingStart="-8dp"
-                android:rating="0"
-                android:stepSize="1" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/textPessimo"
-                    android:layout_width="60dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="9dp"
-                    android:text="@string/appTextRbStar1"
-                    android:textAlignment="center"
-                    android:textColor="#FFFFFF"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/textRuim"
-                    android:layout_width="60dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="9dp"
-                    android:text="@string/appTextRbStar2"
-                    android:textAlignment="center"
-                    android:textColor="#FFFFFF"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/textNeutro"
-                    android:layout_width="70dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="9dp"
-                    android:text="@string/appTextRbStar3"
-                    android:textAlignment="center"
-                    android:textColor="#FFFFFF"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/textBom"
-                    android:layout_width="60dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="9dp"
-                    android:text="@string/appTextRbStar4"
-                    android:textAlignment="center"
-                    android:textColor="#FFFFFF"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/textPerfeito"
-                    android:layout_width="60dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="9dp"
-                    android:text="@string/appTextRbStar5"
-                    android:textAlignment="center"
-                    android:textColor="#FFFFFF"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
         </LinearLayout>
 
         <!-- Botões finais -->
 
-
-
-
     </LinearLayout>
-
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnTViagemAceitaSet"

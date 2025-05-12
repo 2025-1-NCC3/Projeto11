@@ -52,12 +52,11 @@
     <string name="app_TextGaleria">Galeria</string>
     <string name="app_TextCamera">Câmera</string>
     <string name="app_TextInfMotorista">Informações do Motorista</string>
-    <string name="app_TextNomeMotorista">Namo</string>
+    <string name="app_TextNomeMotorista">Name</string>
     <string name="app_TextModeloCarro">Modelo do Carro</string>
     <string name="app_TextPlaca">Placa</string>
     <string name="app_TextNumeroPlaca">xxx-xxxx</string>
     <string name="app_TextCusto">Custo</string>
-    <string name="app_TextValorCusto">R$00,00</string>
     <string name="app_TextCancelar">Cancelar</string>
 
     <string name="app_TextInfoPercurso">Principais informações do percurso</string>
@@ -79,6 +78,10 @@
     <string name="app_TextPositivoFeedback">Positivo</string>
     <string name="app_TextNeutroFeedback">Neutro</string>
     <string name="app_TextNegativoFeedback">Negativo</string>
+    <string name="app_TextTempo">Tempo:</string>
+    <string name="app_Text_Custo">Custo:</string>
+
+
 
     <string name="app_TextViagemAndamento">Viagem em Andamento</string>
     <string name="app_TextRua">Rua</string>

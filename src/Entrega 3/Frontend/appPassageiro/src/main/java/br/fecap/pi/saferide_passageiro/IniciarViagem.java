@@ -8,18 +8,27 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -37,16 +46,19 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.FetchPlaceRequest;
 import com.google.android.libraries.places.api.net.PlacesClient;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import br.fecap.pi.saferide_passageiro.R;
 import br.fecap.pi.saferide_passageiro.adapter.PlaceAutoSuggestAdapter;
+import br.fecap.pi.saferide_passageiro.adapter.adapter_rotas;
 import br.fecap.pi.saferide_passageiro.dto.CalcularRotaRequestDTO;
 import br.fecap.pi.saferide_passageiro.dto.CalcularRotaResponseDTO;
 import br.fecap.pi.saferide_passageiro.models.LocalizacaoModel;
+import br.fecap.pi.saferide_passageiro.models.RotasModel;
 import br.fecap.pi.saferide_passageiro.retrofit.ApiService;
 import br.fecap.pi.saferide_passageiro.retrofit.RetrofitClient;
+import br.fecap.pi.saferide_passageiro.session.SessionManager;
 import br.fecap.pi.saferide_passageiro.utils.MapRoutes;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -64,7 +76,10 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
     private String routePolyline;
     private CalcularRotaResponseDTO routeResponse;
     private  ImageView imgHistorico,imgPerfil;
+
     private boolean doubleBackToExitPressedOnce = false;
+
+    SessionManager sessionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +89,7 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
 
         setContentView(R.layout.activity_iniciar_viagem);
         //local de findViewById
-        btnComecar2 = findViewById(R.id.btnComecar2);
+//        btnComecar2 = findViewById(R.id.btnComecar2);
         etPartida = findViewById(R.id.etPartida);
         etDestino = findViewById(R.id.etDestino);
         imgHistorico = findViewById(R.id.imgHistorico);
@@ -144,6 +159,10 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
 
                     Log.d("IniciarViagem", "Origem selecionada: " + place.getName() +
                             " (" + latLng.latitude + ", " + latLng.longitude + ")");
+
+                    if (origemSelecionada != null && destinoSelecionado != null) {
+                        mostrarPopupRecycleView();
+                    }
                 }
             }).addOnFailureListener((exception) -> {
                 Log.e("IniciarViagem", "Erro ao buscar detalhes do local: " + exception.getMessage());
@@ -189,6 +208,10 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
                             " (" + latLng.latitude + ", " + latLng.longitude + ")");
 
                     calcularRota();
+
+                    if (origemSelecionada != null && destinoSelecionado != null) {
+                        mostrarPopupRecycleView();
+                    }
                 }
             }).addOnFailureListener((exception) -> {
                 Log.e("IniciarViagem", "Erro ao buscar detalhes do local: " + exception.getMessage());
@@ -196,10 +219,6 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
 
         });
 
-        btnComecar2.setOnClickListener(view -> {
-            Intent intent = new Intent(IniciarViagem.this, ViagemAceitaActivity.class);
-            startActivity(intent);
-        });
 
         imgPerfil.setOnClickListener(view -> {
             Intent intent = new Intent(IniciarViagem.this, ConfiguracaoPerfil.class);
@@ -213,6 +232,54 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
         });
 
     }
+    private void mostrarPopupRecycleView() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.TranslucentDialog);
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.popup_recycleview, null);
+        builder.setView(dialogView);
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+        // Controlar o tamanho do popup
+        Window window = dialog.getWindow();
+        if (window != null) {
+            window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+        }
+
+        // Pegar o RecyclerView do layout
+        RecyclerView recyclerView = dialogView.findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        // Criar lista de dados (você pode carregar isso de outro lugar depois)
+        List<RotasModel> listaRotas = new ArrayList<>();
+        listaRotas.add(new RotasModel("Rua das Acácias", 5));
+        listaRotas.add(new RotasModel("Av. Brasil", 4));
+        listaRotas.add(new RotasModel("Rua da Paz", 3));
+        listaRotas.add(new RotasModel("Japão Liberdade", 4));
+
+        // Criar e setar o adapter
+        adapter_rotas adapter = new adapter_rotas(listaRotas);
+        recyclerView.setAdapter(adapter);
+
+
+        // Limitar altura máxima do RecyclerView a altura de 3 itens
+        recyclerView.post(() -> {
+            int itemHeightDp = 90; // altura estimada de cada item em dp
+            int maxItems = 4;
+
+            float scale = recyclerView.getResources().getDisplayMetrics().density;
+            int maxHeightPx = (int) (itemHeightDp * maxItems * scale + 0.5f);
+
+            ViewGroup.LayoutParams params = recyclerView.getLayoutParams();
+            if (recyclerView.getHeight() > maxHeightPx) {
+                params.height = maxHeightPx;
+                recyclerView.setLayoutParams(params);
+            }
+        });
+
+    }
+
 
     private void calcularRota() {
         if (origemSelecionada.getLatitude() == 0 || destinoSelecionado.getLatitude() == 0) {
@@ -327,6 +394,7 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
     @Override
     public void onBackPressed() {
         if (doubleBackToExitPressedOnce) {
+            sessionManager.logoutUser(); // Limpa os dados da sessão do usuário
             super.onBackPressed(); // Sai do app normalmente
             return;
         }
@@ -336,4 +404,5 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
 
         new Handler().postDelayed(() -> doubleBackToExitPressedOnce = false, 2000); // Reseta em 2 segundos
     }
+
 }

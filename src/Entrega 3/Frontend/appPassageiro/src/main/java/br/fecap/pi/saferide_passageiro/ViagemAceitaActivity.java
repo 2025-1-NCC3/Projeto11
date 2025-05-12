@@ -17,7 +17,7 @@ public class ViagemAceitaActivity extends AppCompatActivity {
     private Button btnTViagemAceitaSet;
     private Button btnCancelarViagem;
     private Button btnMudarViagem;
-    private RatingBar starBar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +28,7 @@ public class ViagemAceitaActivity extends AppCompatActivity {
         btnTViagemAceitaSet = findViewById(R.id.btnTViagemAceitaSet);
         btnCancelarViagem = findViewById(R.id.btnCancelarViagem);
         btnMudarViagem = findViewById(R.id.btnMudarViagem);
-        starBar = findViewById(R.id.starBar);
+
 
         btnTViagemAceitaSet.setOnClickListener(view -> {
             Intent intent = new Intent(this, MetodoPagamento.class);
@@ -44,15 +44,6 @@ public class ViagemAceitaActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        starBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
-            @Override
-            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                int estrelasSelecionadas = (int) rating;
-                Toast.makeText(ViagemAceitaActivity.this,
-                        "Você avaliou com " + estrelasSelecionadas + " estrela(s)",
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
