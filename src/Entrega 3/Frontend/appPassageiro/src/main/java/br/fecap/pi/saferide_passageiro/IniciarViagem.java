@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,8 +16,11 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.RatingBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -60,6 +64,7 @@ import br.fecap.pi.saferide_passageiro.retrofit.ApiService;
 import br.fecap.pi.saferide_passageiro.retrofit.RetrofitClient;
 import br.fecap.pi.saferide_passageiro.session.SessionManager;
 import br.fecap.pi.saferide_passageiro.utils.MapRoutes;
+import me.zhanghai.android.materialratingbar.MaterialRatingBar;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -135,6 +140,16 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
         });
 
         etPartida.setOnItemClickListener((parent, view, position, id) -> {
+            String textoSelecionado = parent.getItemAtPosition(position).toString();
+
+            // Inflar o layout do popup
+            LayoutInflater inflater = LayoutInflater.from(IniciarViagem.this);
+            View popupView = inflater.inflate(R.layout.popup_avaliacao_completo, null);
+
+            // Encontrar o campo txtPontoPartida dentro do popup
+            TextView txtPontoPartida = popupView.findViewById(R.id.txtPontoPartida);
+            txtPontoPartida.setText(textoSelecionado);
+
             String placeId = adapter.getPlaceId(position);
 
             // Obter detalhes do local usando o Places API
@@ -251,22 +266,87 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
         RecyclerView recyclerView = dialogView.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Criar lista de dados (você pode carregar isso de outro lugar depois)
+        // Obter referência para o EditText etPartida da Activity principal e torná-lo efetivamente final
+        EditText etPartida = findViewById(R.id.etPartida);
+        final String textoPartida = (etPartida != null) ? etPartida.getText().toString() : "";
+
+        // Obter referência para o EditText etDestino da Activity principal e torná-lo efetivamente final
+        EditText etDestinoPrincipal = findViewById(R.id.etDestino);
+        final String textoDestinoPrincipal = (etDestinoPrincipal != null) ? etDestinoPrincipal.getText().toString() : "";
+
+        // Criar lista de dados (listaRotas inicia com etDestino - lógica de pasted_content.txt)
         List<RotasModel> listaRotas = new ArrayList<>();
-        listaRotas.add(new RotasModel("Rua das Acácias", 5));
+        listaRotas.add(new RotasModel(textoDestinoPrincipal, 5)); // Usa textoDeEtDestino
         listaRotas.add(new RotasModel("Av. Brasil", 4));
         listaRotas.add(new RotasModel("Rua da Paz", 3));
         listaRotas.add(new RotasModel("Japão Liberdade", 4));
 
         // Criar e setar o adapter
-        adapter_rotas adapter = new adapter_rotas(listaRotas);
-        recyclerView.setAdapter(adapter);
+        adapter_rotas adapter = new adapter_rotas(listaRotas, rota -> {
+            // Fechar o primeiro popup
+            dialog.dismiss();
 
+            // Abrir o popup completo
+            LayoutInflater inflater2 = LayoutInflater.from(this);
+            View popupView = inflater2.inflate(R.layout.popup_avaliacao_completo, null);
+
+            // Encontre os campos do popup
+            TextView txtDestinoPopup = popupView.findViewById(R.id.txtDestino);
+            MaterialRatingBar starBar = popupView.findViewById(R.id.starBar);
+            TextView txtPontoPartida = popupView.findViewById(R.id.txtPontoPartida);
+
+            // Passando a rua selecionada para o TextView do popup
+            if (txtDestinoPopup != null) {
+                txtDestinoPopup.setText(rota.getRua());
+            }
+
+            // Passando a quantidade de estrelas para o MaterialRatingBar
+            if (starBar != null) {
+                starBar.setRating(rota.getNota());
+            }
+
+            // Preencher txtPontoPartida com o valor de etPartida (lógica de pasted_content_2.txt) - CORRIGIDO
+            if (txtPontoPartida != null) {
+                txtPontoPartida.setText(textoPartida); // Usa a variável textoPartida, SEM ASPAS
+            }
+
+            // Obter referências para os componentes a serem ocultados/exibidos
+            View containerInicioViagem = findViewById(R.id.container_inicio_viagem_completo);
+            View containerToolbar = findViewById(R.id.container_toobar_completo);
+
+            // Ocultar os componentes antes de mostrar o PopupWindow
+            if (containerInicioViagem != null) {
+                containerInicioViagem.setVisibility(View.GONE);
+            }
+            if (containerToolbar != null) {
+                containerToolbar.setVisibility(View.GONE);
+            }
+
+            // Criar e exibir o PopupWindow
+            PopupWindow popupWindow = new PopupWindow(popupView,
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    true);
+
+            // Adicionar um OnDismissListener para reexibir os componentes
+            popupWindow.setOnDismissListener(() -> {
+                if (containerInicioViagem != null) {
+                    containerInicioViagem.setVisibility(View.VISIBLE);
+                }
+                if (containerToolbar != null) {
+                    containerToolbar.setVisibility(View.VISIBLE);
+                }
+            });
+
+            popupWindow.showAtLocation(findViewById(R.id.main), Gravity.CENTER, 0, 0);
+        });
+
+        recyclerView.setAdapter(adapter);
 
         // Limitar altura máxima do RecyclerView a altura de 3 itens
         recyclerView.post(() -> {
             int itemHeightDp = 90; // altura estimada de cada item em dp
-            int maxItems = 4;
+            int maxItems = 4; // Limite de itens visíveis
 
             float scale = recyclerView.getResources().getDisplayMetrics().density;
             int maxHeightPx = (int) (itemHeightDp * maxItems * scale + 0.5f);
@@ -277,9 +357,7 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
                 recyclerView.setLayoutParams(params);
             }
         });
-
     }
-
 
     private void calcularRota() {
         if (origemSelecionada.getLatitude() == 0 || destinoSelecionado.getLatitude() == 0) {

@@ -16,10 +16,16 @@ import me.zhanghai.android.materialratingbar.MaterialRatingBar;
 
 public class adapter_rotas extends RecyclerView.Adapter<adapter_rotas.ViewHolder> {
 
-    private List<RotasModel> listaRotas;
+    public interface OnItemClickListener {
+        void onItemClick(RotasModel rota);
+    }
 
-    public adapter_rotas(List<RotasModel> listaRotas) {
+    private List<RotasModel> listaRotas;
+    private OnItemClickListener listener;
+
+    public adapter_rotas(List<RotasModel> listaRotas, OnItemClickListener listener) {
         this.listaRotas = listaRotas;
+        this.listener = listener;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -45,7 +51,13 @@ public class adapter_rotas extends RecyclerView.Adapter<adapter_rotas.ViewHolder
     public void onBindViewHolder(@NonNull adapter_rotas.ViewHolder holder, int position) {
         RotasModel rota = listaRotas.get(position);
         holder.textRua.setText(rota.getRua());
-        holder.starBar.setRating(rota.getNota()); // Como nota é int e rating espera float, converte automaticamente
+        holder.starBar.setRating(rota.getNota());
+
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onItemClick(rota);
+            }
+        });
     }
 
     @Override

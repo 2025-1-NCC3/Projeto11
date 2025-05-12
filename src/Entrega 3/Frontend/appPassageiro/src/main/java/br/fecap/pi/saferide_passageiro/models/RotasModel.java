@@ -1,6 +1,5 @@
 package br.fecap.pi.saferide_passageiro.models;
 
-
 public class RotasModel {
     private String rua;
     private int nota;
