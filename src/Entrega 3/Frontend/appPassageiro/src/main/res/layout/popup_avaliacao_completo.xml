@@ -15,7 +15,7 @@
         <!--Bkg_verdeEscuro_container_Top-->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="170dp"
+            android:layout_height="200dp"
             android:layout_marginBottom="12dp"
             android:background="@drawable/bkg_principais_informacaoes"
             android:orientation="vertical">
@@ -23,7 +23,7 @@
             <!--Container do Ponto A até Ponto B-->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="130dp"
+                android:layout_height="170dp"
                 android:background="@drawable/background_viagem_aceita"
                 android:layout_marginTop="15dp"
                 android:layout_marginStart="15dp"
@@ -34,7 +34,7 @@
 
                 <ImageView
                     android:id="@+id/imageView"
-                    android:layout_width="51dp"
+                    android:layout_width="50dp"
                     android:layout_height="81dp"
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="8dp"
@@ -53,19 +53,18 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Ponto de Partida"
-                        android:layout_marginTop="12dp"
                         android:textColor="@android:color/white"
-                        android:textSize="16sp"
+                        android:textSize="20sp"
                         android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/txtDestino"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="38dp"
+                        android:layout_marginTop="70dp"
                         android:text="Destino"
                         android:textColor="@android:color/white"
-                        android:textSize="16sp" />
+                        android:textSize="20sp" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
