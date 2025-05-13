@@ -38,6 +38,10 @@ public class UsuarioModel {
     @SerializedName("validade_carteira")
     private String validadeCarteira;
 
+    @SerializedName("foto")
+    private String foto;
+
+
     public int getIdUsuario() {
         return idUsuario;
     }
@@ -100,6 +104,14 @@ public class UsuarioModel {
 
     public void setSenha(String senha) {
         this.senha = senha;
+    }
+
+    public String getFoto() {
+        return foto;
+    }
+
+    public void setFoto(String foto) {
+        this.foto = foto;
     }
 
     public String getCnh() {

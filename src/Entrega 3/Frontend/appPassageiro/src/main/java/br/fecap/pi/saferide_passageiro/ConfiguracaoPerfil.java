@@ -29,6 +29,7 @@ import androidx.core.view.WindowInsetsCompat;
 import android.content.Intent;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
@@ -112,6 +113,19 @@ public class ConfiguracaoPerfil extends AppCompatActivity {
 
         editSenha = findViewById(R.id.editTextSenha);
         editSenha.setText(sessionManager.getUserSenha());
+
+        ImageView imageView = findViewById(R.id.profile_image);
+        String urlFoto = sessionManager.getUserFoto();
+
+        if (urlFoto != null && !urlFoto.isEmpty()) {
+            Glide.with(this)
+                    .load(urlFoto)
+                    .placeholder(R.drawable.default_avatar)
+                    .error(R.drawable.default_avatar)
+                    .into(imageView);
+        } else {
+            imageView.setImageResource(R.drawable.default_avatar); // fallback
+        }
 
         // Inicializa os TextView
         textCPF = findViewById(R.id.textViewCPF);
