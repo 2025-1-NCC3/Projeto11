@@ -34,6 +34,7 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -99,6 +100,20 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
         etDestino = findViewById(R.id.etDestino);
         imgHistorico = findViewById(R.id.imgHistorico);
         imgPerfil = findViewById(R.id.imgPerfil);
+
+        sessionManager = new SessionManager(this);
+
+        String urlFoto = sessionManager.getUserFoto();
+
+        if (urlFoto != null && !urlFoto.isEmpty()) {
+            Glide.with(this)
+                    .load(urlFoto)
+                    .placeholder(R.drawable.default_avatar)
+                    .error(R.drawable.default_avatar)
+                    .into(imgPerfil);
+        } else {
+            imgPerfil.setImageResource(R.drawable.default_avatar); // fallback
+        }
 
 
         // Inicializar o fragmento do mapa

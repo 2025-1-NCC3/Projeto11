@@ -22,6 +22,8 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.bumptech.glide.Glide;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -49,6 +51,7 @@ public class ModificarFoto extends AppCompatActivity {
     private static final int REQUEST_GALLERY_PERMISSION = 200;
     private ActivityResultLauncher<Intent> cameraLauncher;
     private ActivityResultLauncher<Intent> galleryLauncher;
+    SessionManager sessionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +66,20 @@ public class ModificarFoto extends AppCompatActivity {
         btnVoltar = findViewById(R.id.btnVoltar);
         imgCamera = findViewById(R.id.imgCamera);
         imgGaleria = findViewById(R.id.imgGaleria);
-        imageView6 = findViewById(R.id.imageView6); // Adicione esta linha
+        imageView6  = findViewById(R.id.imageView6); // Adicione esta linha
+        sessionManager = new SessionManager(this);
+
+        String urlFoto = sessionManager.getUserFoto();
+
+        if (urlFoto != null && !urlFoto.isEmpty()) {
+            Glide.with(this)
+                    .load(urlFoto)
+                    .placeholder(R.drawable.default_avatar)
+                    .error(R.drawable.default_avatar)
+                    .into(imageView6);
+        } else {
+            imageView6.setImageResource(R.drawable.default_avatar); // fallback
+        }
 
         // Callbacks
         cameraLauncher = registerForActivityResult(
