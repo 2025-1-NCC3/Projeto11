@@ -379,7 +379,6 @@ exports.deleteUser = async (req, res) => {
   }
 };
 
-
 exports.loginPassageiro = async (req, res) => {
   console.log("🔐 [PASSAGEIRO] Iniciando login...");
   const { email, senha } = req.body;
@@ -415,6 +414,7 @@ exports.loginPassageiro = async (req, res) => {
     }
 
     // Prepara os dados para retorno
+
     const usuarioParaFront = {
       id_usuario: usuario.id_usuario,
       nome: usuario.nome,
@@ -424,6 +424,9 @@ exports.loginPassageiro = async (req, res) => {
       telefone: usuario.telefone || null,
       data_nascimento: usuario.data_nascimento
         ? new Date(usuario.data_nascimento).toISOString().split("T")[0]
+        : null,
+      foto: usuario.foto
+        ? `https://crk7zm-5000.csb.app/uploads/usuarios/${usuario.foto}`
         : null,
     };
 
@@ -477,9 +480,24 @@ exports.loginMotorista = async (req, res) => {
       const token = generateToken(usuario);
       console.log("✅ [MOTORISTA] Login bem-sucedido!");
 
+      const usuarioParaFront = {
+        id_usuario: usuario.id_usuario,
+        nome: usuario.nome,
+        email: usuario.email,
+        cpf: usuario.cpf || null,
+        tipo_usuario: usuario.tipo_usuario,
+        telefone: usuario.telefone || null,
+        data_nascimento: usuario.data_nascimento
+          ? new Date(usuario.data_nascimento).toISOString().split("T")[0]
+          : null,
+        foto: usuario.foto
+          ? `https://crk7zm-5000.csb.app/uploads/usuarios/${usuario.foto}`
+          : null,
+      };
+
       return res.status(200).json({
         message: "Login de motorista bem-sucedido!",
-        usuario: usuario,
+        usuario: usuarioParaFront,
         motorista: motorista,
         token: token,
       });

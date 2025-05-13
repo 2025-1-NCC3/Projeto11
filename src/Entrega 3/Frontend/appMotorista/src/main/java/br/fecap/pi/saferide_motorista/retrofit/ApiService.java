@@ -10,14 +10,19 @@ import br.fecap.pi.saferide_motorista.dto.ResponseLoginUserDTO;
 import br.fecap.pi.saferide_motorista.dto.UpdateUserRequestDTO;
 import br.fecap.pi.saferide_motorista.dto.UpdateVeiculoRequestDTO;
 import br.fecap.pi.saferide_motorista.models.UsuarioModel;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
+import retrofit2.http.Part;
 import retrofit2.http.Path;
 
 public interface ApiService {
@@ -78,6 +83,13 @@ public interface ApiService {
 );*/
     @POST("usuarios/add")
     Call<ResponseCreateUsuarioDTO> createUser(@Body CreateUserRequestDTO request);
+
+    @Multipart
+    @POST("usuarios/upload-foto")
+    Call<ResponseBody> uploadFoto(
+            @Part MultipartBody.Part foto,
+            @Part("id") RequestBody id
+    );
 
     @POST("usuarios/motorista/login")
     Call<ResponseLoginUserDTO> loginMotorista(@Body LoginRequestDTO request);

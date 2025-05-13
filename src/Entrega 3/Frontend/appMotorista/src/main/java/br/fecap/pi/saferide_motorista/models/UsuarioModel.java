@@ -32,6 +32,9 @@ public class UsuarioModel implements Serializable {
     @SerializedName("tipo_usuario")
     private TipoUsuarioEnum tipoUsuario;
 
+    @SerializedName("foto")
+    private String foto;
+
     // Getters e Setters
 
     public int getIdUsuario() {
@@ -88,6 +91,13 @@ public class UsuarioModel implements Serializable {
 
     public void setDataNascimento(String dataNascimento) {
         this.dataNascimento = dataNascimento;
+    }
+    public String getFoto() {
+        return foto;
+    }
+
+    public void setFoto(String foto) {
+        this.foto = foto;
     }
 
     public TipoUsuarioEnum getTipoUsuario() {

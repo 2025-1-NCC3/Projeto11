@@ -12,6 +12,10 @@ app.use(criptografiaMiddleware);
 // Não use express.json() aqui, já que estamos lidando com raw body
 // app.use(express.json()); ❌ Comentado
 
+// Torna a pasta "uploads" acessível publicamente via URL
+const path = require("path"); // já deve estar instalado com o Node.js
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
 app.use("/usuarios", usuarioRoutes);
 app.use("/rotas", rotasRoutes);
 

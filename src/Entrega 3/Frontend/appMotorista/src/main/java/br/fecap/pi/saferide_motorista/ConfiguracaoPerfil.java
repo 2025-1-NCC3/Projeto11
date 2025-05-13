@@ -30,6 +30,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.bumptech.glide.Glide;
+
 import java.util.Calendar;
 import java.util.Locale;
 
@@ -118,6 +120,23 @@ public class ConfiguracaoPerfil extends AppCompatActivity {
 
         editSenha = findViewById(R.id.editTextSenha);
         editSenha.setText(sessionManager.getUserSenha());
+
+        ImageView imageView = findViewById(R.id.profile_image);
+        String urlFoto = sessionManager.getUserFoto();
+
+        Log.d("IMAGEM_DEBUG", "URL da imagem: " + urlFoto); // <-- log adicionado
+
+        if (urlFoto != null && !urlFoto.isEmpty()) {
+            Glide.with(this)
+                    .load(urlFoto)
+                    .placeholder(R.drawable.default_avatar)
+                    .error(R.drawable.default_avatar)
+                    .into(imageView);
+        } else {
+            Log.d("IMAGEM_DEBUG", "URL nula ou vazia, usando imagem padrão.");
+            imageView.setImageResource(R.drawable.default_avatar); // fallback
+        }
+
 
         editTextCor = findViewById(R.id.editTextCor);
         editTextCor.setText(sessionManager.getMotoristaCor());

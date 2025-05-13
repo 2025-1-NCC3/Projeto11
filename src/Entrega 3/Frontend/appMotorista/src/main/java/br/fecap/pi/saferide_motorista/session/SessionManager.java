@@ -29,6 +29,7 @@ public class SessionManager {
     private static final String USER_TELEFONE = "UserTelefone";
     private static final String USER_EMAIL = "UserEmail";
     private static final String USER_SENHA = "UserSenha";
+    private static final String USER_FOTO = "UserFoto";
     private static final String USER_TOKEN = "UserToken";
 
     // Dados do motorista
@@ -55,7 +56,8 @@ public class SessionManager {
         editor.putString(USER_NOME, usuario.getNome());
         editor.putString(USER_TELEFONE, usuario.getTelefone());
         editor.putString(USER_EMAIL, usuario.getEmail());
-        editor.putString(USER_SENHA, usuario.getDataNascimento().toString());
+        editor.putString(USER_SENHA, usuario.getSenha());
+        editor.putString(USER_FOTO, usuario.getFoto());
         editor.putString(USER_TOKEN, token);
         editor.commit();
     }
@@ -118,7 +120,9 @@ public class SessionManager {
     public String getUserSenha() {
         return sharedPreferences.getString(USER_SENHA, null);
     }
-
+    public String getUserFoto() {
+        return sharedPreferences.getString(USER_FOTO, null);
+    }
     public String getUserToken() {
         return sharedPreferences.getString(USER_TOKEN, null);
     }

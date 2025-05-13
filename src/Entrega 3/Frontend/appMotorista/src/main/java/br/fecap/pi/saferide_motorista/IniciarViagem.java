@@ -13,18 +13,22 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import br.fecap.pi.saferide_motorista.R;
 import br.fecap.pi.saferide_motorista.adapter.adapter_IniciarViagem;
 import br.fecap.pi.saferide_motorista.model.IniciarViagemModel;
+import br.fecap.pi.saferide_motorista.session.SessionManager;
 
 public class IniciarViagem extends AppCompatActivity {
 
     private RecyclerView recyclerViewCorridas;
     private adapter_IniciarViagem adapter;
     private List<IniciarViagemModel> listaCorridas;
+    SessionManager sessionManager;
 
 
     @Override
@@ -59,6 +63,19 @@ public class IniciarViagem extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        sessionManager = new SessionManager(this);
+
+        String urlFoto = sessionManager.getUserFoto();
+
+        if (urlFoto != null && !urlFoto.isEmpty()) {
+            Glide.with(this)
+                    .load(urlFoto)
+                    .placeholder(R.drawable.default_avatar)
+                    .error(R.drawable.default_avatar)
+                    .into(imgPerfil);
+        } else {
+            imgPerfil.setImageResource(R.drawable.default_avatar); // fallback
+        }
 
         ImageView imgHistorico = findViewById(R.id.imgHistorico);
         imgHistorico.setOnClickListener(new View.OnClickListener() {
