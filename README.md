@@ -45,6 +45,9 @@ Com base nesses dados, o SafeRide oferece aos usuários a possibilidade de escol
 │   ├── Entrega2/
 │   │   ├── frontend/
 │   │   └── backend/
+|   ├── Entrega3/
+│   │   ├── frontend/
+│   │   └── backend/
 └── readme.md<br>
 ```
 
