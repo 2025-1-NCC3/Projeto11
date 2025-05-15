@@ -9,12 +9,15 @@ const Usuario = require("../models/Usuario");
 router.get("/", usuarioController.getUsuarios);
 router.get("/id/:id", usuarioController.getUsuarioById);
 router.get("/cpf/:cpf", usuarioController.getUsuarioByCpf);
+
 router.post("/add", usuarioController.createUsuario);
 router.post("/passageiro/login", usuarioController.loginPassageiro);
 router.post("/motorista/login", usuarioController.loginMotorista);
+router.post("/upload-foto", upload.single("foto"), atualizarFoto);
+
 router.put("/update", usuarioController.updateUsuario);
 router.put("/updateVeiculoMotorista", usuarioController.updateVeiculoMotorista);
-router.post("/upload-foto", upload.single("foto"), atualizarFoto);
+
 router.delete("/usuarios/delete", usuarioController.deleteUser);
 
 module.exports = router;
