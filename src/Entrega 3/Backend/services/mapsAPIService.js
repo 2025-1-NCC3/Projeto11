@@ -33,6 +33,7 @@ exports.GetRouteFromMapsAPI = async (origem, destino) => {
         },
         travelMode: 'DRIVE',
         routingPreference: 'TRAFFIC_AWARE',
+        computeAlternativeRoutes: true,
         languageCode: 'pt-BR',
         units: "METRIC"
     }
@@ -104,6 +105,7 @@ exports.GetRouteFromMapsAPI = async (origem, destino) => {
 //         return res.status(500).json({ error: 'Erro ao obter detalhes do local' });
 //     }
 // }
+
 
 // Geocodificação reversa (coordenadas para endereço)
 exports.reverseGeocode = async (latitude, longitude) => {

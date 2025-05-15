@@ -21,88 +21,133 @@ exports.calcularRota = async (req, res) => {
         const apiResponse = await GetRouteFromMapsAPI(origem, destino)
 
         if (apiResponse.status !== 200) {
-            return res.status(apiResponse.status).json({ error: 'Erro ao calcular a rota.' });
+            return res.status(apiResponse.status).json({ error: 'Erro ao calcular rotas.' });
         }
         
-        await RegisterLocalizacoesInDB(apiResponse)
-        const novaRota = await RegisterRouteInDB(apiResponse)
-        await RegisterTrechosInDB(apiResponse, novaRota)
-        
-        const rota = await db.Rota.findOne({ 
-            // Retornar rota usando novaRota.id_rota e associar os trechos relacionados e as localizações
-            where: { id_rota: novaRota.id_rota },
-            include: [{
-                model: db.Trecho,
-                as: 'trechos',
-                attributes: ['id_trecho', 'descricao', 'distancia', 'duracao', 'polyline', 'order_number'],
+        const routePromises = apiResponse.data.routes.map(async (route) => {
+            await RegisterLocalizacoesInDB(route)
+            const novaRota = await RegisterRouteInDB(route)
+            await RegisterTrechosInDB(route, novaRota)
+
+            return await db.Rota.findOne({ 
+                where: { id_rota: novaRota.id_rota },
                 include: [{
+                    model: db.Trecho,
+                    as: 'trechos',
+                    attributes: ['id_trecho', 'descricao', 'distancia', 'duracao', 'polyline', 'order_number'],
+                    include: [{
+                        model: db.Localizacao,
+                        as: 'local_partida',
+                        attributes: ['id_localizacao', 'place_id', 'latitude', 'longitude', 'logradouro', 'bairro', 'cidade', 'estado', 'cep', 'pais']
+                    }, {
+                        model: db.Localizacao,
+                        as: 'local_destino',
+                        attributes: ['id_localizacao', 'place_id', 'latitude', 'longitude',  'logradouro', 'bairro', 'cidade', 'estado', 'cep', 'pais']
+                    }],
+                    order: [
+                        ['order_number', 'ASC']
+                    ]
+                },
+                {
                     model: db.Localizacao,
                     as: 'local_partida',
                     attributes: ['id_localizacao', 'place_id', 'latitude', 'longitude', 'logradouro', 'bairro', 'cidade', 'estado', 'cep', 'pais']
                 }, {
                     model: db.Localizacao,
                     as: 'local_destino',
-                    attributes: ['id_localizacao', 'place_id', 'latitude', 'longitude',  'logradouro', 'bairro', 'cidade', 'estado', 'cep', 'pais']
-                }],
-                order: [
-                    ['order_number', 'ASC']
-                ]
-            },
-            {
-                model: db.Localizacao,
-                as: 'local_partida',
-                attributes: ['id_localizacao', 'place_id', 'latitude', 'longitude', 'logradouro', 'bairro', 'cidade', 'estado', 'cep', 'pais']
-            }, {
-                model: db.Localizacao,
-                as: 'local_destino',
-                attributes: ['id_localizacao', 'place_id', 'latitude', 'longitude', 'logradouro', 'bairro', 'cidade', 'estado', 'cep', 'pais']
-            }]
+                    attributes: ['id_localizacao', 'place_id', 'latitude', 'longitude', 'logradouro', 'bairro', 'cidade', 'estado', 'cep', 'pais']
+                }]
+            })
         })
 
-        const sendResponse = {
-            "route": {
-                "distanceMeters": apiResponse.data.routes[0].legs[0].distanceMeters,
-                "duration": apiResponse.data.routes[0].legs[0].duration,
-                "polyline": apiResponse.data.routes[0].legs[0].polyline,
-                "startLocation": {
-                    "latitude": apiResponse.data.routes[0].legs[0].startLocation.latLng.latitude,
-                    "longitude": apiResponse.data.routes[0].legs[0].startLocation.latLng.longitude
-                },
-                "endLocation": {
-                    "latitude": apiResponse.data.routes[0].legs[0].endLocation.latLng.latitude,
-                    "longitude": apiResponse.data.routes[0].legs[0].endLocation.latLng.longitude
-                },
-                "steps": apiResponse.data.routes[0].legs[0].steps.map(step => ({
-                    "distanceMeters": step.distanceMeters,
-                    "staticDuration": step.staticDuration,
-                    "polyline": step.polyline,
-                    "startLocation": {
-                        "latitude": step.startLocation.latLng.latitude,
-                        "longitude": step.startLocation.latLng.longitude
-                    },
-                    "endLocation": {
-                        "latitude": step.endLocation.latLng.latitude,
-                        "longitude": step.endLocation.latLng.longitude
-                    }
-                })),
-                "localizedValues": {
-                    "distance": {
-                        "text": apiResponse.data.routes[0].legs[0].localizedValues.distance.text,
-                    },
-                    "duration": {
-                        "text": apiResponse.data.routes[0].legs[0].localizedValues.duration.text,
-                    },
-                    "staticDuration": {
-                        "text": apiResponse.data.routes[0].legs[0].localizedValues.staticDuration.text,
-                    }
-                },
-                "description": apiResponse.data.routes[0].legs[0].description,
-                "routeToken": apiResponse.data.routes[0].legs[0].routeToken,
+        const listaRotas = await Promise.all(routePromises)
 
-            }
-        }
+        // await apiResponse.data.routes.forEach(async (route) => {
+        //     await RegisterLocalizacoesInDB(route)
+        //     const novaRota = await RegisterRouteInDB(route)
+        //     await RegisterTrechosInDB(route, novaRota)
 
-        return res.status(200).json(rota);
+        //     const rota = await db.Rota.findOne({ 
+        //         where: { id_rota: novaRota.id_rota },
+        //         include: [{
+        //             model: db.Trecho,
+        //             as: 'trechos',
+        //             attributes: ['id_trecho', 'descricao', 'distancia', 'duracao', 'polyline', 'order_number'],
+        //             include: [{
+        //                 model: db.Localizacao,
+        //                 as: 'local_partida',
+        //                 attributes: ['id_localizacao', 'place_id', 'latitude', 'longitude', 'logradouro', 'bairro', 'cidade', 'estado', 'cep', 'pais']
+        //             }, {
+        //                 model: db.Localizacao,
+        //                 as: 'local_destino',
+        //                 attributes: ['id_localizacao', 'place_id', 'latitude', 'longitude',  'logradouro', 'bairro', 'cidade', 'estado', 'cep', 'pais']
+        //             }],
+        //             order: [
+        //                 ['order_number', 'ASC']
+        //             ]
+        //         },
+        //         {
+        //             model: db.Localizacao,
+        //             as: 'local_partida',
+        //             attributes: ['id_localizacao', 'place_id', 'latitude', 'longitude', 'logradouro', 'bairro', 'cidade', 'estado', 'cep', 'pais']
+        //         }, {
+        //             model: db.Localizacao,
+        //             as: 'local_destino',
+        //             attributes: ['id_localizacao', 'place_id', 'latitude', 'longitude', 'logradouro', 'bairro', 'cidade', 'estado', 'cep', 'pais']
+        //         }]
+        //     })
+
+        //     listaRotas.push(rota);
+        // })
+
+        // const response = {
+        //     routes: listaRotas
+        // }
+
+        // const sendResponse = {
+        //     "route": {
+        //         "distanceMeters": apiResponse.data.routes[0].legs[0].distanceMeters,
+        //         "duration": apiResponse.data.routes[0].legs[0].duration,
+        //         "polyline": apiResponse.data.routes[0].legs[0].polyline,
+        //         "startLocation": {
+        //             "latitude": apiResponse.data.routes[0].legs[0].startLocation.latLng.latitude,
+        //             "longitude": apiResponse.data.routes[0].legs[0].startLocation.latLng.longitude
+        //         },
+        //         "endLocation": {
+        //             "latitude": apiResponse.data.routes[0].legs[0].endLocation.latLng.latitude,
+        //             "longitude": apiResponse.data.routes[0].legs[0].endLocation.latLng.longitude
+        //         },
+        //         "steps": apiResponse.data.routes[0].legs[0].steps.map(step => ({
+        //             "distanceMeters": step.distanceMeters,
+        //             "staticDuration": step.staticDuration,
+        //             "polyline": step.polyline,
+        //             "startLocation": {
+        //                 "latitude": step.startLocation.latLng.latitude,
+        //                 "longitude": step.startLocation.latLng.longitude
+        //             },
+        //             "endLocation": {
+        //                 "latitude": step.endLocation.latLng.latitude,
+        //                 "longitude": step.endLocation.latLng.longitude
+        //             }
+        //         })),
+        //         "localizedValues": {
+        //             "distance": {
+        //                 "text": apiResponse.data.routes[0].legs[0].localizedValues.distance.text,
+        //             },
+        //             "duration": {
+        //                 "text": apiResponse.data.routes[0].legs[0].localizedValues.duration.text,
+        //             },
+        //             "staticDuration": {
+        //                 "text": apiResponse.data.routes[0].legs[0].localizedValues.staticDuration.text,
+        //             }
+        //         },
+        //         "description": apiResponse.data.routes[0].legs[0].description,
+        //         "routeToken": apiResponse.data.routes[0].legs[0].routeToken,
+
+        //     }
+        // }
+
+        return res.status(200).json({routes: listaRotas});
     } catch (error) {
         console.error('Erro ao calcular a rota:', error);
         
@@ -241,7 +286,7 @@ exports.obterDetalhesLocal = async (req, res) => {
 
 async function RegisterLocalizacoesInDB(response) {
     const locations = [];
-    const { startLocation, endLocation, steps } = response.data.routes[0].legs[0];
+    const { startLocation, endLocation, steps } = response.legs[0];
     
     locations.push(startLocation, endLocation);
 
@@ -265,7 +310,8 @@ async function RegisterLocalizacoesInDB(response) {
             });
 
             // Se não existir, criar nova localização
-            if (!existingLocation) {
+            if (existingLocation === null) {
+                // Se a localização já existe, não faz nada
                 const localizacao = {
                     latitude: location.latLng.latitude,
                     longitude: location.latLng.longitude,
@@ -288,21 +334,13 @@ async function RegisterLocalizacoesInDB(response) {
 }
 
 async function RegisterRouteInDB(response) {
-    const routeToken = response.data.routes[0].routeToken
-    const route = response.data.routes[0].legs[0]
+    const routeToken = response.routeToken
+    const route = response.legs[0]
     let newStartLocation
     let newEndLocation
 
     try {
-        const newRoute = await db.Rota.findOne({
-            where: {
-                polyline: route.polyline.encodedPolyline
-            }
-        })
-
-        if (newRoute) {
-            return newRoute
-        }   
+          
     } catch (error) {
         console.error('Erro ao verificar rota existente:', error)
         throw new Error('Erro ao verificar rota existente' + error)
@@ -318,7 +356,7 @@ async function RegisterRouteInDB(response) {
             }
         })
         
-        if (!startLocation) {
+        if (startLocation === null) {
             const localizacao = {
                 latitude: route.startLocation.latLng.latitude,
                 longitude: route.startLocation.latLng.longitude,
@@ -345,7 +383,7 @@ async function RegisterRouteInDB(response) {
             }
         })
 
-        if (!endLocation) {
+        if (endLocation === null) {
             const localizacao = {
                 latitude: route.endLocation.latLng.latitude,
                 longitude: route.endLocation.latLng.longitude,
@@ -362,6 +400,17 @@ async function RegisterRouteInDB(response) {
         } else {
             newEndLocation = endLocation
         }
+
+        const newRoute = await db.Rota.findOne({
+            where: {
+                descricao: `${newStartLocation.logradouro} - ${newEndLocation.logradouro}`,
+                distancia: route.distanceMeters,
+            }
+        })
+
+        if (newRoute !== null) {
+            return newRoute
+        } 
 
         const routeDetails = {
             maps_token: routeToken,
@@ -382,7 +431,7 @@ async function RegisterRouteInDB(response) {
 
 async function RegisterTrechosInDB(response, route) {
     const routeId = route.id_rota
-    const { steps } = response.data.routes[0].legs[0]
+    const { steps } = response.legs[0]
 
     try {
         var order = 1;
@@ -396,7 +445,7 @@ async function RegisterTrechosInDB(response, route) {
                 }
             });
             
-            if (existingStep) {
+            if (existingStep !== null) {
                 return
             }
 
@@ -409,7 +458,7 @@ async function RegisterTrechosInDB(response, route) {
             });
 
             // Se a localização de início não existe, obter detalhes e criá-la
-            if (!startLocation) {
+            if (startLocation === null) {
                 const startLocationDetails = await reverseGeocode(
                     step.startLocation.latLng.latitude, 
                     step.startLocation.latLng.longitude
@@ -440,7 +489,7 @@ async function RegisterTrechosInDB(response, route) {
             });
 
             // Se a localização de destino não existe, obter detalhes e criá-la
-            if (!endLocation) {
+            if (endLocation === null) {
                 const endLocationDetails = await reverseGeocode(
                     step.endLocation.latLng.latitude, 
                     step.endLocation.latLng.longitude
