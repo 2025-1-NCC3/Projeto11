@@ -3,6 +3,7 @@ package br.fecap.pi.saferide_passageiro.retrofit;
 import java.util.List;
 import java.util.Map;
 
+import br.fecap.pi.saferide_passageiro.dto.AvaliacoesRotaResponseDTO;
 import br.fecap.pi.saferide_passageiro.dto.CalcularRotaRequestDTO;
 import br.fecap.pi.saferide_passageiro.dto.CalcularRotaResponseDTO;
 import br.fecap.pi.saferide_passageiro.dto.LoginRequestDTO;
@@ -53,6 +54,9 @@ public interface ApiService {
 
     @POST("rotas/calcular-rota")
     Call<CalcularRotaResponseDTO> calcularRota(@Body CalcularRotaRequestDTO calcularRotaRequestDTO);
+
+    @GET("avaliacoes/{idRota}")
+    Call<List<AvaliacoesRotaResponseDTO>> getAvaliacoesRota(@Path("idRota") int idRota);
 
     @Multipart
     @POST("usuarios/upload-foto")

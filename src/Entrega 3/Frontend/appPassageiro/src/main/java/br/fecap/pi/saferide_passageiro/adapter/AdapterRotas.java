@@ -11,19 +11,21 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import br.fecap.pi.saferide_passageiro.R;
-import br.fecap.pi.saferide_passageiro.models.RotasModel;
+import br.fecap.pi.saferide_passageiro.dto.AvaliacoesRotaResponseDTO;
+import br.fecap.pi.saferide_passageiro.models.RotaModel;
+import br.fecap.pi.saferide_passageiro.utils.AvaliacaoUtils;
 import me.zhanghai.android.materialratingbar.MaterialRatingBar;
 
-public class adapter_rotas extends RecyclerView.Adapter<adapter_rotas.ViewHolder> {
+public class AdapterRotas extends RecyclerView.Adapter<AdapterRotas.ViewHolder> {
 
     public interface OnItemClickListener {
-        void onItemClick(RotasModel rota);
+        void onItemClick(RotaModel rota);
     }
 
-    private List<RotasModel> listaRotas;
+    private List<RotaModel> listaRotas;
     private OnItemClickListener listener;
 
-    public adapter_rotas(List<RotasModel> listaRotas, OnItemClickListener listener) {
+    public AdapterRotas(List<RotaModel> listaRotas, OnItemClickListener listener) {
         this.listaRotas = listaRotas;
         this.listener = listener;
     }
@@ -41,17 +43,20 @@ public class adapter_rotas extends RecyclerView.Adapter<adapter_rotas.ViewHolder
 
     @NonNull
     @Override
-    public adapter_rotas.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public AdapterRotas.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.adapter_rotas_layout, parent, false);
         return new ViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull adapter_rotas.ViewHolder holder, int position) {
-        RotasModel rota = listaRotas.get(position);
-        holder.textRua.setText(rota.getRua());
-        holder.starBar.setRating(rota.getNota());
+    public void onBindViewHolder(@NonNull AdapterRotas.ViewHolder holder, int position) {
+        RotaModel rota = listaRotas.get(position);
+        holder.textRua.setText(rota.getDescricao());
+
+        if (rota.getAvaliacoes() != null) {
+            holder.starBar.setRating(AvaliacaoUtils.calcularMediaAvaliacao(rota.getAvaliacoes()));
+        }
 
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) {

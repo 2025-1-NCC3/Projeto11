@@ -19,7 +19,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
-import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -56,14 +55,16 @@ import java.util.Arrays;
 import java.util.List;
 
 import br.fecap.pi.saferide_passageiro.adapter.PlaceAutoSuggestAdapter;
-import br.fecap.pi.saferide_passageiro.adapter.adapter_rotas;
+import br.fecap.pi.saferide_passageiro.adapter.AdapterRotas;
+import br.fecap.pi.saferide_passageiro.dto.AvaliacoesRotaResponseDTO;
 import br.fecap.pi.saferide_passageiro.dto.CalcularRotaRequestDTO;
 import br.fecap.pi.saferide_passageiro.dto.CalcularRotaResponseDTO;
 import br.fecap.pi.saferide_passageiro.models.LocalizacaoModel;
-import br.fecap.pi.saferide_passageiro.models.RotasModel;
+import br.fecap.pi.saferide_passageiro.models.RotaModel;
 import br.fecap.pi.saferide_passageiro.retrofit.ApiService;
 import br.fecap.pi.saferide_passageiro.retrofit.RetrofitClient;
 import br.fecap.pi.saferide_passageiro.session.SessionManager;
+import br.fecap.pi.saferide_passageiro.utils.AvaliacaoUtils;
 import br.fecap.pi.saferide_passageiro.utils.MapRoutes;
 import me.zhanghai.android.materialratingbar.MaterialRatingBar;
 import retrofit2.Call;
@@ -190,9 +191,9 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
                     Log.d("IniciarViagem", "Origem selecionada: " + place.getName() +
                             " (" + latLng.latitude + ", " + latLng.longitude + ")");
 
-                    if (origemSelecionada != null && destinoSelecionado != null) {
-                        mostrarPopupRecycleView();
-                    }
+//                    if (origemSelecionada != null && destinoSelecionado != null) {
+//                        mostrarPopupRecycleView(responseCalcularRota);
+//                    }
                 }
             }).addOnFailureListener((exception) -> {
                 Log.e("IniciarViagem", "Erro ao buscar detalhes do local: " + exception.getMessage());
@@ -238,17 +239,12 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
                             " (" + latLng.latitude + ", " + latLng.longitude + ")");
 
                     calcularRota();
-
-                    if (origemSelecionada != null && destinoSelecionado != null) {
-                        mostrarPopupRecycleView();
-                    }
                 }
             }).addOnFailureListener((exception) -> {
                 Log.e("IniciarViagem", "Erro ao buscar detalhes do local: " + exception.getMessage());
             });
 
         });
-
 
         imgPerfil.setOnClickListener(view -> {
             Intent intent = new Intent(IniciarViagem.this, ConfiguracaoPerfil.class);
@@ -262,7 +258,8 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
         });
 
     }
-    private void mostrarPopupRecycleView() {
+
+    private void mostrarPopupRecycleView(ArrayList<RotaModel> rotas) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.TranslucentDialog);
         LayoutInflater inflater = getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.popup_recycleview, null);
@@ -289,15 +286,15 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
         EditText etDestinoPrincipal = findViewById(R.id.etDestino);
         final String textoDestinoPrincipal = (etDestinoPrincipal != null) ? etDestinoPrincipal.getText().toString() : "";
 
-        // Criar lista de dados
-        List<RotasModel> listaRotas = new ArrayList<>();
-        listaRotas.add(new RotasModel(textoDestinoPrincipal, 5));
-        listaRotas.add(new RotasModel("Av. Brasil", 4));
-        listaRotas.add(new RotasModel("Rua da Paz", 3));
-        listaRotas.add(new RotasModel("Japão Liberdade", 4));
+        // Criar lista de dados (listaRotas inicia com etDestino - lógica de pasted_content.txt)
+        List<RotaModel> listaRotas = new ArrayList<>(rotas);
+//        listaRotas.add(new RotaModel(textoDestinoPrincipal, 5)); // Usa textoDeEtDestino
+//        listaRotas.add(new RotaModel("Av. Brasil", 4));
+//        listaRotas.add(new RotaModel("Rua da Paz", 3));
+//        listaRotas.add(new RotaModel("Japão Liberdade", 4));
 
         // Criar e setar o adapter
-        adapter_rotas adapter = new adapter_rotas(listaRotas, rota -> {
+        AdapterRotas adapter = new AdapterRotas(rotas, rota -> {
             // Fechar o primeiro popup
             dialog.dismiss();
 
@@ -312,10 +309,10 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
 
             // Passar os dados
             if (txtDestinoPopup != null) {
-                txtDestinoPopup.setText(rota.getRua());
+                txtDestinoPopup.setText(rota.getLocalDestino().getLogradouro());
             }
-            if (starBar != null) {
-                starBar.setRating(rota.getNota());
+            if (starBar != null && rota.getAvaliacoes() != null) {
+                starBar.setRating(AvaliacaoUtils.calcularMediaAvaliacao(rota.getAvaliacoes()));
             }
             if (txtPontoPartida != null) {
                 txtPontoPartida.setText(textoPartida);
@@ -381,7 +378,6 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
         });
     }
 
-
     private void calcularRota() {
         if (origemSelecionada.getLatitude() == 0 || destinoSelecionado.getLatitude() == 0) {
             Toast.makeText(this, "Por favor, selecione origem e destino", Toast.LENGTH_SHORT).show();
@@ -389,7 +385,6 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
         }
 
         CalcularRotaRequestDTO routeRequest = new CalcularRotaRequestDTO(origemSelecionada, destinoSelecionado);
-        final CalcularRotaResponseDTO[] routeResponse = new CalcularRotaResponseDTO[1];
         Call<CalcularRotaResponseDTO> call = apiService.calcularRota(routeRequest);
 
         call.enqueue(new Callback<>() {
@@ -398,9 +393,16 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
                 if (response.isSuccessful()) {
                     // Processar resposta de sucesso
                     // Você pode armazenar a resposta em um Bundle e passar para a próxima Activity
-                    CalcularRotaResponseDTO calcularRotaResponseDTO = response.body();
                     Log.d("RESPONSE API", "onResponse: " + response.body());
-                    desenharPolyline(calcularRotaResponseDTO.getPolyline());
+                    ArrayList<RotaModel> rotas = response.body().getRoutes();
+
+                    rotas.forEach((rota) -> {
+                        buscarAvaliacoes(rota);
+                        //classificarRota();
+                        desenharPolyline(rota.getPolyline(), Color.BLUE);
+                    });
+
+                    mostrarPopupRecycleView(rotas);
                 } else {
                     // Tratar erro na resposta
                     Toast.makeText(IniciarViagem.this,
@@ -416,10 +418,34 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
                         "Falha na comunicação: " + t.getMessage(),
                         Toast.LENGTH_SHORT).show();
             }
+
+            private void buscarAvaliacoes(RotaModel rota) {
+                Call<List<AvaliacoesRotaResponseDTO>> call = apiService.getAvaliacoesRota(rota.getIdRota());
+
+                call.enqueue(new Callback<>() {
+                    @Override
+                    public void onResponse(Call<List<AvaliacoesRotaResponseDTO>> call, Response<List<AvaliacoesRotaResponseDTO>> response) {
+                        if (response.isSuccessful()) {
+                            assert response.body() != null;
+                            rota.setAvaliacoes(response.body());
+                            Log.d("ROTAS: ", rota.getDescricao() + response.body());
+                        } else {
+                            Toast.makeText(IniciarViagem.this,
+                                    "Erro ao buscar avaliações da rota: " + response.message(),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<AvaliacoesRotaResponseDTO>> call, Throwable t) {
+
+                    }
+                });
+            }
         });
     }
 
-    private void desenharPolyline(String encodedPolyline) {
+    private void desenharPolyline(String encodedPolyline, int color) {
         // Verificar se o mapa e a polyline estão disponíveis
         if (mMap == null || encodedPolyline == null || encodedPolyline.isEmpty()) {
             return;
@@ -437,8 +463,7 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
                 .addAll(points)
                 .width(10)  // Largura da linha
                 .color(Color.BLUE)  // Cor da linha
-                .geodesic(true);
-        // Seguir a curvatura da Terra
+                .geodesic(false); // Seguir a curvatura da Terra
 
         // Adicionar a polyline ao mapa
         mMap.addPolyline(polylineOptions);
@@ -452,10 +477,10 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
 
         // Adicionar padding em torno da rota
         int padding = 100; // em pixels
-        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding);
 
         // Mover a câmera suavemente
-        mMap.animateCamera(cu);
+        mMap.animateCamera(cameraUpdate);
     }
 
     // Mapa carregado

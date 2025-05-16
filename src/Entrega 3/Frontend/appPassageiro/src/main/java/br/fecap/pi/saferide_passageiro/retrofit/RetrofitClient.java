@@ -11,7 +11,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import java.util.concurrent.TimeUnit;
 
 public class RetrofitClient {
-    private static final String BASE_URL = "https://crk7zm-5000.csb.app";
+    private static final String BASE_URL = "https://t7zn5w-5000.csb.app";
+
     private static Retrofit retrofit = null;
 
     public static ApiService getApiService() {
