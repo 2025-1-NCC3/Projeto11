@@ -289,9 +289,9 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
         EditText etDestinoPrincipal = findViewById(R.id.etDestino);
         final String textoDestinoPrincipal = (etDestinoPrincipal != null) ? etDestinoPrincipal.getText().toString() : "";
 
-        // Criar lista de dados (listaRotas inicia com etDestino - lógica de pasted_content.txt)
+        // Criar lista de dados
         List<RotasModel> listaRotas = new ArrayList<>();
-        listaRotas.add(new RotasModel(textoDestinoPrincipal, 5)); // Usa textoDeEtDestino
+        listaRotas.add(new RotasModel(textoDestinoPrincipal, 5));
         listaRotas.add(new RotasModel("Av. Brasil", 4));
         listaRotas.add(new RotasModel("Rua da Paz", 3));
         listaRotas.add(new RotasModel("Japão Liberdade", 4));
@@ -310,26 +310,21 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
             MaterialRatingBar starBar = popupView.findViewById(R.id.starBar);
             TextView txtPontoPartida = popupView.findViewById(R.id.txtPontoPartida);
 
-            // Passando a rua selecionada para o TextView do popup
+            // Passar os dados
             if (txtDestinoPopup != null) {
                 txtDestinoPopup.setText(rota.getRua());
             }
-
-            // Passando a quantidade de estrelas para o MaterialRatingBar
             if (starBar != null) {
                 starBar.setRating(rota.getNota());
             }
-
-            // Preencher txtPontoPartida com o valor de etPartida (lógica de pasted_content_2.txt) - CORRIGIDO
             if (txtPontoPartida != null) {
-                txtPontoPartida.setText(textoPartida); // Usa a variável textoPartida, SEM ASPAS
+                txtPontoPartida.setText(textoPartida);
             }
 
-            // Obter referências para os componentes a serem ocultados/exibidos
+            // Ocultar containers
             View containerInicioViagem = findViewById(R.id.container_inicio_viagem_completo);
             View containerToolbar = findViewById(R.id.container_toobar_completo);
 
-            // Ocultar os componentes antes de mostrar o PopupWindow
             if (containerInicioViagem != null) {
                 containerInicioViagem.setVisibility(View.GONE);
             }
@@ -343,7 +338,7 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
                     ViewGroup.LayoutParams.WRAP_CONTENT,
                     true);
 
-            // Adicionar um OnDismissListener para reexibir os componentes
+            // Ao fechar o popup, reexibir os containers
             popupWindow.setOnDismissListener(() -> {
                 if (containerInicioViagem != null) {
                     containerInicioViagem.setVisibility(View.VISIBLE);
@@ -353,6 +348,18 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
                 }
             });
 
+            // === AQUI ADICIONAMOS O BOTÃO btnSet PARA IR PARA MetodoPagamento ===
+            Button btnSet = popupView.findViewById(R.id.btnSet);
+            if (btnSet != null) {
+                btnSet.setOnClickListener(v -> {
+                    popupWindow.dismiss(); // fecha o popup
+
+                    // Inicia a tela MetodoPagamento
+                    Intent intent = new Intent(this, MetodoPagamento.class);
+                    startActivity(intent);
+                });
+            }
+
             popupWindow.showAtLocation(findViewById(R.id.main), Gravity.CENTER, 0, 0);
         });
 
@@ -360,8 +367,8 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
 
         // Limitar altura máxima do RecyclerView a altura de 3 itens
         recyclerView.post(() -> {
-            int itemHeightDp = 90; // altura estimada de cada item em dp
-            int maxItems = 4; // Limite de itens visíveis
+            int itemHeightDp = 90;
+            int maxItems = 4;
 
             float scale = recyclerView.getResources().getDisplayMetrics().density;
             int maxHeightPx = (int) (itemHeightDp * maxItems * scale + 0.5f);
@@ -373,6 +380,7 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
             }
         });
     }
+
 
     private void calcularRota() {
         if (origemSelecionada.getLatitude() == 0 || destinoSelecionado.getLatitude() == 0) {

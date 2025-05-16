@@ -60,7 +60,7 @@ public class MetodoPagamento extends AppCompatActivity {
                     Toast.makeText(MetodoPagamento.this, "Por favor, selecione um método de pagamento.", Toast.LENGTH_SHORT).show();
                 } else {
                     // A opção foi selecionada - ir para a próxima tela
-                    Intent intent = new Intent(MetodoPagamento.this, TempoViagemActivity.class);
+                    Intent intent = new Intent(MetodoPagamento.this, ViagemAceitaActivity.class);
                     intent.putExtra("metodo_pagamento", opcaoSelecionada); // Se quiser passar para a próxima tela
                     startActivity(intent);
                 }
