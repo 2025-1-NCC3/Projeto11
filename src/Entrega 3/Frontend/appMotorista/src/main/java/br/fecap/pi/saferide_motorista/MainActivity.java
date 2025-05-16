@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
         btnComecar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, TelaLogin.class);
+                Intent intent = new Intent(MainActivity.this, IniciarViagem.class);
                 startActivity(intent);
             }
         });

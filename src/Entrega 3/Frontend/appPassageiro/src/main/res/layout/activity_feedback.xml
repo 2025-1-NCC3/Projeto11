@@ -8,51 +8,35 @@
     android:background="@color/white"
     tools:context="br.fecap.pi.saferide_passageiro.Feedback">
 
-    <FrameLayout
-        android:id="@+id/frameFeedback"
-        android:layout_width="414dp"
-        android:layout_height="208dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0">
-
-        <ImageView
-            android:id="@+id/imgBackgroundPagamento"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="center"
-            app:srcCompat="@drawable/img_feedback" />
-    </FrameLayout>
-
     <TextView
         android:id="@+id/textTituloFeedback"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:fontFamily="@font/roboto"
         android:text="@string/appTituloFeedback"
         android:textColor="@color/Preto"
         android:textSize="27sp"
-        android:fontFamily="@font/roboto"
         android:textStyle="bold"
-        android:layout_marginTop="180dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.1" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15sp"
+        android:layout_height="0dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="20dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toTopOf="@+id/btnFinalizar"
         app:layout_constraintTop_toBottomOf="@id/textTituloFeedback">
 
         <LinearLayout
             android:id="@+id/layoutFeedback"
-            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:padding="16dp">
 
             <LinearLayout
@@ -92,39 +76,44 @@
                 android:layout_height="wrap_content"
                 android:padding="8dp">
 
-                <RadioGroup android:id="@+id/rgPositivos"
+                <LinearLayout
+                    android:id="@+id/checkboxGroupPositivos"
                     android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-                    <RadioButton
+                    <CheckBox
+                        android:id="@+id/checkPositivo1"
                         android:text="@string/app_TextFeedback1Positivo"
                         app:buttonTint="@color/VerdeEscuro"
                         android:textColor="@color/VerdeEscuro"
                         android:textSize="16sp"
                         android:layout_height="wrap_content"
                         android:layout_width="match_parent" />
-                    <RadioButton
+                    <CheckBox
+                        android:id="@+id/checkPositivo2"
                         android:text="@string/app_TextFeedback2Positivo"
                         app:buttonTint="@color/VerdeEscuro"
                         android:textColor="@color/VerdeEscuro"
                         android:textSize="16sp"
                         android:layout_height="wrap_content"
                         android:layout_width="match_parent" />
-                    <RadioButton
+                    <CheckBox
+                        android:id="@+id/checkPositivo3"
                         android:text="@string/app_TextFeedback3Positivo"
                         app:buttonTint="@color/VerdeEscuro"
                         android:textColor="@color/VerdeEscuro"
                         android:textSize="16sp"
                         android:layout_height="wrap_content"
                         android:layout_width="match_parent" />
-                    <RadioButton
+                    <CheckBox
+                        android:id="@+id/checkPositivo4"
                         android:text="@string/app_TextFeedback4Positivo"
                         app:buttonTint="@color/VerdeEscuro"
                         android:textColor="@color/VerdeEscuro"
                         android:textSize="16sp"
                         android:layout_height="wrap_content"
                         android:layout_width="match_parent" />
-                </RadioGroup>
+                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
@@ -164,32 +153,36 @@
                 android:layout_height="wrap_content"
                 android:padding="8dp">
 
-                <RadioGroup android:id="@+id/rgNeutros"
+                <LinearLayout
+                    android:id="@+id/checkboxGroupNeutros"
                     android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-                    <RadioButton
+                    <CheckBox
+                        android:id="@+id/checkNeutro1"
                         android:text="@string/app_TextFeedback1Neutro"
                         app:buttonTint="@color/Amarelo"
                         android:textColor="@color/VerdeEscuro"
                         android:textSize="16sp"
                         android:layout_height="wrap_content"
                         android:layout_width="match_parent" />
-                    <RadioButton
+                    <CheckBox
+                        android:id="@+id/checkNeutro2"
                         android:text="@string/app_TextFeedback2Neutro"
                         app:buttonTint="@color/Amarelo"
                         android:textColor="@color/VerdeEscuro"
                         android:textSize="16sp"
                         android:layout_height="wrap_content"
                         android:layout_width="match_parent"/>
-                    <RadioButton
+                    <CheckBox
+                        android:id="@+id/checkNeutro3"
                         android:text="@string/app_TextFeedback3Neutro"
                         app:buttonTint="@color/Amarelo"
                         android:textColor="@color/VerdeEscuro"
                         android:textSize="16sp"
                         android:layout_height="wrap_content"
                         android:layout_width="match_parent"/>
-                </RadioGroup>
+                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
@@ -229,53 +222,58 @@
                 android:layout_height="wrap_content"
                 android:padding="8dp">
 
-                <RadioGroup android:id="@+id/rgNegativos"
+                <LinearLayout
+                    android:id="@+id/checkboxGroupNegativos"
                     android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-                    <RadioButton
+                    <CheckBox
+                        android:id="@+id/checkNegativo1"
                         android:text="@string/app_TextFeedback1Negativo"
                         app:buttonTint="@color/Vermelho"
                         android:textColor="@color/VerdeEscuro"
                         android:textSize="16sp"
                         android:layout_height="wrap_content"
                         android:layout_width="match_parent"/>
-                    <RadioButton
+                    <CheckBox
+                        android:id="@+id/checkNegativo2"
                         android:text="@string/app_TextFeedback2Negativo"
                         app:buttonTint="@color/Vermelho"
                         android:textColor="@color/VerdeEscuro"
                         android:textSize="16sp"
                         android:layout_height="wrap_content"
                         android:layout_width="match_parent"/>
-                    <RadioButton
+                    <CheckBox
+                        android:id="@+id/checkNegativo3"
                         android:text="@string/app_TextFeedback3Negativo"
                         app:buttonTint="@color/Vermelho"
                         android:textColor="@color/VerdeEscuro"
                         android:textSize="16sp"
                         android:layout_height="wrap_content"
                         android:layout_width="match_parent"/>
-                    <RadioButton
+                    <CheckBox
+                        android:id="@+id/checkNegativo4"
                         android:text="@string/app_TextFeedback4Negativo"
                         app:buttonTint="@color/Vermelho"
                         android:textColor="@color/VerdeEscuro"
                         android:textSize="16sp"
                         android:layout_height="wrap_content"
                         android:layout_width="match_parent"/>
-                    <RadioButton
+                    <CheckBox
+                        android:id="@+id/checkNegativo5"
                         android:text="@string/app_TextFeedback5Negativo"
                         app:buttonTint="@color/Vermelho"
                         android:textColor="@color/VerdeEscuro"
                         android:textSize="16sp"
                         android:layout_height="wrap_content"
                         android:layout_width="match_parent"/>
-                </RadioGroup>
+                </LinearLayout>
             </LinearLayout>
 
-            <ImageView
-                android:id="@+id/imageView2"
+            <!-- Espaço adicional para garantir que o conteúdo não fique escondido atrás do botão -->
+            <View
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ic_arrow_back" />
+                android:layout_height="20dp" />
         </LinearLayout>
     </ScrollView>
 
@@ -285,6 +283,7 @@
         android:layout_height="60dp"
         android:layout_marginStart="40dp"
         android:layout_marginEnd="40dp"
+        android:layout_marginBottom="30dp"
         android:background="@drawable/button_background"
         android:clickable="true"
         android:focusable="true"
@@ -292,13 +291,8 @@
         android:textColor="@color/Branco"
         android:textSize="21sp"
         android:textStyle="bold"
-        android:layout_marginBottom="50dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintVertical_bias="0.87"
-        app:layout_goneMarginEnd="20dp" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-
