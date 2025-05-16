@@ -1,27 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+    android:id="@+id/coordinator_layout_main"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     tools:context="br.fecap.pi.saferide_passageiro.ViagemAceitaActivity">
 
-    <LinearLayout
+    <!-- Conteúdo principal da tela (ex: Mapa, lista, etc.) -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main_content_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="150dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="match_parent">
 
-        <!-- Seção Verde Escuro -->
+        <FrameLayout
+            android:id="@+id/frameLayoutViagemAceita"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <fragment
+                android:id="@+id/mapViagemAceita"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+        </FrameLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Container de informações sobre o motorista (BottomSheet) -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container_informacaoMotorista"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+        app:behavior_peekHeight="50dp"
+        app:behavior_hideable="false">
+
         <LinearLayout
+            android:id="@+id/linearLayout"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:background="#0F5E27"
+            android:layout_height="wrap_content"
+            android:background="@drawable/background_viagem_aceita"
             android:orientation="vertical"
             android:padding="16dp">
 
@@ -29,7 +54,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="30dp"
+                android:layout_marginTop="15dp"
                 android:text="@string/app_TextInfMotorista"
                 android:textColor="#FFFFFF"
                 android:textSize="14sp"
@@ -125,6 +151,6 @@
             </LinearLayout>
         </LinearLayout>
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

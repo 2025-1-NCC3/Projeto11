@@ -279,7 +279,7 @@
     </ScrollView>
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btnCadastrar"
+        android:id="@+id/btnFinalizar"
         android:layout_width="0dp"
         android:layout_height="60dp"
         android:layout_marginStart="40dp"

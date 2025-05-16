@@ -10,9 +10,11 @@
     android:gravity="center"
     tools:context="br.fecap.pi.saferide_passageiro.SplashScreenActivity">
 
-    <ImageView
-        android:layout_width="400dp"
-        android:layout_height="400dp"
-        android:src="@drawable/icon_passenger"
-        />
+    <pl.droidsonroids.gif.GifImageView
+        android:id="@+id/gifView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:src="@drawable/saferide" />
+
 </LinearLayout>

@@ -2,25 +2,35 @@ package br.fecap.pi.saferide_passageiro;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
-import br.fecap.pi.saferide_passageiro.R;
+import pl.droidsonroids.gif.GifDrawable;
+import pl.droidsonroids.gif.GifImageView;
 
 public class SplashScreenActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_splash_screen);
 
-        new Handler().postDelayed(() -> {
-            startActivity(new Intent(SplashScreenActivity.this, MainActivity.class));
-            finish(); // Fecha a SplashActivity para não voltar pra ela
-        }, 2000); // 2 segundos de splash
+        GifImageView gifView = findViewById(R.id.gifView);
 
+        try {
+            GifDrawable gifDrawable = new GifDrawable(getResources(), R.drawable.saferide);
+            gifDrawable.setLoopCount(1); // Exibe o GIF apenas uma vez
+            gifView.setImageDrawable(gifDrawable);
+
+            // Listener para detectar o fim da animação
+            gifDrawable.addAnimationListener(loopNumber -> {
+                // Quando o loop termina (nesse caso, só vai acontecer 1 vez)
+                startActivity(new Intent(SplashScreenActivity.this, MainActivity.class));
+                finish();
+            });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

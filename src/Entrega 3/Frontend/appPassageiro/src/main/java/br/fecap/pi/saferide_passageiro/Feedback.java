@@ -2,6 +2,7 @@ package br.fecap.pi.saferide_passageiro;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -15,6 +16,7 @@ public class Feedback extends AppCompatActivity {
     private LinearLayout btnNeutro, layoutNeutros;
     private LinearLayout btnNegativo, layoutNegativos;
     private ImageView imgSetaPositivo, imgSetaNeutro, imgSetaNegativo;
+    private Button btnFinalizar;
 
     private boolean isPositivosOpen = false;
     private boolean isNeutrosOpen = false;
@@ -57,5 +59,12 @@ public class Feedback extends AppCompatActivity {
             layoutNegativos.setVisibility(isNegativosOpen ? View.VISIBLE : View.GONE);
             imgSetaNegativo.setImageResource(isNegativosOpen ? R.drawable.icon_seta_baixo : R.drawable.icon_seta_esquerda);
         });
+
+        btnFinalizar = findViewById(R.id.btnFinalizar);
+
+        btnFinalizar.setOnClickListener(v -> {
+            finish(); // Encerra a tela atual
+        });
+
     }
 }
