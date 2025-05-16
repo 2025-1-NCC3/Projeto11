@@ -41,7 +41,8 @@
                 android:scaleY="0.8"
                 android:layout_marginStart="-20dp"
                 android:isIndicator="true"
-                android:focusable="false" />
+                android:focusable="false"
+                android:progressTint="@color/VerdeEscuro"/>
 
 
         </LinearLayout>

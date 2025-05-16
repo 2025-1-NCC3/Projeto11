@@ -63,6 +63,8 @@ public class MetodoPagamento extends AppCompatActivity {
                     Intent intent = new Intent(MetodoPagamento.this, ViagemAceitaActivity.class);
                     intent.putExtra("metodo_pagamento", opcaoSelecionada); // Se quiser passar para a próxima tela
                     startActivity(intent);
+                    finish();
+
                 }
             }
         });
