@@ -28,42 +28,44 @@
         android:theme="@style/Theme.Uber_SafeRide"
         tools:targetApi="31">
         <activity
-            android:name="br.fecap.pi.saferide_passageiro.TempoViagemActivity"
+            android:name=".activity_tela_carregamento"
             android:exported="false" />
         <activity
-            android:name="br.fecap.pi.saferide_passageiro.Feedback"
+            android:name=".TempoViagemActivity"
             android:exported="false" />
         <activity
-            android:name="br.fecap.pi.saferide_passageiro.MetodoPagamento"
+            android:name=".Feedback"
             android:exported="false" />
         <activity
-            android:name="br.fecap.pi.saferide_passageiro.ViagemAceitaActivity"
+            android:name=".MetodoPagamento"
             android:exported="false" />
         <activity
-            android:name="br.fecap.pi.saferide_passageiro.ModificarFoto"
+            android:name=".ViagemAceitaActivity"
             android:exported="false" />
         <activity
-            android:name="br.fecap.pi.saferide_passageiro.ConfiguracaoPerfil"
+            android:name=".ModificarFoto"
             android:exported="false" />
         <activity
-            android:name="br.fecap.pi.saferide_passageiro.IniciarViagem"
+            android:name=".ConfiguracaoPerfil"
             android:exported="false" />
         <activity
-            android:name="br.fecap.pi.saferide_passageiro.TelaAtividades"
+            android:name=".IniciarViagem"
             android:exported="false" />
         <activity
-            android:name="br.fecap.pi.saferide_passageiro.TelaCadastro"
+            android:name=".TelaAtividades"
             android:exported="false" />
         <activity
-            android:name="br.fecap.pi.saferide_passageiro.TelaLogin"
+            android:name=".TelaCadastro"
             android:exported="false" />
         <activity
-            android:name="br.fecap.pi.saferide_passageiro.MainActivity"
-            android:exported="false"/>
-
-            <activity
-            android:name="br.fecap.pi.saferide_passageiro.SplashScreenActivity"
-            android:exported="true" >
+            android:name=".TelaLogin"
+            android:exported="false" />
+        <activity
+            android:name=".MainActivity"
+            android:exported="false" />
+        <activity
+            android:name=".SplashScreenActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

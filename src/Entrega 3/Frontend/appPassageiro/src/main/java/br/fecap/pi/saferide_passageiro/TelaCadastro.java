@@ -9,9 +9,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.airbnb.lottie.LottieAnimationView;
 
 import java.util.Calendar;
 import java.util.Locale;
@@ -35,6 +38,8 @@ public class TelaCadastro extends AppCompatActivity {
     private TextView txtCadastrarSe;
     ApiService apiService;
     SessionManager sessionManager;
+    private LottieAnimationView animationView;
+    private FrameLayout loadingLayout;
     Context context = this;
 
     @SuppressLint("MissingInflatedId")
@@ -54,6 +59,9 @@ public class TelaCadastro extends AppCompatActivity {
         etSenha = findViewById(R.id.etSenha);
         btnCadastrar = findViewById(R.id.btnCadastrar);
         txtCadastrarSe = findViewById(R.id.txtCadastrar_se);
+
+        loadingLayout = findViewById(R.id.loadingLayout);
+        animationView = findViewById(R.id.animationView);
 
         etDataNasci.setOnClickListener(v -> {
             final Calendar calendar = Calendar.getInstance();
@@ -85,6 +93,8 @@ public class TelaCadastro extends AppCompatActivity {
                 }
 
                 if (camposPreenchidos()) {
+                    showLoading();
+
                     // 1. Cria o objeto UsuarioModel com os dados em texto puro
                     UsuarioModel usuario = new UsuarioModel();
                     usuario.setNome(etNome.getText().toString());
@@ -101,6 +111,8 @@ public class TelaCadastro extends AppCompatActivity {
                     call.enqueue(new Callback<ResponseCreateUsuarioDTO>() {
                         @Override
                         public void onResponse(Call<ResponseCreateUsuarioDTO> call, Response<ResponseCreateUsuarioDTO> response) {
+                            hideLoading();
+
                             if (response.isSuccessful() && response.body() != null) {
                                 ResponseCreateUsuarioDTO res = response.body();
                                 Toast.makeText(context, res.getMessage(), Toast.LENGTH_SHORT).show();
@@ -108,6 +120,7 @@ public class TelaCadastro extends AppCompatActivity {
                                 startActivity(intent);
                                 finish();
                             } else {
+                                hideLoading();
                                 Toast.makeText(context, "Erro ao criar usuário!", Toast.LENGTH_SHORT).show();
                             }
                         }
@@ -146,5 +159,25 @@ public class TelaCadastro extends AppCompatActivity {
                 !etTelefone.getText().toString().trim().isEmpty() &&
                 !etEmail.getText().toString().trim().isEmpty() &&
                 !etSenha.getText().toString().trim().isEmpty();
+    }
+
+    private void showLoading() {
+        runOnUiThread(() -> {
+            loadingLayout.setVisibility(View.VISIBLE);
+            animationView.playAnimation();
+        });
+    }
+
+    private void hideLoading() {
+        runOnUiThread(() -> {
+            loadingLayout.setVisibility(View.GONE);
+            animationView.pauseAnimation();
+        });
+    }
+
+    @Override
+    protected void onDestroy() {
+        hideLoading();
+        super.onDestroy();
     }
 }
