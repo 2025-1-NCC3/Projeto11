@@ -17,14 +17,18 @@ public class UpdateUserRequestDTO {
 
     @SerializedName("telefone")
     private String telefone;
+    @SerializedName("senha")
+    private String senha;
 
     // Construtor
-    public UpdateUserRequestDTO(int idUsuario, String cpf, String nome, String email, String telefone) {
+    public UpdateUserRequestDTO(int idUsuario, String cpf, String nome, String email, String telefone, String senha) {
         this.idUsuario = idUsuario;
         this.cpf = cpf;
         this.nome = nome;
         this.email = email;
         this.telefone = telefone;
+        this.senha = senha;
+
     }
 
     // Getters

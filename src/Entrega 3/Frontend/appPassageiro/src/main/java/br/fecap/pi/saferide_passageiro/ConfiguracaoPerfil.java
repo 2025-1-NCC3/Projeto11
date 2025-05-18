@@ -52,7 +52,7 @@ public class ConfiguracaoPerfil extends AppCompatActivity {
     private ImageButton btnBack;
     private Button btnEditar, btnSalvar;
     private EditText editNome, editTelefone, editEmail, editSenha;
-    private TextView textCPF, textDataNascimento, txtSair;
+    private TextView textCPF, textDataNascimento, txtSair, txtName;
     private AlertDialog alertDialog;
     private TextView txtDeletarConta;
 
@@ -103,16 +103,19 @@ public class ConfiguracaoPerfil extends AppCompatActivity {
 
         // Inicialize os EditTexts
         editNome = findViewById(R.id.editTextNome);
-        editNome.setText(sessionManager.getUserNome());
+        editNome.setHint("Nome: " + sessionManager.getUserNome());
+
+        txtName = findViewById(R.id.txtName);
+        txtName.setText("Olá, " + sessionManager.getUserNome() + " !");
 
         editTelefone = findViewById(R.id.editTextTelefone);
-        editTelefone.setText(sessionManager.getUserTelefone());
+        editTelefone.setHint("Telefone: " + sessionManager.getUserTelefone());
 
         editEmail = findViewById(R.id.editTextEmail);
-        editEmail.setText(sessionManager.getUserEmail());
+        editEmail.setHint("Email: " + sessionManager.getUserEmail());
 
         editSenha = findViewById(R.id.editTextSenha);
-        editSenha.setText(sessionManager.getUserSenha());
+        editSenha.setHint("Senha: ********");
 
         ImageView imageView = findViewById(R.id.profile_image);
         String urlFoto = sessionManager.getUserFoto();
@@ -193,13 +196,15 @@ public class ConfiguracaoPerfil extends AppCompatActivity {
                     String nome = editNome.getText().toString();
                     String email = editEmail.getText().toString();
                     String telefone = editTelefone.getText().toString();
+                    String senha = editSenha.getText().toString();
 
                     UpdateUserRequestDTO updateUserRequestDTO = new UpdateUserRequestDTO(
                             sessionManager.getUserId(),
                             sessionManager.getUserCpf(),
                             nome,
                             email,
-                            telefone
+                            telefone,
+                            senha
                     );
 
                     Call<ResponseDTO> call = apiService.updateUser(updateUserRequestDTO);

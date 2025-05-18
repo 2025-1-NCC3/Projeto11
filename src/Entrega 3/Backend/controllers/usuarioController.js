@@ -250,19 +250,13 @@ exports.updateUsuario = async (req, res) => {
       usuario.telefone = telefone;
     }
 
-    // if (senha) {
-    //     const samePassword = bcrypt.compare(senha, usuario.senha);
-
-    //     if (!samePassword) {
-    //         bcrypt.hash(senha, 10, async (err, hashedPassword) => {
-    //             if (err) {
-    //                 return res.status(500).json({ message: 'Erro ao criar a senha. Tente novamente.' });
-    //             }
-
-    //             usuario.senha = hashedPassword;
-    //         });
-    //     }
-    // }
+    if (senha) {
+      const samePassword = await bcrypt.compare(senha, usuario.senha);
+      if (!samePassword) {
+        const hashedPassword = await bcrypt.hash(senha, 10);
+        usuario.senha = hashedPassword;
+      }
+    }
 
     await usuario.save();
 
