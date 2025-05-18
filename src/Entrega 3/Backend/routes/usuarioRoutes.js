@@ -18,6 +18,6 @@ router.post("/upload-foto", upload.single("foto"), atualizarFoto);
 router.put("/update", usuarioController.updateUsuario);
 router.put("/updateVeiculoMotorista", usuarioController.updateVeiculoMotorista);
 
-router.delete("/usuarios/delete", usuarioController.deleteUser);
+router.delete("/delete", usuarioController.deleteUser);
 
 module.exports = router;

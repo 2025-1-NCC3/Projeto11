@@ -313,68 +313,69 @@ exports.updateVeiculoMotorista = async (req, res) => {
 exports.deleteUser = async (req, res) => {
   const { id } = req.body;
 
-  // Verifica se o ID foi enviado no corpo
   if (!id) {
-    console.log("ID não fornecido no corpo da requisição."); // Log de erro
+    console.log("ID não fornecido no corpo da requisição.");
     return res.status(400).json({ message: "ID é obrigatório" });
   }
 
-  // Verifica se o ID é um número válido
   if (isNaN(id)) {
-    console.log(`ID fornecido é inválido: ${id}`); // Log de erro
+    console.log(`ID fornecido é inválido: ${id}`);
     return res.status(400).json({ message: "ID inválido" });
   }
 
-  const t = await db.transaction(); // Inicia uma transação
+  const t = await db.sequelize.transaction();
 
   try {
-    console.log(`Tentando buscar usuário com ID: ${id}`); // Log de progresso
-    const usuario = await db.Usuario.findOne({ where: { id }, transaction: t });
+    console.log(`Tentando buscar usuário com ID: ${id}`);
+    const usuario = await db.Usuario.findOne({
+      where: { id_usuario: id },
+      transaction: t,
+    });
 
     if (!usuario) {
-      console.log(`Usuário não encontrado com ID: ${id}`); // Log de erro
+      console.log(`Usuário não encontrado com ID: ${id}`);
       await t.rollback();
       return res.status(404).json({ message: "Usuário não encontrado" });
     }
 
-    console.log(`Usuário encontrado: ${usuario.nome}`); // Log de sucesso
+    console.log(`Usuário encontrado: ${usuario.nome}`);
 
-    // Se o usuário for um motorista, deleta os dados do motorista
     if (usuario.tipo_usuario === "Motorista") {
-      console.log(`Deletando dados do motorista com ID: ${id}`);
-      await db.Motorista.destroy({
-        where: { id_usuario: id },
-        transaction: t, // Associado à transação
-      });
-    }
-
-    // Se o usuário for um passageiro, deleta os dados do passageiro
-    if (usuario.tipo_usuario === "Passageiro") {
-      console.log(`Deletando dados do passageiro com ID: ${id}`);
-      await db.Passageiro.destroy({
+      console.log(`Deletando dados do motorista com ID_usuario: ${id}`);
+      const motoristaDeleted = await db.Motorista.destroy({
         where: { id_usuario: id },
         transaction: t,
       });
+      console.log(`Registros de motorista deletados: ${motoristaDeleted}`);
     }
 
-    // Deleta o usuário da tabela de usuários
-    console.log(`Deletando usuário com ID: ${id}`);
-    await db.Usuario.destroy({
-      where: { id },
+    if (usuario.tipo_usuario === "Passageiro") {
+      console.log(`Deletando dados do passageiro com ID_usuario: ${id}`);
+      const passageiroDeleted = await db.Passageiro.destroy({
+        where: { id_usuario: id },
+        transaction: t,
+      });
+      console.log(`Registros de passageiro deletados: ${passageiroDeleted}`);
+    }
+
+    console.log(`Deletando usuário com ID_usuario: ${id}`);
+    const usuarioDeleted = await db.Usuario.destroy({
+      where: { id_usuario: id },
       transaction: t,
     });
+    console.log(`Registros de usuário deletados: ${usuarioDeleted}`);
 
-    await t.commit(); // Confirma a transação
-    console.log(`Usuário com ID: ${id} deletado com sucesso.`); // Log de sucesso
+    await t.commit();
+    console.log(`Usuário com ID_usuario: ${id} deletado com sucesso.`);
 
-    return res.status(204).send(); // No Content - Sucesso sem conteúdo
+    return res.status(204).send();
   } catch (error) {
-    await t.rollback(); // Em caso de erro, faz rollback
-    console.error("Erro ao excluir usuário:", error); // Log de erro
+    await t.rollback();
+    console.error("Erro ao excluir usuário:", error);
 
     return res.status(500).json({
       message: "Erro interno ao tentar excluir o usuário",
-      error: error.message, // Mensagem de erro mais detalhada para debug
+      error: error.message,
     });
   }
 };
