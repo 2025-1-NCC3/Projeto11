@@ -7,7 +7,7 @@
     android:background="#80000000"
     android:visibility="gone"
     android:elevation="10dp">
-    
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

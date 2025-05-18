@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -29,6 +30,7 @@ import androidx.core.view.WindowInsetsCompat;
 import android.content.Intent;
 import android.widget.Toast;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.bumptech.glide.Glide;
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -55,6 +57,8 @@ public class ConfiguracaoPerfil extends AppCompatActivity {
     private TextView textCPF, textDataNascimento, txtSair, txtName;
     private AlertDialog alertDialog;
     private TextView txtDeletarConta;
+    private LottieAnimationView animationView;
+    private FrameLayout loadingLayout;
 
     ApiService apiService;
     SessionManager sessionManager;
@@ -67,7 +71,10 @@ public class ConfiguracaoPerfil extends AppCompatActivity {
 
         apiService = RetrofitClient.getApiService();
         sessionManager = new SessionManager(context);
-        
+
+        loadingLayout = findViewById(R.id.loadingLayout);
+        animationView = findViewById(R.id.animationView);
+        loadingLayout.bringToFront();
 
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_configuracao_perfil);
@@ -193,6 +200,7 @@ public class ConfiguracaoPerfil extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(sessionManager.isLoggedIn()) {
+                    showLoading();
                     String nome = editNome.getText().toString();
                     String email = editEmail.getText().toString();
                     String telefone = editTelefone.getText().toString();
@@ -212,6 +220,8 @@ public class ConfiguracaoPerfil extends AppCompatActivity {
                     call.enqueue(new Callback<ResponseDTO>() {
                         @Override
                         public void onResponse(Call<ResponseDTO> call, Response<ResponseDTO> response) {
+                            hideLoading();
+
                             if (response.isSuccessful() && response.body() != null) {
                                 ResponseDTO res = response.body();
                                 Toast.makeText(context, res.getMessage(), Toast.LENGTH_SHORT).show();
@@ -238,6 +248,7 @@ public class ConfiguracaoPerfil extends AppCompatActivity {
 
                         @Override
                         public void onFailure(Call<ResponseDTO> call, Throwable t) {
+                            hideLoading();
                             Log.d("Login", "Failure ");
                             Log.e("Error", "Erro na requisição: " + t.getMessage());
                         }
@@ -388,6 +399,7 @@ public class ConfiguracaoPerfil extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 alertDialog.dismiss(); // Fecha o popup de confirmação
+                showLoading();
 
                 ApiService apiService = RetrofitClient.getApiService();
 
@@ -401,6 +413,8 @@ public class ConfiguracaoPerfil extends AppCompatActivity {
                 call.enqueue(new Callback<ResponseDTO>() {
                     @Override
                     public void onResponse(Call<ResponseDTO> call, Response<ResponseDTO> response) {
+                        hideLoading();
+
                         if (response.isSuccessful()) {
                             // Mostra mensagem de sucesso
                             AlertDialog.Builder successBuilder = new AlertDialog.Builder(ConfiguracaoPerfil.this);
@@ -421,6 +435,7 @@ public class ConfiguracaoPerfil extends AppCompatActivity {
 
                     @Override
                     public void onFailure(Call<ResponseDTO> call, Throwable t) {
+                        hideLoading();
                         Toast.makeText(ConfiguracaoPerfil.this, "Erro: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -437,5 +452,29 @@ public class ConfiguracaoPerfil extends AppCompatActivity {
 
         // Mostra o AlertDialog
         alertDialog.show();
+    }
+
+    private void showLoading() {
+        runOnUiThread(() -> {
+            loadingLayout.setVisibility(View.VISIBLE);
+            animationView.playAnimation();
+            loadingLayout.setClickable(true);
+        });
+    }
+
+    private void hideLoading() {
+        runOnUiThread(() -> {
+            if (loadingLayout.getVisibility() == View.VISIBLE) {
+                loadingLayout.setVisibility(View.GONE);
+                animationView.pauseAnimation();
+                loadingLayout.setClickable(false);
+            }
+        });
+    }
+
+    @Override
+    protected void onDestroy() {
+        hideLoading();
+        super.onDestroy();
     }
 }
