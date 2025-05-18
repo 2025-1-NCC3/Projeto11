@@ -72,12 +72,12 @@ public class ConfiguracaoPerfil extends AppCompatActivity {
         apiService = RetrofitClient.getApiService();
         sessionManager = new SessionManager(context);
 
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_configuracao_perfil);
+
         loadingLayout = findViewById(R.id.loadingLayout);
         animationView = findViewById(R.id.animationView);
         loadingLayout.bringToFront();
-
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_configuracao_perfil);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
