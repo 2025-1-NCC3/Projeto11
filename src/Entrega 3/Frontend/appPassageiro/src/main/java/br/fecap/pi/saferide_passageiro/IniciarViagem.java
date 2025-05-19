@@ -314,6 +314,7 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
             if (starBar != null && rota.getAvaliacoes() != null) {
                 starBar.setRating(AvaliacaoUtils.calcularMediaAvaliacao(rota.getAvaliacoes()));
             }
+
             if (txtPontoPartida != null) {
                 txtPontoPartida.setText(textoPartida);
             }
@@ -378,6 +379,73 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
         });
     }
 
+    private void calcularRota() {
+        if (origemSelecionada.getLatitude() == 0 || destinoSelecionado.getLatitude() == 0) {
+            Toast.makeText(this, "Por favor, selecione origem e destino", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        CalcularRotaRequestDTO routeRequest = new CalcularRotaRequestDTO(origemSelecionada, destinoSelecionado);
+        Call<CalcularRotaResponseDTO> call = apiService.calcularRota(routeRequest);
+
+        call.enqueue(new Callback<>() {
+            @Override
+            public void onResponse(Call<CalcularRotaResponseDTO> call, Response<CalcularRotaResponseDTO> response) {
+                if (response.isSuccessful()) {
+                    // Processar resposta de sucesso
+                    // Você pode armazenar a resposta em um Bundle e passar para a próxima Activity
+                    Log.d("RESPONSE API", "onResponse: " + response.body());
+                    ArrayList<RotaModel> rotas = response.body().getRoutes();
+
+                    rotas.forEach((rota) -> {
+                        buscarAvaliacoes(rota);
+                        //classificarRota();
+                        desenharPolyline(rota.getPolyline(), Color.BLUE);
+                    });
+
+                    mostrarPopupRecycleView(rotas);
+                } else {
+                    // Tratar erro na resposta
+                    Toast.makeText(IniciarViagem.this,
+                            "Erro ao calcular rota: " + response.message(),
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CalcularRotaResponseDTO> call, Throwable t) {
+                // Tratar falha na comunicação
+                Toast.makeText(IniciarViagem.this,
+                        "Falha na comunicação: " + t.getMessage(),
+                        Toast.LENGTH_SHORT).show();
+            }
+
+            private void buscarAvaliacoes(RotaModel rota) {
+                Call<List<AvaliacoesRotaResponseDTO>> call = apiService.getAvaliacoesRota(rota.getIdRota());
+
+                call.enqueue(new Callback<>() {
+                    @Override
+                    public void onResponse(Call<List<AvaliacoesRotaResponseDTO>> call, Response<List<AvaliacoesRotaResponseDTO>> response) {
+                        if (response.isSuccessful()) {
+                            assert response.body() != null;
+                            rota.setAvaliacoes(response.body());
+                            Log.d("ROTAS: ", rota.getDescricao() + response.body());
+                        } else {
+                            Toast.makeText(IniciarViagem.this,
+                                    "Erro ao buscar avaliações da rota: " + response.message(),
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<AvaliacoesRotaResponseDTO>> call, Throwable t) {
+
+                    }
+                });
+            }
+        });
+    }
+
 //    private void calcularRota() {
 //        if (origemSelecionada.getLatitude() == 0 || destinoSelecionado.getLatitude() == 0) {
 //            Toast.makeText(this, "Por favor, selecione origem e destino", Toast.LENGTH_SHORT).show();
@@ -392,17 +460,30 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
 //            public void onResponse(Call<CalcularRotaResponseDTO> call, Response<CalcularRotaResponseDTO> response) {
 //                if (response.isSuccessful()) {
 //                    // Processar resposta de sucesso
-//                    // Você pode armazenar a resposta em um Bundle e passar para a próxima Activity
 //                    Log.d("RESPONSE API", "onResponse: " + response.body());
 //                    ArrayList<RotaModel> rotas = response.body().getRoutes();
 //
-//                    rotas.forEach((rota) -> {
-//                        buscarAvaliacoes(rota);
-//                        //classificarRota();
-//                        desenharPolyline(rota.getPolyline(), Color.BLUE);
-//                    });
+//                    // Solução para remover duplicatas baseada no endereço de destino
+//                    ArrayList<RotaModel> rotasSemDuplicatas = new ArrayList<>();
+//                    java.util.Set<String> enderecosVistos = new java.util.HashSet<>();
 //
-//                    mostrarPopupRecycleView(rotas);
+//                    for (RotaModel rota : rotas) {
+//                        // Obter o endereço completo do destino
+//                        String enderecoDestino = rota.getLocalDestino().getLogradouro();
+//
+//                        // Se o endereço ainda não foi visto, adiciona à lista filtrada
+//                        if (!enderecosVistos.contains(enderecoDestino)) {
+//                            enderecosVistos.add(enderecoDestino);
+//                            rotasSemDuplicatas.add(rota);
+//
+//                            // Buscar avaliações e desenhar polyline apenas para rotas únicas
+//                            buscarAvaliacoes(rota);
+//                            desenharPolyline(rota.getPolyline(), Color.BLUE);
+//                        }
+//                    }
+//
+//                    // Usar a lista filtrada em vez da original
+//                    mostrarPopupRecycleView(rotasSemDuplicatas);
 //                } else {
 //                    // Tratar erro na resposta
 //                    Toast.makeText(IniciarViagem.this,
@@ -438,91 +519,11 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
 //
 //                    @Override
 //                    public void onFailure(Call<List<AvaliacoesRotaResponseDTO>> call, Throwable t) {
-//
 //                    }
 //                });
 //            }
 //        });
 //    }
-
-private void calcularRota() {
-    if (origemSelecionada.getLatitude() == 0 || destinoSelecionado.getLatitude() == 0) {
-        Toast.makeText(this, "Por favor, selecione origem e destino", Toast.LENGTH_SHORT).show();
-        return;
-    }
-
-    CalcularRotaRequestDTO routeRequest = new CalcularRotaRequestDTO(origemSelecionada, destinoSelecionado);
-    Call<CalcularRotaResponseDTO> call = apiService.calcularRota(routeRequest);
-
-    call.enqueue(new Callback<>() {
-        @Override
-        public void onResponse(Call<CalcularRotaResponseDTO> call, Response<CalcularRotaResponseDTO> response) {
-            if (response.isSuccessful()) {
-                // Processar resposta de sucesso
-                Log.d("RESPONSE API", "onResponse: " + response.body());
-                ArrayList<RotaModel> rotas = response.body().getRoutes();
-
-                // Solução para remover duplicatas baseada no endereço de destino
-                ArrayList<RotaModel> rotasSemDuplicatas = new ArrayList<>();
-                java.util.Set<String> enderecosVistos = new java.util.HashSet<>();
-
-                for (RotaModel rota : rotas) {
-                    // Obter o endereço completo do destino
-                    String enderecoDestino = rota.getLocalDestino().getLogradouro();
-
-                    // Se o endereço ainda não foi visto, adiciona à lista filtrada
-                    if (!enderecosVistos.contains(enderecoDestino)) {
-                        enderecosVistos.add(enderecoDestino);
-                        rotasSemDuplicatas.add(rota);
-
-                        // Buscar avaliações e desenhar polyline apenas para rotas únicas
-                        buscarAvaliacoes(rota);
-                        desenharPolyline(rota.getPolyline(), Color.BLUE);
-                    }
-                }
-
-                // Usar a lista filtrada em vez da original
-                mostrarPopupRecycleView(rotasSemDuplicatas);
-            } else {
-                // Tratar erro na resposta
-                Toast.makeText(IniciarViagem.this,
-                        "Erro ao calcular rota: " + response.message(),
-                        Toast.LENGTH_SHORT).show();
-            }
-        }
-
-        @Override
-        public void onFailure(Call<CalcularRotaResponseDTO> call, Throwable t) {
-            // Tratar falha na comunicação
-            Toast.makeText(IniciarViagem.this,
-                    "Falha na comunicação: " + t.getMessage(),
-                    Toast.LENGTH_SHORT).show();
-        }
-
-        private void buscarAvaliacoes(RotaModel rota) {
-            Call<List<AvaliacoesRotaResponseDTO>> call = apiService.getAvaliacoesRota(rota.getIdRota());
-
-            call.enqueue(new Callback<>() {
-                @Override
-                public void onResponse(Call<List<AvaliacoesRotaResponseDTO>> call, Response<List<AvaliacoesRotaResponseDTO>> response) {
-                    if (response.isSuccessful()) {
-                        assert response.body() != null;
-                        rota.setAvaliacoes(response.body());
-                        Log.d("ROTAS: ", rota.getDescricao() + response.body());
-                    } else {
-                        Toast.makeText(IniciarViagem.this,
-                                "Erro ao buscar avaliações da rota: " + response.message(),
-                                Toast.LENGTH_SHORT).show();
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<List<AvaliacoesRotaResponseDTO>> call, Throwable t) {
-                }
-            });
-        }
-    });
-}
 
     private void desenharPolyline(String encodedPolyline, int color) {
         // Verificar se o mapa e a polyline estão disponíveis
