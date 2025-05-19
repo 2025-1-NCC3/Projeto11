@@ -50,9 +50,15 @@ Com base nesses dados, o SafeRide oferece aos usuários a possibilidade de escol
 │   ├── Entrega2/
 │   │   ├── frontend/
 │   │   └── backend/
+│   │   └── Projeto Interdisciplinar: Aplicativo Móvel/
+│   │   │   └── AAB_SafeRide
+│   │   │   └── APK_SafeRide
 |   ├── Entrega3/
 │   │   ├── frontend/
 │   │   └── backend/
+│   │   └── Projeto Interdisciplinar: Aplicativo Móvel/
+│   │   │   └── AAB_SafeRide
+│   │   │   └── APK_SafeRide
 └── readme.md<br>
 ```
 
