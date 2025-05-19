@@ -231,5 +231,7 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <include layout="@layout/activity_tela_carregamento"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

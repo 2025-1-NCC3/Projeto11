@@ -3,8 +3,11 @@ package br.fecap.pi.saferide_passageiro;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -14,11 +17,16 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.airbnb.lottie.LottieAnimationView;
+
 public class MetodoPagamento extends AppCompatActivity {
 
     private CardView cardPix, cardCartao, cardDinheiro;
     private String opcaoSelecionada = "";
     private Button btnContinuar;
+    private FrameLayout procurandomMotorista;
+    private LottieAnimationView animationView;
+    private Runnable loadingRunnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +38,10 @@ public class MetodoPagamento extends AppCompatActivity {
         cardCartao = findViewById(R.id.cardCartao);
         cardDinheiro = findViewById(R.id.cardDinheiro);
         btnContinuar = findViewById(R.id.btnContinuar);
+
+        procurandomMotorista = findViewById(R.id.procurandomMotorista);
+        animationView = findViewById(R.id.animationView);
+        procurandomMotorista.bringToFront();
 
         cardPix.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,15 +68,30 @@ public class MetodoPagamento extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (opcaoSelecionada.isEmpty()) {
-                    // Nenhuma opção foi selecionada
-                    Toast.makeText(MetodoPagamento.this, "Por favor, selecione um método de pagamento.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MetodoPagamento.this,
+                            "Por favor, selecione um método de pagamento.",
+                            Toast.LENGTH_SHORT).show();
                 } else {
-                    // A opção foi selecionada - ir para a próxima tela
-                    Intent intent = new Intent(MetodoPagamento.this, ViagemAceitaActivity.class);
-                    intent.putExtra("metodo_pagamento", opcaoSelecionada); // Se quiser passar para a próxima tela
-                    startActivity(intent);
-                    finish();
+                    showLoading();
 
+                    if (loadingRunnable != null) {
+                        new Handler(Looper.getMainLooper()).removeCallbacks(loadingRunnable);
+                    }
+
+                    loadingRunnable = new Runnable() {
+                        @Override
+                        public void run() {
+                            if (!isFinishing()) {
+                                hideLoading();
+                                Intent intent = new Intent(MetodoPagamento.this, ViagemAceitaActivity.class);
+                                intent.putExtra("metodo_pagamento", opcaoSelecionada);
+                                startActivity(intent);
+                                finish();
+                            }
+                        }
+                    };
+
+                    new Handler(Looper.getMainLooper()).postDelayed(loadingRunnable, 7000);
                 }
             }
         });
@@ -75,7 +102,6 @@ public class MetodoPagamento extends AppCompatActivity {
             return insets;
         });
     }
-
 
     private void selecionarOpcao(CardView selecionado) {
         cardPix.setCardBackgroundColor(Color.WHITE);
@@ -91,5 +117,33 @@ public class MetodoPagamento extends AppCompatActivity {
         } else if (selecionado == cardDinheiro) {
             opcaoSelecionada = "Dinheiro";
         }
+    }
+
+    private void showLoading() {
+        runOnUiThread(() -> {
+            procurandomMotorista.setVisibility(View.VISIBLE);
+            animationView.playAnimation();
+            procurandomMotorista.setClickable(true);
+            btnContinuar.setEnabled(false); // Desabilita o botão durante o loading
+        });
+    }
+
+    private void hideLoading() {
+        runOnUiThread(() -> {
+            if (procurandomMotorista.getVisibility() == View.VISIBLE) {
+                procurandomMotorista.setVisibility(View.GONE);
+                animationView.pauseAnimation();
+                procurandomMotorista.setClickable(false);
+            }
+        });
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (loadingRunnable != null) {
+            new Handler(Looper.getMainLooper()).removeCallbacks(loadingRunnable);
+        }
+        hideLoading();
+        super.onDestroy();
     }
 }

@@ -42,41 +42,40 @@ exports.historicoCorridasMotorista = async (req, res) => {
 }
 
 exports.historicoCorridasPassageiro = async (req, res) => {
-    const { idPassageiro } = req.params;
-    const idPassageiroInt = parseInt(idPassageiro, 10);
+  const { idPassageiro } = req.params;
+  const idPassageiroInt = parseInt(idPassageiro, 10);
 
-    try {
-        const corridas = await db.Corrida.findAll({
-            where: { 
-                status_corrida: 'Concluída',
-                id_passageiro: idPassageiroInt
-            },
-            include: [
-                {
-                    model: db.Passageiro,
-                    as: 'passageiro'
-                },
-                {
-                    model: db.Motorista,
-                    as: 'motorista'
-                },
-                {
-                    model: db.Pagamento,
-                    as: 'pagamento'
-                },
-                {
-                    model: db.Rota,
-                    as: 'rota'
-                }
-            ]
-        });
+  try {
+    const corridas = await db.Corrida.findAll({
+      where: {
+        status_corrida: "Concluída",
+        id_passageiro: idPassageiroInt,
+      },
+      attributes: ["data_corrida", "data_hora_inicio"],
+      include: [
+        {
+          model: db.Rota,
+          as: "rota",
+          attributes: ["descricao"],
+        },
+      ],
+    });
 
-        res.status(200).json(corridas);
-    } catch (error) {
-        console.error("Erro ao obter histórico de corridas:", error);
-        res.status(500).json({ error: "Erro ao obter histórico de corridas" });
-    }
-}
+    // Mapear o resultado para um JSON "achatado"
+    const corridasAchatas = corridas.map((corrida) => {
+      return {
+        data_corrida: corrida.data_corrida,
+        data_hora_inicio: corrida.data_hora_inicio,
+        descricao: corrida.rota ? corrida.rota.descricao : null,
+      };
+    });
+
+    res.status(200).json(corridasAchatas);
+  } catch (error) {
+    console.error("Erro ao obter histórico de corridas:", error);
+    res.status(500).json({ error: "Erro ao obter histórico de corridas" });
+  }
+};
 
 exports.criarCorrida = async (req, res) => {
     const { id_rota, id_solicitacao, id_passageiro, id_motorista, metodo_pagamento } = req.body;

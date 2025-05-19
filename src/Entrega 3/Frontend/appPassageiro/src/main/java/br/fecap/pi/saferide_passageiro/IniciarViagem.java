@@ -17,6 +17,7 @@ import android.view.WindowManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -33,6 +34,7 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -89,6 +91,8 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
     private  ImageView imgHistorico,imgPerfil;
 
     private boolean doubleBackToExitPressedOnce = false;
+    private FrameLayout loadingLayout;
+    private LottieAnimationView animationView;
 
     SessionManager sessionManager;
 
@@ -105,6 +109,10 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
         etDestino = findViewById(R.id.etDestino);
         imgHistorico = findViewById(R.id.imgHistorico);
         imgPerfil = findViewById(R.id.imgPerfil);
+
+        loadingLayout = findViewById(R.id.loadingLayout);
+        animationView = findViewById(R.id.animationView);
+        loadingLayout.bringToFront();
 
         sessionManager = new SessionManager(this);
 
@@ -396,6 +404,7 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
 //            public void onResponse(Call<CalcularRotaResponseDTO> call, Response<CalcularRotaResponseDTO> response) {
 //                if (response.isSuccessful()) {
 //                    // Processar resposta de sucesso
+//                    // Você pode armazenar a resposta em um Bundle e passar para a próxima Activity
 //                    Log.d("RESPONSE API", "onResponse: " + response.body());
 //                    ArrayList<RotaModel> rotas = response.body().getRoutes();
 //
@@ -418,8 +427,7 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
 //                        }
 //                    }
 //
-//                    // Usar a lista filtrada em vez da original
-//                    mostrarPopupRecycleView(rotasSemDuplicatas);
+//                    mostrarPopupRecycleView(rotas);
 //                } else {
 //                    // Tratar erro na resposta
 //                    Toast.makeText(IniciarViagem.this,
@@ -455,29 +463,33 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
 //
 //                    @Override
 //                    public void onFailure(Call<List<AvaliacoesRotaResponseDTO>> call, Throwable t) {
+//
 //                    }
 //                });
 //            }
 //        });
 //    }
 
-    private void calcularRota() {
-        if (origemSelecionada.getLatitude() == 0 || destinoSelecionado.getLatitude() == 0) {
-            Toast.makeText(this, "Por favor, selecione origem e destino", Toast.LENGTH_SHORT).show();
-            return;
-        }
+private void calcularRota() {
+    if (origemSelecionada.getLatitude() == 0 || destinoSelecionado.getLatitude() == 0) {
+        Toast.makeText(this, "Por favor, selecione origem e destino", Toast.LENGTH_SHORT).show();
+        return;
+    }
 
-        CalcularRotaRequestDTO routeRequest = new CalcularRotaRequestDTO(origemSelecionada, destinoSelecionado);
-        Call<CalcularRotaResponseDTO> call = apiService.calcularRota(routeRequest);
+    showLoading();
 
-        call.enqueue(new Callback<>() {
-            @Override
-            public void onResponse(Call<CalcularRotaResponseDTO> call, Response<CalcularRotaResponseDTO> response) {
-                if (response.isSuccessful()) {
-                    // Processar resposta de sucesso
-                    // Você pode armazenar a resposta em um Bundle e passar para a próxima Activity
-                    Log.d("RESPONSE API", "onResponse: " + response.body());
-                    ArrayList<RotaModel> rotas = response.body().getRoutes();
+    CalcularRotaRequestDTO routeRequest = new CalcularRotaRequestDTO(origemSelecionada, destinoSelecionado);
+    Call<CalcularRotaResponseDTO> call = apiService.calcularRota(routeRequest);
+
+    call.enqueue(new Callback<>() {
+        @Override
+        public void onResponse(Call<CalcularRotaResponseDTO> call, Response<CalcularRotaResponseDTO> response) {
+            hideLoading();
+
+            if (response.isSuccessful()) {
+                // Processar resposta de sucesso
+                Log.d("RESPONSE API", "onResponse: " + response.body());
+                ArrayList<RotaModel> rotas = response.body().getRoutes();
 
                     rotas.forEach((rota) -> {
                         buscarAvaliacoes(rota);
@@ -493,13 +505,14 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
                 }
             }
 
-            @Override
-            public void onFailure(Call<CalcularRotaResponseDTO> call, Throwable t) {
-                // Tratar falha na comunicação
-                Toast.makeText(IniciarViagem.this,
-                        "Falha na comunicação: " + t.getMessage(),
-                        Toast.LENGTH_SHORT).show();
-            }
+        @Override
+        public void onFailure(Call<CalcularRotaResponseDTO> call, Throwable t) {
+            hideLoading();
+            // Tratar falha na comunicação
+            Toast.makeText(IniciarViagem.this,
+                    "Falha na comunicação: " + t.getMessage(),
+                    Toast.LENGTH_SHORT).show();
+        }
 
             private void buscarAvaliacoes(RotaModel rota) {
                 Call<List<AvaliacoesRotaResponseDTO>> call = apiService.getAvaliacoesRota(rota.getIdRota());
@@ -659,4 +672,26 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
         new Handler().postDelayed(() -> doubleBackToExitPressedOnce = false, 2000); // Reseta em 2 segundos
     }
 
+    private void showLoading() {
+        runOnUiThread(() -> {
+            loadingLayout.setVisibility(View.VISIBLE);
+            animationView.playAnimation();
+            loadingLayout.setClickable(true);
+        });
+    }
+
+    private void hideLoading() {
+        runOnUiThread(() -> {
+            if (loadingLayout.getVisibility() == View.VISIBLE) {
+                loadingLayout.setVisibility(View.GONE);
+                animationView.pauseAnimation();
+            }
+        });
+    }
+
+    @Override
+    protected void onDestroy() {
+        hideLoading();
+        super.onDestroy();
+    }
 }

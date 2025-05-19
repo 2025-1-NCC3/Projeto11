@@ -1,9 +1,13 @@
 package br.fecap.pi.saferide_passageiro;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.content.Context;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,12 +17,27 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import br.fecap.pi.saferide_passageiro.R;
 import br.fecap.pi.saferide_passageiro.adapter.adapter;
+import br.fecap.pi.saferide_passageiro.dto.HistoricoCorridaDTO;
 import br.fecap.pi.saferide_passageiro.models.AtividadeModel;
+import br.fecap.pi.saferide_passageiro.retrofit.ApiService;
+import br.fecap.pi.saferide_passageiro.retrofit.RetrofitClient;
+import br.fecap.pi.saferide_passageiro.session.SessionManager;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class TelaAtividades extends AppCompatActivity {
 
@@ -28,20 +47,36 @@ public class TelaAtividades extends AppCompatActivity {
     private TextView textRua;
     private TextView textData;
     private TextView textHorario;
-    private ImageView imgPerfil,imgHome;
+    private ImageView imgPerfil, imgHome, imgEmptyState;
+    ApiService apiService;
+    SessionManager sessionManager;
+    Context context = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tela_atividades);
 
+        // Inicializações
+        apiService = RetrofitClient.getApiService();
+        sessionManager = new SessionManager(context);
+
+        // Configuração dos componentes de UI
         recyclerView = findViewById(R.id.recyclerView);
         textRua = findViewById(R.id.textRua);
         textData = findViewById(R.id.textData);
         textHorario = findViewById(R.id.textHorario);
         imgHome = findViewById(R.id.imgHome);
         imgPerfil = findViewById(R.id.imgPerfil);
+        imgEmptyState = findViewById(R.id.imgEmptyState);
 
+        // Configuração do RecyclerView
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setHasFixedSize(true);
+        adapter = new adapter(ListaAtividade);
+        recyclerView.setAdapter(adapter);
+
+        // Configuração do EdgeToEdge
         EdgeToEdge.enable(this);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -49,99 +84,123 @@ public class TelaAtividades extends AppCompatActivity {
             return insets;
         });
 
+        // Listeners de clique
         imgPerfil.setOnClickListener(v -> {
             Intent intent = new Intent(TelaAtividades.this, ConfiguracaoPerfil.class);
             startActivity(intent);
         });
 
         imgHome.setOnClickListener(v -> {
-           finish();
+            finish();
         });
 
+        // Carrega as atividades
         criarAtividades();
-
-        // Exibir o primeiro item da lista nos TextViews
-        if (!ListaAtividade.isEmpty()) {
-            AtividadeModel primeiroItem = ListaAtividade.get(0);
-            textRua.setText(primeiroItem.getEndereco());
-            textData.setText(primeiroItem.getData());
-            textHorario.setText(primeiroItem.getHorario());
-        }
-
-        // Configurar RecyclerView
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setHasFixedSize(true);
-
-        adapter = new adapter(ListaAtividade);
-        recyclerView.setAdapter(adapter);
     }
-
 
     public void criarAtividades() {
-        AtividadeModel atividade;
+        ApiService apiService = RetrofitClient.getApiService();
+        int idPassageiro = sessionManager.getUserId();
 
-        atividade = new AtividadeModel("Rua José Augusto França", "03 de Fev.", "10:10 a.m");
-        ListaAtividade.add(atividade);
+        Call<List<HistoricoCorridaDTO>> call = apiService.getHistoricoCorridas(idPassageiro);
+        call.enqueue(new Callback<List<HistoricoCorridaDTO>>() {
+            @Override
+            public void onResponse(Call<List<HistoricoCorridaDTO>> call, Response<List<HistoricoCorridaDTO>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<HistoricoCorridaDTO> corridas = response.body();
+                    ListaAtividade.clear();
 
-        atividade = new AtividadeModel("Rua das Acácias", "11 de Abr.", "14:30 p.m");
-        ListaAtividade.add(atividade);
+                    // Adiciona todos os itens à lista
+                    for (HistoricoCorridaDTO dto : corridas) {
+                        String descricao = dto.getDescricao() != null ? dto.getDescricao() : "Sem descrição";
+                        String dataFormatada = formatarData(dto.getData_corrida());
+                        String horarioFormatado = formatarHorario(dto.getData_hora_inicio());
+                        ListaAtividade.add(new AtividadeModel(descricao, dataFormatada, horarioFormatado));
+                    }
 
-        atividade = new AtividadeModel("Av. Brasil", "25 de Dez.", "08:00 a.m");
-        ListaAtividade.add(atividade);
+                    runOnUiThread(() -> {
+                        // Atualiza a RecyclerView com todos os itens
+                        adapter.notifyDataSetChanged();
 
-        atividade = new AtividadeModel("Rua Fernando Pessoa", "01 de Jan.", "09:15 a.m");
-        ListaAtividade.add(atividade);
+                        // Verifica se há corridas
+                        if (!ListaAtividade.isEmpty()) {
+                            // Mostra RecyclerView e esconde imagem de empty state
+                            recyclerView.setVisibility(View.VISIBLE);
+                            imgEmptyState.setVisibility(View.GONE);
 
-        atividade = new AtividadeModel("Rua do Comércio", "20 de Mar.", "13:45 p.m");
-        ListaAtividade.add(atividade);
+                            // Exibe o primeiro item nos TextViews
+                            AtividadeModel primeiroItem = ListaAtividade.get(0);
+                            textRua.setText(primeiroItem.getEndereco());
+                            textData.setText(primeiroItem.getData());
+                            textHorario.setText(primeiroItem.getHorario());
+                        } else {
+                            // Caso não haja corridas
+                            recyclerView.setVisibility(View.GONE);
+                            imgEmptyState.setVisibility(View.VISIBLE);
 
-        atividade = new AtividadeModel("Rua dos Lírios", "15 de Out.", "16:00 p.m");
-        ListaAtividade.add(atividade);
+                            textRua.setText("Nenhuma corrida encontrada");
+                            textData.setText("");
+                            textHorario.setText("");
+                        }
+                    });
 
-        atividade = new AtividadeModel("Rua São Pedro", "07 de Set.", "11:20 a.m");
-        ListaAtividade.add(atividade);
+                } else {
+                    Log.e("API_ERROR", "Erro: " + response.code() + " - " + response.message());
+                    runOnUiThread(() -> {
+                        recyclerView.setVisibility(View.GONE);
+                        imgEmptyState.setVisibility(View.VISIBLE);
 
-        atividade = new AtividadeModel("Av. Paulista", "19 de Jun.", "17:00 p.m");
-        ListaAtividade.add(atividade);
+                        textRua.setText("Erro ao carregar dados");
+                        textData.setText("");
+                        textHorario.setText("");
+                    });
+                }
+            }
 
-        atividade = new AtividadeModel("Rua Getúlio Vargas", "12 de Ago.", "18:30 p.m");
-        ListaAtividade.add(atividade);
+            @Override
+            public void onFailure(Call<List<HistoricoCorridaDTO>> call, Throwable t) {
+                Log.e("API_FAILURE", "Falha na requisição: " + t.getMessage(), t);
+                runOnUiThread(() -> {
+                    recyclerView.setVisibility(View.GONE);
+                    imgEmptyState.setVisibility(View.VISIBLE);
 
-        atividade = new AtividadeModel("Rua das Flores", "22 de Mai.", "07:45 a.m");
-        ListaAtividade.add(atividade);
-
-        atividade = new AtividadeModel("Rua Dom Pedro II", "05 de Nov.", "20:10 p.m");
-        ListaAtividade.add(atividade);
-
-        atividade = new AtividadeModel("Rua João XXIII", "03 de Fev.", "12:00 p.m");
-        ListaAtividade.add(atividade);
-
-        atividade = new AtividadeModel("Rua Antônio Prado", "28 de Jul.", "15:25 p.m");
-        ListaAtividade.add(atividade);
-
-        atividade = new AtividadeModel("Rua do Sol", "30 de Jan.", "06:30 a.m");
-        ListaAtividade.add(atividade);
-
-        atividade = new AtividadeModel("Rua Silveira Martins", "10 de Dez.", "22:00 p.m");
-        ListaAtividade.add(atividade);
-
-        atividade = new AtividadeModel("Rua Bela Vista", "14 de Fev.", "08:45 a.m");
-        ListaAtividade.add(atividade);
-
-        atividade = new AtividadeModel("Rua das Palmeiras", "06 de Abr.", "19:00 p.m");
-        ListaAtividade.add(atividade);
-
-        atividade = new AtividadeModel("Rua Castro Alves", "18 de Mar.", "10:00 a.m");
-        ListaAtividade.add(atividade);
-
-        atividade = new AtividadeModel("Rua Marechal Deodoro", "02 de Jun.", "21:45 p.m");
-        ListaAtividade.add(atividade);
-
-        atividade = new AtividadeModel("Av. Independência", "09 de Set.", "13:00 p.m");
-        ListaAtividade.add(atividade);
-
-
+                    textRua.setText("Falha na conexão");
+                    textData.setText("");
+                    textHorario.setText("");
+                });
+            }
+        });
     }
 
+    private String formatarData(String dataISO) {
+        if (dataISO == null || dataISO.isEmpty()) {
+            return "Data inválida";
+        }
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                LocalDate data = LocalDate.parse(dataISO);
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd 'de' MMM.", new Locale("pt", "BR"));
+                return data.format(formatter);
+            }
+        } catch (Exception e) {
+            Log.e("FormatarData", "Erro ao formatar data: " + dataISO, e);
+        }
+        return dataISO;
+    }
+
+    private String formatarHorario(String dataHoraISO) {
+        if (dataHoraISO == null || dataHoraISO.isEmpty()) {
+            return "Horário inválido";
+        }
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                OffsetDateTime odt = OffsetDateTime.parse(dataHoraISO);
+                LocalTime hora = odt.toLocalTime();
+                return hora.format(DateTimeFormatter.ofPattern("HH:mm"));
+            }
+        } catch (Exception e) {
+            Log.e("FormatarHorario", "Erro ao formatar horário: " + dataHoraISO, e);
+        }
+        return dataHoraISO;
+    }
 }

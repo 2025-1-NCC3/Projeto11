@@ -136,4 +136,6 @@
      app:layout_constraintVertical_bias="0.76"
      app:layout_goneMarginEnd="20dp" />
 
+    <include layout="@layout/activity_tela_carregamento"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

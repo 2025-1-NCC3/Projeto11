@@ -3,19 +3,19 @@ package br.fecap.pi.saferide_passageiro.models;
 import androidx.annotation.NonNull;
 
 public class AtividadeModel{
-    private final String endereco;
+    private final String descricao;
     private final String data;
     private final String horario;
 
-    public AtividadeModel(@NonNull String endereco, @NonNull String data, @NonNull String horario) {
-        this.endereco = endereco;
+    public AtividadeModel(@NonNull String descricao, @NonNull String data, @NonNull String horario) {
+        this.descricao = descricao;
         this.data = data;
         this.horario = horario;
     }
 
     @NonNull
     public String getEndereco() {
-        return endereco;
+        return descricao;
     }
 
     @NonNull

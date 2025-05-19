@@ -6,6 +6,7 @@ import java.util.Map;
 import br.fecap.pi.saferide_passageiro.dto.AvaliacoesRotaResponseDTO;
 import br.fecap.pi.saferide_passageiro.dto.CalcularRotaRequestDTO;
 import br.fecap.pi.saferide_passageiro.dto.CalcularRotaResponseDTO;
+import br.fecap.pi.saferide_passageiro.dto.HistoricoCorridaDTO;
 import br.fecap.pi.saferide_passageiro.dto.LoginRequestDTO;
 import br.fecap.pi.saferide_passageiro.dto.ResponseCreateUsuarioDTO;
 import br.fecap.pi.saferide_passageiro.dto.ResponseDTO;
@@ -57,6 +58,9 @@ public interface ApiService {
 
     @GET("avaliacoes/{idRota}")
     Call<List<AvaliacoesRotaResponseDTO>> getAvaliacoesRota(@Path("idRota") int idRota);
+
+    @GET("corridas/passageiro/{idPassageiro}")
+    Call<List<HistoricoCorridaDTO>> getHistoricoCorridas(@Path("idPassageiro") int idPassageiro);
 
     @Multipart
     @POST("usuarios/upload-foto")

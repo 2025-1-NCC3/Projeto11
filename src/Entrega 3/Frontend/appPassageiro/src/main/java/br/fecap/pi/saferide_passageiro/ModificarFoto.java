@@ -9,7 +9,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -22,6 +24,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.bumptech.glide.Glide;
 
 import java.io.File;
@@ -51,12 +54,19 @@ public class ModificarFoto extends AppCompatActivity {
     private static final int REQUEST_GALLERY_PERMISSION = 200;
     private ActivityResultLauncher<Intent> cameraLauncher;
     private ActivityResultLauncher<Intent> galleryLauncher;
+    private LottieAnimationView animationView;
+    private FrameLayout loadingLayout;
     SessionManager sessionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_modificar_foto);
+
+        loadingLayout = findViewById(R.id.loadingLayout);
+        animationView = findViewById(R.id.animationView);
+        loadingLayout.bringToFront();
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             androidx.core.graphics.Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -85,6 +95,7 @@ public class ModificarFoto extends AppCompatActivity {
         cameraLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
+                    hideLoading();
                     if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
                         Bundle extras = result.getData().getExtras();
                         Bitmap imageBitmap = (Bitmap) extras.get("data");
@@ -104,6 +115,7 @@ public class ModificarFoto extends AppCompatActivity {
         galleryLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
+                    hideLoading();
                     if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
                         Uri selectedImageUri = result.getData().getData();
                         imageView6.setImageURI(selectedImageUri);
@@ -146,6 +158,8 @@ public class ModificarFoto extends AppCompatActivity {
     }
 
     private void fazerUploadImagem(File file) {
+        showLoading();
+
         SessionManager sessionManager = new SessionManager(getApplicationContext());
         int userId = sessionManager.getUserId();
 
@@ -161,8 +175,11 @@ public class ModificarFoto extends AppCompatActivity {
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                hideLoading();
+
                 if (response.isSuccessful()) {
                     Toast.makeText(ModificarFoto.this, "Foto enviada com sucesso!", Toast.LENGTH_SHORT).show();
+                    finish();
                 } else {
                     Toast.makeText(ModificarFoto.this, "Falha ao enviar imagem", Toast.LENGTH_SHORT).show();
                 }
@@ -170,6 +187,7 @@ public class ModificarFoto extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
+                hideLoading();
                 Toast.makeText(ModificarFoto.this, "Erro: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
@@ -212,15 +230,19 @@ public class ModificarFoto extends AppCompatActivity {
 
     // Métodos
     private void abrirCamera() {
+        showLoading();
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             cameraLauncher.launch(takePictureIntent);
         }
+        hideLoading();
     }
 
     private void abrirGaleria() {
+        showLoading();
         Intent pickPhoto = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         galleryLauncher.launch(pickPhoto);
+        hideLoading();
     }
 
     @Override
@@ -244,5 +266,29 @@ public class ModificarFoto extends AppCompatActivity {
                 Toast.makeText(this, "Permissão de galeria negada", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    private void showLoading() {
+        runOnUiThread(() -> {
+            loadingLayout.setVisibility(View.VISIBLE);
+            animationView.playAnimation();
+            loadingLayout.setClickable(true);
+        });
+    }
+
+    private void hideLoading() {
+        runOnUiThread(() -> {
+            if (loadingLayout.getVisibility() == View.VISIBLE) {
+                loadingLayout.setVisibility(View.GONE);
+                animationView.pauseAnimation();
+                loadingLayout.setClickable(false);
+            }
+        });
+    }
+
+    @Override
+    protected void onDestroy() {
+        hideLoading();
+        super.onDestroy();
     }
 }
