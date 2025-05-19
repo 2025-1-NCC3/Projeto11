@@ -5,7 +5,7 @@ const axios = require('axios');
 const API_KEY = process.env.GOOGLE_MAPS_API_KEY;
 const ROUTES_API_URL = `${process.env.ROUTES_API_BASE_URL}/directions/v2:computeRoutes`;
 
-exports.GetRouteFromMapsAPI = async (origem, destino) => {
+exports.GetRouteFromMapsAPI = async (origem, destino, alternativeRoutes) => {
     const requestHeaders = {
         headers: {
             'Content-Type': 'application/json',
@@ -33,7 +33,7 @@ exports.GetRouteFromMapsAPI = async (origem, destino) => {
         },
         travelMode: 'DRIVE',
         routingPreference: 'TRAFFIC_AWARE',
-        computeAlternativeRoutes: true,
+        computeAlternativeRoutes: alternativeRoutes,
         languageCode: 'pt-BR',
         units: "METRIC"
     }

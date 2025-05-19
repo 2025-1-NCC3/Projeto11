@@ -2,9 +2,9 @@
 
 const db = require('../config/db')
 const axios = require('axios')
-const { GetRouteFromMapsAPI, reverseGeocode } = require('../services/mapsAPIService.js');
+const { GetRouteFromMapsAPI: GetRoutesFromMapsAPI, reverseGeocode } = require('../services/mapsAPIService.js');
 const Localizacao = require('../models/Localizacao.js');
-const { where, or } = require('sequelize');
+const { where, or, Op } = require('sequelize');
 
 const ROUTES_API_URL = `${process.env.ROUTES_API_BASE_URL}/directions/v2:computeRoutes`;
 const API_KEY = process.env.GOOGLE_MAPS_API_KEY 
@@ -16,9 +16,9 @@ exports.calcularRota = async (req, res) => {
     if (!origem || !destino) {
         return res.status(400).json({ error: 'Origem e destino são obrigatórios.' });
     }
-
+    
     try {
-        const apiResponse = await GetRouteFromMapsAPI(origem, destino)
+        const apiResponse = await GetRoutesFromMapsAPI(origem, destino, true)
 
         if (apiResponse.status !== 200) {
             return res.status(apiResponse.status).json({ error: 'Erro ao calcular rotas.' });
@@ -29,40 +29,55 @@ exports.calcularRota = async (req, res) => {
             const novaRota = await RegisterRouteInDB(route)
             await RegisterTrechosInDB(route, novaRota)
 
-            return await db.Rota.findOne({ 
-                where: { id_rota: novaRota.id_rota },
+            return novaRota.id_rota
+        })
+
+        const listaRotas = await Promise.all(routePromises)
+
+        const descricaoRota = await db.Rota.findOne({ 
+            where: {
+                id_rota: listaRotas[0]
+            }
+        })
+        
+        const allRoutes = await db.Rota.findAll({ 
+            where: {
+                [Op.or]: [
+                    { id_rota: { [Op.in]: listaRotas } },
+                    { 
+                        descricao: descricaoRota.descricao,
+                    }
+                ]
+            }, 
+            include: [{
+                model: db.Trecho,
+                as: 'trechos',
+                attributes: ['id_trecho', 'descricao', 'distancia', 'duracao', 'polyline', 'order_number'],
                 include: [{
-                    model: db.Trecho,
-                    as: 'trechos',
-                    attributes: ['id_trecho', 'descricao', 'distancia', 'duracao', 'polyline', 'order_number'],
-                    include: [{
-                        model: db.Localizacao,
-                        as: 'local_partida',
-                        attributes: ['id_localizacao', 'place_id', 'latitude', 'longitude', 'logradouro', 'bairro', 'cidade', 'estado', 'cep', 'pais']
-                    }, {
-                        model: db.Localizacao,
-                        as: 'local_destino',
-                        attributes: ['id_localizacao', 'place_id', 'latitude', 'longitude',  'logradouro', 'bairro', 'cidade', 'estado', 'cep', 'pais']
-                    }],
-                    order: [
-                        ['order_number', 'ASC']
-                    ]
-                },
-                {
                     model: db.Localizacao,
                     as: 'local_partida',
                     attributes: ['id_localizacao', 'place_id', 'latitude', 'longitude', 'logradouro', 'bairro', 'cidade', 'estado', 'cep', 'pais']
                 }, {
                     model: db.Localizacao,
                     as: 'local_destino',
-                    attributes: ['id_localizacao', 'place_id', 'latitude', 'longitude', 'logradouro', 'bairro', 'cidade', 'estado', 'cep', 'pais']
-                }]
-            })
+                    attributes: ['id_localizacao', 'place_id', 'latitude', 'longitude',  'logradouro', 'bairro', 'cidade', 'estado', 'cep', 'pais']
+                }],
+                order: [
+                    ['order_number', 'ASC']
+                ]
+            },
+            {
+                model: db.Localizacao,
+                as: 'local_partida',
+                attributes: ['id_localizacao', 'place_id', 'latitude', 'longitude', 'logradouro', 'bairro', 'cidade', 'estado', 'cep', 'pais']
+            }, {
+                model: db.Localizacao,
+                as: 'local_destino',
+                attributes: ['id_localizacao', 'place_id', 'latitude', 'longitude', 'logradouro', 'bairro', 'cidade', 'estado', 'cep', 'pais']
+            }]
         })
-
-        const listaRotas = await Promise.all(routePromises)
-
-        return res.status(200).json({routes: listaRotas});
+        
+        return res.status(200).json({routes: allRoutes});
     } catch (error) {
         console.error('Erro ao calcular a rota:', error);
         
@@ -446,3 +461,47 @@ async function RegisterTrechosInDB(response, route) {
         throw new Error('Erro ao registrar trechos: ' + error);
     }
 }
+
+function standardizeCoordinates(lat, lng) {
+    // Ensure inputs are numbers first
+    let latitude = typeof lat === 'string' ? parseFloat(lat) : lat;
+    let longitude = typeof lng === 'string' ? parseFloat(lng) : lng;
+    
+    // Check for valid coordinate ranges
+    if (latitude < -90 || latitude > 90) {
+        throw new Error('Latitude must be between -90 and 90');
+    }
+    if (longitude < -180 || longitude > 180) {
+        throw new Error('Longitude must be between -180 and 180');
+    }
+    
+    // Convert to string with fixed precision
+    // For comparing with database, we use strings to avoid floating point issues
+    let latStr = latitude.toString();
+    let lngStr = longitude.toString();
+    
+    // Find decimal point position or add one if it doesn't exist
+    const latDecimalPos = latStr.indexOf('.');
+    const lngDecimalPos = lngStr.indexOf('.');
+    
+    if (latDecimalPos === -1) {
+        latStr = latStr + '.';
+    }
+    
+    if (lngDecimalPos === -1) {
+        lngStr = lngStr + '.';
+    }
+    
+    // Add zeros to pad to exactly 15 decimal places
+    const latDecimalPart = latStr.substring(latStr.indexOf('.') + 1);
+    const lngDecimalPart = lngStr.substring(lngStr.indexOf('.') + 1);
+    
+    latStr = latStr + '0'.repeat(15 - latDecimalPart.length);
+    lngStr = lngStr + '0'.repeat(15 - lngDecimalPart.length);
+    
+    return {
+        latitude: latStr,
+        longitude: lngStr
+    };
+}
+
