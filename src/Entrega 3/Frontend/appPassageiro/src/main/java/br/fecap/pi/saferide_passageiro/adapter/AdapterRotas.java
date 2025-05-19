@@ -45,7 +45,7 @@ public class AdapterRotas extends RecyclerView.Adapter<AdapterRotas.ViewHolder> 
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            //textNumeracaoRota = itemView.findViewById(R.id.textNumeracaoRota);
+            textNumeracaoRota = itemView.findViewById(R.id.textNumeracaoRota);
             textRua = itemView.findViewById(R.id.textRua);
             starBar = itemView.findViewById(R.id.starBarAdapter);
             avaliacoesContainer = itemView.findViewById(R.id.avaliacoesContainer);
@@ -70,7 +70,7 @@ public class AdapterRotas extends RecyclerView.Adapter<AdapterRotas.ViewHolder> 
         starBar.setRating(notaAvaliacaoRota);
 
         // Configurar o nome da rua
-        //holder.textNumeracaoRota.setText("Rota " + (position + 1));
+        holder.textNumeracaoRota.setText("Rota " + (position + 1));
         holder.textRua.setText(rota.getDescricao());
 
         // Limpar o container de avaliações antes de adicionar novas
