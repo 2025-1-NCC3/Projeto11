@@ -1,5 +1,6 @@
 package br.fecap.pi.saferide_passageiro;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -123,11 +124,13 @@ public class Feedback extends AppCompatActivity {
         btnFinalizar.setAlpha(0.5f); // Visual feedback que está desabilitado
 
         btnFinalizar.setOnClickListener(v -> {
-            // Verificar novamente se pelo menos uma opção foi selecionada
             if (peloMenosUmaOpcaoSelecionada()) {
-                finish(); // Encerra a tela atual
+                Intent intent = new Intent(this, IniciarViagem.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
+
             } else {
-                // Mostrar mensagem informando que pelo menos uma opção deve ser selecionada
                 Toast.makeText(this, "Selecione pelo menos uma opção", Toast.LENGTH_SHORT).show();
             }
         });
@@ -141,8 +144,6 @@ public class Feedback extends AppCompatActivity {
 
         layoutNegativos.setVisibility(isNegativosOpen ? View.VISIBLE : View.GONE);
         imgSetaNegativo.setImageResource(isNegativosOpen ? R.drawable.icon_seta_baixo : R.drawable.icon_seta_esquerda);
-
-        // Verificar se já existem seleções (caso de restauração de estado)
         verificarSelecoes();
     }
 
@@ -165,8 +166,6 @@ public class Feedback extends AppCompatActivity {
             checkbox.setOnCheckedChangeListener(listener);
         }
     }
-
-    // Método para verificar se pelo menos uma opção foi selecionada
     private void verificarSelecoes() {
         boolean peloMenosUma = peloMenosUmaOpcaoSelecionada();
 
