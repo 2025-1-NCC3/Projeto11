@@ -354,9 +354,9 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
                     // Inicia a tela MetodoPagamento
                     Intent intent = new Intent(this, MetodoPagamento.class);
                     startActivity(intent);
+                    finish();
                 });
             }
-
             popupWindow.showAtLocation(findViewById(R.id.main), Gravity.CENTER, 0, 0);
         });
 
@@ -445,7 +445,7 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
 //        });
 //    }
 
-private void calcularRota() {
+    private void calcularRota() {
     if (origemSelecionada.getLatitude() == 0 || destinoSelecionado.getLatitude() == 0) {
         Toast.makeText(this, "Por favor, selecione origem e destino", Toast.LENGTH_SHORT).show();
         return;
