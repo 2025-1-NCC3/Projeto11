@@ -166,4 +166,6 @@
         app:layout_constraintVertical_bias="0.87"
         app:layout_goneMarginEnd="20dp" />
 
+    <include layout="@layout/activity_procurando_motorista"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

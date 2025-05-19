@@ -17,6 +17,7 @@ import android.view.WindowManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -33,6 +34,7 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -85,6 +87,8 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
     private  ImageView imgHistorico,imgPerfil;
 
     private boolean doubleBackToExitPressedOnce = false;
+    private FrameLayout loadingLayout;
+    private LottieAnimationView animationView;
 
     SessionManager sessionManager;
 
@@ -101,6 +105,10 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
         etDestino = findViewById(R.id.etDestino);
         imgHistorico = findViewById(R.id.imgHistorico);
         imgPerfil = findViewById(R.id.imgPerfil);
+
+        loadingLayout = findViewById(R.id.loadingLayout);
+        animationView = findViewById(R.id.animationView);
+        loadingLayout.bringToFront();
 
         sessionManager = new SessionManager(this);
 
@@ -464,12 +472,16 @@ private void calcularRota() {
         return;
     }
 
+    showLoading();
+
     CalcularRotaRequestDTO routeRequest = new CalcularRotaRequestDTO(origemSelecionada, destinoSelecionado);
     Call<CalcularRotaResponseDTO> call = apiService.calcularRota(routeRequest);
 
     call.enqueue(new Callback<>() {
         @Override
         public void onResponse(Call<CalcularRotaResponseDTO> call, Response<CalcularRotaResponseDTO> response) {
+            hideLoading();
+
             if (response.isSuccessful()) {
                 // Processar resposta de sucesso
                 Log.d("RESPONSE API", "onResponse: " + response.body());
@@ -506,6 +518,7 @@ private void calcularRota() {
 
         @Override
         public void onFailure(Call<CalcularRotaResponseDTO> call, Throwable t) {
+            hideLoading();
             // Tratar falha na comunicação
             Toast.makeText(IniciarViagem.this,
                     "Falha na comunicação: " + t.getMessage(),
@@ -623,4 +636,26 @@ private void calcularRota() {
         new Handler().postDelayed(() -> doubleBackToExitPressedOnce = false, 2000); // Reseta em 2 segundos
     }
 
+    private void showLoading() {
+        runOnUiThread(() -> {
+            loadingLayout.setVisibility(View.VISIBLE);
+            animationView.playAnimation();
+            loadingLayout.setClickable(true);
+        });
+    }
+
+    private void hideLoading() {
+        runOnUiThread(() -> {
+            if (loadingLayout.getVisibility() == View.VISIBLE) {
+                loadingLayout.setVisibility(View.GONE);
+                animationView.pauseAnimation();
+            }
+        });
+    }
+
+    @Override
+    protected void onDestroy() {
+        hideLoading();
+        super.onDestroy();
+    }
 }
