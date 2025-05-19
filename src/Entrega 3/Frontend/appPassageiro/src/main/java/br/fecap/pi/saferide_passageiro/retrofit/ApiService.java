@@ -8,6 +8,8 @@ import br.fecap.pi.saferide_passageiro.dto.CalcularRotaRequestDTO;
 import br.fecap.pi.saferide_passageiro.dto.CalcularRotaResponseDTO;
 import br.fecap.pi.saferide_passageiro.dto.HistoricoCorridaDTO;
 import br.fecap.pi.saferide_passageiro.dto.LoginRequestDTO;
+import br.fecap.pi.saferide_passageiro.dto.RegistrarAvaliacaoRequestDTO;
+import br.fecap.pi.saferide_passageiro.dto.RegistrarAvaliacaoResponseDTO;
 import br.fecap.pi.saferide_passageiro.dto.ResponseCreateUsuarioDTO;
 import br.fecap.pi.saferide_passageiro.dto.ResponseDTO;
 import br.fecap.pi.saferide_passageiro.dto.ResponseLoginUserDTO;
@@ -69,4 +71,6 @@ public interface ApiService {
             @Part("id") RequestBody id
     );
 
+    @POST("avaliacoes/")
+    Call<RegistrarAvaliacaoResponseDTO> registrarAvaliacao(@Body RegistrarAvaliacaoRequestDTO body);
 }
