@@ -16,12 +16,19 @@ public class EncryptionInterceptor implements Interceptor {
     @Override
     public Response intercept(Chain chain) throws IOException {
         Request originalRequest = chain.request();
+        String url = originalRequest.url().toString();
+
+        // Se for a rota de histórico de corridas, ignora criptografia/descriptografia
+        if (url.contains("/corridas/passageiro/")) {
+            return chain.proceed(originalRequest); // Passa direto sem modificar
+        }
+
         RequestBody originalBody = originalRequest.body();
         MediaType contentType = originalBody != null ? originalBody.contentType() : null;
 
         Request encryptedRequest = originalRequest;
 
-        // Criptografar o corpo da requisição se for JSON
+        // Criptografar o corpo da requisição se for JSON (para outras rotas)
         if (originalBody != null && contentType != null && "json".equalsIgnoreCase(contentType.subtype())) {
             Buffer buffer = new Buffer();
             originalBody.writeTo(buffer);
@@ -39,10 +46,15 @@ public class EncryptionInterceptor implements Interceptor {
                     .build();
         }
 
-        // Envia a requisição criptografada
+        // Envia a requisição (criptografada ou não)
         Response response = chain.proceed(encryptedRequest);
 
-        // Descriptografar a resposta se for JSON
+        // Se for a rota de histórico, retorna a resposta original
+        if (url.contains("/corridas/passageiro/")) {
+            return response;
+        }
+
+        // Descriptografar a resposta se for JSON (para outras rotas)
         ResponseBody responseBody = response.body();
         MediaType responseContentType = responseBody != null ? responseBody.contentType() : null;
 
