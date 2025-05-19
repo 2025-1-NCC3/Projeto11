@@ -423,7 +423,9 @@ public class ConfiguracaoPerfil extends AppCompatActivity {
                                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
                                             sessionManager.logoutUser(); // limpa sessão
-                                            finishAffinity(); // Fecha todas as telas
+                                            Intent intent = new Intent(ConfiguracaoPerfil.this, TelaLogin.class);
+                                            startActivity(intent);
+                                            finish();
                                             System.exit(0); // Encerra o app
                                         }
                                     });
