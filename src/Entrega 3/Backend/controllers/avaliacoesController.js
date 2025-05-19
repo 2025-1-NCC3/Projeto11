@@ -21,7 +21,8 @@ exports.obterAvaliacoes = async (req, res) => {
                     through: {
                         model: db.AvaliacaoFeedback,
                         as: 'avaliacao_feedback'
-                    }
+                    },
+                    attributes: ['id_feedback', 'descricao', 'categoria'], // Inclui apenas os atributos desejados do feedback
                 }                
             ]
         });

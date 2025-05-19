@@ -38,6 +38,8 @@ public class RotaModel {
 
     private List<AvaliacoesRotaResponseDTO> avaliacoes;
 
+    private List<FeedbackModel> feedbacks;
+
     public RotaModel() {}
 
     public RotaModel(int idRota,
@@ -146,5 +148,13 @@ public class RotaModel {
 
     public void setAvaliacoes(List<AvaliacoesRotaResponseDTO> avaliacoes) {
         this.avaliacoes = avaliacoes;
+    }
+
+    public List<FeedbackModel> getFeedbacks() {
+        return feedbacks;
+    }
+
+    public void setFeedbacks(List<FeedbackModel> feedbacks) {
+        this.feedbacks = feedbacks;
     }
 }

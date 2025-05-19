@@ -52,13 +52,17 @@ import com.google.android.libraries.places.api.net.PlacesClient;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import br.fecap.pi.saferide_passageiro.adapter.PlaceAutoSuggestAdapter;
 import br.fecap.pi.saferide_passageiro.adapter.AdapterRotas;
 import br.fecap.pi.saferide_passageiro.dto.AvaliacoesRotaResponseDTO;
 import br.fecap.pi.saferide_passageiro.dto.CalcularRotaRequestDTO;
 import br.fecap.pi.saferide_passageiro.dto.CalcularRotaResponseDTO;
+import br.fecap.pi.saferide_passageiro.models.FeedbackModel;
 import br.fecap.pi.saferide_passageiro.models.LocalizacaoModel;
 import br.fecap.pi.saferide_passageiro.models.RotaModel;
 import br.fecap.pi.saferide_passageiro.retrofit.ApiService;
@@ -392,7 +396,6 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
 //            public void onResponse(Call<CalcularRotaResponseDTO> call, Response<CalcularRotaResponseDTO> response) {
 //                if (response.isSuccessful()) {
 //                    // Processar resposta de sucesso
-//                    // Você pode armazenar a resposta em um Bundle e passar para a próxima Activity
 //                    Log.d("RESPONSE API", "onResponse: " + response.body());
 //                    ArrayList<RotaModel> rotas = response.body().getRoutes();
 //
@@ -415,7 +418,8 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
 //                        }
 //                    }
 //
-//                    mostrarPopupRecycleView(rotas);
+//                    // Usar a lista filtrada em vez da original
+//                    mostrarPopupRecycleView(rotasSemDuplicatas);
 //                } else {
 //                    // Tratar erro na resposta
 //                    Toast.makeText(IniciarViagem.this,
@@ -451,91 +455,123 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
 //
 //                    @Override
 //                    public void onFailure(Call<List<AvaliacoesRotaResponseDTO>> call, Throwable t) {
-//
 //                    }
 //                });
 //            }
 //        });
 //    }
 
-private void calcularRota() {
-    if (origemSelecionada.getLatitude() == 0 || destinoSelecionado.getLatitude() == 0) {
-        Toast.makeText(this, "Por favor, selecione origem e destino", Toast.LENGTH_SHORT).show();
-        return;
-    }
+    private void calcularRota() {
+        if (origemSelecionada.getLatitude() == 0 || destinoSelecionado.getLatitude() == 0) {
+            Toast.makeText(this, "Por favor, selecione origem e destino", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-    CalcularRotaRequestDTO routeRequest = new CalcularRotaRequestDTO(origemSelecionada, destinoSelecionado);
-    Call<CalcularRotaResponseDTO> call = apiService.calcularRota(routeRequest);
+        CalcularRotaRequestDTO routeRequest = new CalcularRotaRequestDTO(origemSelecionada, destinoSelecionado);
+        Call<CalcularRotaResponseDTO> call = apiService.calcularRota(routeRequest);
 
-    call.enqueue(new Callback<>() {
-        @Override
-        public void onResponse(Call<CalcularRotaResponseDTO> call, Response<CalcularRotaResponseDTO> response) {
-            if (response.isSuccessful()) {
-                // Processar resposta de sucesso
-                Log.d("RESPONSE API", "onResponse: " + response.body());
-                ArrayList<RotaModel> rotas = response.body().getRoutes();
+        call.enqueue(new Callback<>() {
+            @Override
+            public void onResponse(Call<CalcularRotaResponseDTO> call, Response<CalcularRotaResponseDTO> response) {
+                if (response.isSuccessful()) {
+                    // Processar resposta de sucesso
+                    // Você pode armazenar a resposta em um Bundle e passar para a próxima Activity
+                    Log.d("RESPONSE API", "onResponse: " + response.body());
+                    ArrayList<RotaModel> rotas = response.body().getRoutes();
 
-                // Solução para remover duplicatas baseada no endereço de destino
-                ArrayList<RotaModel> rotasSemDuplicatas = new ArrayList<>();
-                java.util.Set<String> enderecosVistos = new java.util.HashSet<>();
-
-                for (RotaModel rota : rotas) {
-                    // Obter o endereço completo do destino
-                    String enderecoDestino = rota.getLocalDestino().getLogradouro();
-
-                    // Se o endereço ainda não foi visto, adiciona à lista filtrada
-                    if (!enderecosVistos.contains(enderecoDestino)) {
-                        enderecosVistos.add(enderecoDestino);
-                        rotasSemDuplicatas.add(rota);
-
-                        // Buscar avaliações e desenhar polyline apenas para rotas únicas
+                    rotas.forEach((rota) -> {
                         buscarAvaliacoes(rota);
                         desenharPolyline(rota.getPolyline(), Color.BLUE);
-                    }
-                }
+                    });
 
-                // Usar a lista filtrada em vez da original
-                mostrarPopupRecycleView(rotasSemDuplicatas);
-            } else {
-                // Tratar erro na resposta
+                    mostrarPopupRecycleView(rotas);
+                } else {
+                    // Tratar erro na resposta
+                    Toast.makeText(IniciarViagem.this,
+                            "Erro ao calcular rota: " + response.message(),
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CalcularRotaResponseDTO> call, Throwable t) {
+                // Tratar falha na comunicação
                 Toast.makeText(IniciarViagem.this,
-                        "Erro ao calcular rota: " + response.message(),
+                        "Falha na comunicação: " + t.getMessage(),
                         Toast.LENGTH_SHORT).show();
             }
-        }
 
-        @Override
-        public void onFailure(Call<CalcularRotaResponseDTO> call, Throwable t) {
-            // Tratar falha na comunicação
-            Toast.makeText(IniciarViagem.this,
-                    "Falha na comunicação: " + t.getMessage(),
-                    Toast.LENGTH_SHORT).show();
-        }
+            private void buscarAvaliacoes(RotaModel rota) {
+                Call<List<AvaliacoesRotaResponseDTO>> call = apiService.getAvaliacoesRota(rota.getIdRota());
 
-        private void buscarAvaliacoes(RotaModel rota) {
-            Call<List<AvaliacoesRotaResponseDTO>> call = apiService.getAvaliacoesRota(rota.getIdRota());
+                call.enqueue(new Callback<>() {
+                    @Override
+                    public void onResponse(Call<List<AvaliacoesRotaResponseDTO>> call, Response<List<AvaliacoesRotaResponseDTO>> response) {
+                        if (response.isSuccessful()) {
+                            assert response.body() != null;
+                            List<AvaliacoesRotaResponseDTO> listaAvaliacoes = response.body();
 
-            call.enqueue(new Callback<>() {
-                @Override
-                public void onResponse(Call<List<AvaliacoesRotaResponseDTO>> call, Response<List<AvaliacoesRotaResponseDTO>> response) {
-                    if (response.isSuccessful()) {
-                        assert response.body() != null;
-                        rota.setAvaliacoes(response.body());
-                        Log.d("ROTAS: ", rota.getDescricao() + response.body());
-                    } else {
-                        Toast.makeText(IniciarViagem.this,
-                                "Erro ao buscar avaliações da rota: " + response.message(),
-                                Toast.LENGTH_SHORT).show();
+                            ArrayList<FeedbackModel> listaFeedbacks = new ArrayList<>();
+                            listaAvaliacoes.forEach((avaliacao) -> {
+                                listaFeedbacks.addAll(avaliacao.getFeedbacks());
+                            });
+
+                            List<FeedbackModel> feedbacks = contarItensDistintosFeedback(listaFeedbacks);
+                            rota.setFeedbacks(feedbacks);
+                            rota.setAvaliacoes(response.body());
+                            Log.d("ROTAS: ", rota.getDescricao() + response.body());
+                        } else {
+                            Log.d("AVALIACOES", "Erro ao buscar avaliações da rota: " + response.message());
+                        }
                     }
-                }
 
-                @Override
-                public void onFailure(Call<List<AvaliacoesRotaResponseDTO>> call, Throwable t) {
-                }
-            });
+                    @Override
+                    public void onFailure(Call<List<AvaliacoesRotaResponseDTO>> call, Throwable t) {
+
+                    }
+                });
+            }
+        });
+    }
+
+    public List<FeedbackModel> contarItensDistintosFeedback(List<FeedbackModel> lista) {
+        if (lista == null || lista.isEmpty()) {
+            return new ArrayList<>();
         }
-    });
-}
+
+        // Agrupa por descrição e mapeia para o primeiro objeto encontrado de cada grupo
+        return new ArrayList<>(lista.stream()
+                .collect(Collectors.groupingBy(
+                        FeedbackModel::getDescricao,
+                        // Usa o primeiro collector para pegar o primeiro objeto de cada grupo
+                        Collectors.collectingAndThen(
+                                Collectors.toList(),
+                                grupo -> {
+                                    // Conta o número de ocorrências
+                                    long contagem = grupo.size();
+
+                                    // Pega o primeiro objeto do grupo
+                                    FeedbackModel primeiroObjeto = grupo.get(0);
+
+                                    // Cria um novo objeto com a mesma estrutura do original
+                                    // e atualiza a contagem
+                                    return criarObjetoComContagem(primeiroObjeto, (int) contagem);
+                                }
+                        )
+                ))
+                .values());
+    }
+
+    private FeedbackModel criarObjetoComContagem(FeedbackModel objetoOriginal, int contagem) {
+        FeedbackModel novoObjeto = new FeedbackModel(
+                objetoOriginal.getIdFeedback(),  // Assumindo que existe um ID
+                objetoOriginal.getCategoria(),  // Outros atributos que queira manter
+                objetoOriginal.getDescricao(),
+                contagem  // Novo atributo de contagem
+        );
+
+        return novoObjeto;
+    }
 
     private void desenharPolyline(String encodedPolyline, int color) {
         // Verificar se o mapa e a polyline estão disponíveis

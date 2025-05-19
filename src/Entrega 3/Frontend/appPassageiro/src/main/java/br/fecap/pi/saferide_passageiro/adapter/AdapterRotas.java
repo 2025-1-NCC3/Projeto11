@@ -11,7 +11,9 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.sql.Array;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import br.fecap.pi.saferide_passageiro.R;
@@ -60,8 +62,10 @@ public class AdapterRotas extends RecyclerView.Adapter<AdapterRotas.ViewHolder> 
     public void onBindViewHolder(@NonNull AdapterRotas.ViewHolder holder, int position) {
         RotaModel rota = listaRotas.get(position);
         Context context = holder.itemView.getContext();
+        MaterialRatingBar starBar = holder.itemView.findViewById(R.id.starBarAdapter);
 
         int notaAvaliacaoRota = rota.getAvaliacoes() != null ? AvaliacaoUtils.calcularMediaAvaliacao(rota.getAvaliacoes()) : 0;
+        starBar.setRating(notaAvaliacaoRota);
 
         // Configurar o nome da rua
         holder.textRua.setText(rota.getDescricao());
@@ -73,18 +77,20 @@ public class AdapterRotas extends RecyclerView.Adapter<AdapterRotas.ViewHolder> 
         if (rota.getAvaliacoes() != null && !rota.getAvaliacoes().isEmpty()) {
             LayoutInflater inflater = LayoutInflater.from(context);
 
-            ArrayList<FeedbackModel> listaFeedbacks = new ArrayList<>();
-            rota.getAvaliacoes().forEach((avaliacao) -> {
-                listaFeedbacks.retainAll(avaliacao.getFeedbacks());
-            });
+            List<FeedbackModel> listaFeedbacks = rota.getFeedbacks();
+            listaFeedbacks.sort(Comparator.comparing(FeedbackModel::getFrequencia).reversed());
+
+            int limitCounter = 0;
 
             for (FeedbackModel feedback : listaFeedbacks) {
+                if (limitCounter == 4) break;
+
                 View avaliacaoView = inflater.inflate(R.layout.item_avaliacao_layout, holder.avaliacoesContainer, false);
 
                 // Configurar o texto da avaliação (feedbacks ou comentário)
                 TextView textoAvaliacao = avaliacaoView.findViewById(R.id.textoAvaliacao);
 
-                textoAvaliacao.setText(feedback.getDescricao());
+                textoAvaliacao.setText(feedback.getDescricao() + " - " + feedback.getFrequencia());
 
                 // Configurar a cor do indicador baseado na nota
                 View indicadorAvaliacao = avaliacaoView.findViewById(R.id.indicadorAvaliacao);
@@ -120,6 +126,7 @@ public class AdapterRotas extends RecyclerView.Adapter<AdapterRotas.ViewHolder> 
 
                 // Adicionar a view de avaliação ao container
                 holder.avaliacoesContainer.addView(avaliacaoView);
+                limitCounter++;
             }
         } else {
             // Se não houver avaliações, exibir uma mensagem

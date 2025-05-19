@@ -23,6 +23,10 @@ public class EncryptionInterceptor implements Interceptor {
             return chain.proceed(originalRequest); // Passa direto sem modificar
         }
 
+        if (url.contains("/avaliacoes/")) {
+            return chain.proceed(originalRequest);
+        }
+
         RequestBody originalBody = originalRequest.body();
         MediaType contentType = originalBody != null ? originalBody.contentType() : null;
 
@@ -51,6 +55,10 @@ public class EncryptionInterceptor implements Interceptor {
 
         // Se for a rota de histórico, retorna a resposta original
         if (url.contains("/corridas/passageiro/")) {
+            return response;
+        }
+
+        if (url.contains("/avaliacoes/")) {
             return response;
         }
 
