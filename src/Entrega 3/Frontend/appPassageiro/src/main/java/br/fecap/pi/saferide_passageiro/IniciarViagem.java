@@ -250,7 +250,9 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
                     Log.d("IniciarViagem", "Destino selecionado: " + place.getName() +
                             " (" + latLng.latitude + ", " + latLng.longitude + ")");
 
+                    showLoading();
                     calcularRota();
+                    hideLoading();
                 }
             }).addOnFailureListener((exception) -> {
                 Log.e("IniciarViagem", "Erro ao buscar detalhes do local: " + exception.getMessage());
@@ -376,7 +378,7 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
 
         // Limitar altura máxima do RecyclerView a altura de 3 itens
         recyclerView.post(() -> {
-            int itemHeightDp = 90;
+            int itemHeightDp = 160;
             int maxItems = 4;
 
             float scale = recyclerView.getResources().getDisplayMetrics().density;
@@ -470,26 +472,22 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
 //        });
 //    }
 
-private void calcularRota() {
-    if (origemSelecionada.getLatitude() == 0 || destinoSelecionado.getLatitude() == 0) {
-        Toast.makeText(this, "Por favor, selecione origem e destino", Toast.LENGTH_SHORT).show();
-        return;
-    }
+    private void calcularRota() {
+        if (origemSelecionada.getLatitude() == 0 || destinoSelecionado.getLatitude() == 0) {
+            Toast.makeText(this, "Por favor, selecione origem e destino", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-    showLoading();
+        CalcularRotaRequestDTO routeRequest = new CalcularRotaRequestDTO(origemSelecionada, destinoSelecionado);
+        Call<CalcularRotaResponseDTO> call = apiService.calcularRota(routeRequest);
 
-    CalcularRotaRequestDTO routeRequest = new CalcularRotaRequestDTO(origemSelecionada, destinoSelecionado);
-    Call<CalcularRotaResponseDTO> call = apiService.calcularRota(routeRequest);
-
-    call.enqueue(new Callback<>() {
-        @Override
-        public void onResponse(Call<CalcularRotaResponseDTO> call, Response<CalcularRotaResponseDTO> response) {
-            hideLoading();
-
-            if (response.isSuccessful()) {
-                // Processar resposta de sucesso
-                Log.d("RESPONSE API", "onResponse: " + response.body());
-                ArrayList<RotaModel> rotas = response.body().getRoutes();
+        call.enqueue(new Callback<>() {
+            @Override
+            public void onResponse(Call<CalcularRotaResponseDTO> call, Response<CalcularRotaResponseDTO> response) {
+                if (response.isSuccessful()) {
+                    // Processar resposta de sucesso
+                    Log.d("RESPONSE API", "onResponse: " + response.body());
+                    ArrayList<RotaModel> rotas = response.body().getRoutes();
 
                     rotas.forEach((rota) -> {
                         buscarAvaliacoes(rota);
@@ -505,14 +503,13 @@ private void calcularRota() {
                 }
             }
 
-        @Override
-        public void onFailure(Call<CalcularRotaResponseDTO> call, Throwable t) {
-            hideLoading();
-            // Tratar falha na comunicação
-            Toast.makeText(IniciarViagem.this,
-                    "Falha na comunicação: " + t.getMessage(),
-                    Toast.LENGTH_SHORT).show();
-        }
+            @Override
+            public void onFailure(Call<CalcularRotaResponseDTO> call, Throwable t) {
+                // Tratar falha na comunicação
+                Toast.makeText(IniciarViagem.this,
+                        "Falha na comunicação: " + t.getMessage(),
+                        Toast.LENGTH_SHORT).show();
+            }
 
             private void buscarAvaliacoes(RotaModel rota) {
                 Call<List<AvaliacoesRotaResponseDTO>> call = apiService.getAvaliacoesRota(rota.getIdRota());

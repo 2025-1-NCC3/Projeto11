@@ -13,13 +13,23 @@
         android:padding="16dp">
 
         <TextView
-            android:id="@+id/textRua"
+            android:id="@+id/textNumeracaoRota"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/app_TextRua"
             android:textColor="@color/VerdeEscuro"
             android:layout_marginStart="4dp"
-            android:textSize="18sp"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/textRua"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_TextRua"
+            android:textColor="@color/Preto"
+            android:layout_marginStart="4dp"
+            android:textSize="17sp"
             android:textStyle="bold" />
 
         <LinearLayout
