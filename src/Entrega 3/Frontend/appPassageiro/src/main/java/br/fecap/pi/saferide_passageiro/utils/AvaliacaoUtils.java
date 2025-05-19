@@ -5,8 +5,8 @@ import java.util.List;
 import br.fecap.pi.saferide_passageiro.dto.AvaliacoesRotaResponseDTO;
 
 public class AvaliacaoUtils {
-    public static float calcularMediaAvaliacao(List<AvaliacoesRotaResponseDTO> avaliacoes) {
-        float somaNotaAvaliacoes = 0;
+    public static int calcularMediaAvaliacao(List<AvaliacoesRotaResponseDTO> avaliacoes) {
+        int somaNotaAvaliacoes = 0;
 
         for (AvaliacoesRotaResponseDTO avaliacao : avaliacoes) {
             somaNotaAvaliacoes += avaliacao.getNota();

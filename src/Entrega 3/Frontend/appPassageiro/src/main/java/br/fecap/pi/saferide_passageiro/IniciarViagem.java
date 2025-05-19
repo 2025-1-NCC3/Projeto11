@@ -396,11 +396,24 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
 //                    Log.d("RESPONSE API", "onResponse: " + response.body());
 //                    ArrayList<RotaModel> rotas = response.body().getRoutes();
 //
-//                    rotas.forEach((rota) -> {
-//                        buscarAvaliacoes(rota);
-//                        //classificarRota();
-//                        desenharPolyline(rota.getPolyline(), Color.BLUE);
-//                    });
+//                    // Solução para remover duplicatas baseada no endereço de destino
+//                    ArrayList<RotaModel> rotasSemDuplicatas = new ArrayList<>();
+//                    java.util.Set<String> enderecosVistos = new java.util.HashSet<>();
+//
+//                    for (RotaModel rota : rotas) {
+//                        // Obter o endereço completo do destino
+//                        String enderecoDestino = rota.getLocalDestino().getLogradouro();
+//
+//                        // Se o endereço ainda não foi visto, adiciona à lista filtrada
+//                        if (!enderecosVistos.contains(enderecoDestino)) {
+//                            enderecosVistos.add(enderecoDestino);
+//                            rotasSemDuplicatas.add(rota);
+//
+//                            // Buscar avaliações e desenhar polyline apenas para rotas únicas
+//                            buscarAvaliacoes(rota);
+//                            desenharPolyline(rota.getPolyline(), Color.BLUE);
+//                        }
+//                    }
 //
 //                    mostrarPopupRecycleView(rotas);
 //                } else {

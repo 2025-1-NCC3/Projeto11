@@ -28,7 +28,6 @@ Com base nesses dados, o SafeRide oferece aos usuários a possibilidade de escol
 ## 🛠 Estrutura de pastas
 
 ```
-├── .vscode/
 ├── documentos/
 │   ├── BD/
 │   ├── Entrega1/
@@ -37,11 +36,7 @@ Com base nesses dados, o SafeRide oferece aos usuários a possibilidade de escol
 │   ├── Entrega2/
 │   │   ├── Analise Descritiva de Dados/
 │   │   └── Programacao Orientada a Objetos e Estrutura de Dados/
-│   ├── Entrega3/
-│   │   ├── Analise Descritiva de Dados/
-│   │   └── Programacao Orientada a Objetos e Estrutura de Dados/
 │   ├── Documentação.docx/
-│   ├── readme.md/
 ├── imagens/
 ├── src/
 │   ├── Entrega1/
