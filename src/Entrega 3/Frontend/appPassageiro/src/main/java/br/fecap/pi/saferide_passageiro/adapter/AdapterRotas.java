@@ -93,7 +93,7 @@ public class AdapterRotas extends RecyclerView.Adapter<AdapterRotas.ViewHolder> 
                 // Configurar o texto da avaliação (feedbacks ou comentário)
                 TextView textoAvaliacao = avaliacaoView.findViewById(R.id.textoAvaliacao);
 
-                textoAvaliacao.setText(feedback.getDescricao() + " - " + feedback.getFrequencia());
+                textoAvaliacao.setText(feedback.getDescricao());
 
                 // Configurar a cor do indicador baseado na nota
                 View indicadorAvaliacao = avaliacaoView.findViewById(R.id.indicadorAvaliacao);
@@ -114,16 +114,6 @@ public class AdapterRotas extends RecyclerView.Adapter<AdapterRotas.ViewHolder> 
                         backgroundResId = R.drawable.circle_background_gray;
                         break;
                 }
-
-//                if (notaAvaliacaoRota >= 4) {
-//                    backgroundResId = R.drawable.circle_background_positive;
-//                } else if (notaAvaliacaoRota == 3) {
-//                    backgroundResId = R.drawable.circle_background_neutral;
-//                } else if (notaAvaliacaoRota > 0) {
-//                    backgroundResId = R.drawable.circle_background_negative;
-//                } else {
-//                    backgroundResId = R.drawable.circle_background_gray;
-//                }
 
                 indicadorAvaliacao.setBackgroundResource(backgroundResId);
 

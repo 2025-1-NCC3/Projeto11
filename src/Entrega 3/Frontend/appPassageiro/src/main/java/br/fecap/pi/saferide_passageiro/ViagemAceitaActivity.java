@@ -65,6 +65,7 @@ public class ViagemAceitaActivity extends AppCompatActivity {
 
         new Handler().postDelayed(() -> {
             Intent intent = new Intent(ViagemAceitaActivity.this, Feedback.class);
+            intent.putExtras(getIntent().getExtras());
             startActivity(intent);
             finish(); // Finaliza a tela atual
         }, 10000); // 10 segundos

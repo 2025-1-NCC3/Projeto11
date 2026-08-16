@@ -23,10 +23,6 @@ public class EncryptionInterceptor implements Interceptor {
             return chain.proceed(originalRequest); // Passa direto sem modificar
         }
 
-        if (url.contains("/avaliacoes/")) {
-            return chain.proceed(originalRequest);
-        }
-
         RequestBody originalBody = originalRequest.body();
         MediaType contentType = originalBody != null ? originalBody.contentType() : null;
 

@@ -152,9 +152,6 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
 
         PlacesClient placesClient = Places.createClient(this);
 
-
-        AutocompleteSessionToken token = AutocompleteSessionToken.newInstance();
-
         PlaceAutoSuggestAdapter adapter = new PlaceAutoSuggestAdapter(this, placesClient);
         etPartida.setAdapter(adapter);
         etPartida.setThreshold(2);
@@ -203,9 +200,6 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
                     Log.d("IniciarViagem", "Origem selecionada: " + place.getName() +
                             " (" + latLng.latitude + ", " + latLng.longitude + ")");
 
-//                    if (origemSelecionada != null && destinoSelecionado != null) {
-//                        mostrarPopupRecycleView(responseCalcularRota);
-//                    }
                 }
             }).addOnFailureListener((exception) -> {
                 Log.e("IniciarViagem", "Erro ao buscar detalhes do local: " + exception.getMessage());
@@ -252,7 +246,6 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
 
                     showLoading();
                     calcularRota();
-                    hideLoading();
                 }
             }).addOnFailureListener((exception) -> {
                 Log.e("IniciarViagem", "Erro ao buscar detalhes do local: " + exception.getMessage());
@@ -274,6 +267,7 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
     }
 
     private void mostrarPopupRecycleView(ArrayList<RotaModel> rotas) {
+        hideLoading();
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.TranslucentDialog);
         LayoutInflater inflater = getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.popup_recycleview, null);
@@ -291,21 +285,6 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
         // Pegar o RecyclerView do layout
         RecyclerView recyclerView = dialogView.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        // Obter referência para o EditText etPartida da Activity principal e torná-lo efetivamente final
-        EditText etPartida = findViewById(R.id.etPartida);
-        final String textoPartida = (etPartida != null) ? etPartida.getText().toString() : "";
-
-        // Obter referência para o EditText etDestino da Activity principal e torná-lo efetivamente final
-        EditText etDestinoPrincipal = findViewById(R.id.etDestino);
-        final String textoDestinoPrincipal = (etDestinoPrincipal != null) ? etDestinoPrincipal.getText().toString() : "";
-
-        // Criar lista de dados (listaRotas inicia com etDestino - lógica de pasted_content.txt)
-        List<RotaModel> listaRotas = new ArrayList<>(rotas);
-//        listaRotas.add(new RotaModel(textoDestinoPrincipal, 5)); // Usa textoDeEtDestino
-//        listaRotas.add(new RotaModel("Av. Brasil", 4));
-//        listaRotas.add(new RotaModel("Rua da Paz", 3));
-//        listaRotas.add(new RotaModel("Japão Liberdade", 4));
 
         // Criar e setar o adapter
         AdapterRotas adapter = new AdapterRotas(rotas, rota -> {
@@ -329,7 +308,7 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
                 starBar.setRating(AvaliacaoUtils.calcularMediaAvaliacao(rota.getAvaliacoes()));
             }
             if (txtPontoPartida != null) {
-                txtPontoPartida.setText(textoPartida);
+                txtPontoPartida.setText(rota.getLocalPartida().getLogradouro());
             }
 
             // Ocultar containers
@@ -367,6 +346,10 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
 
                     // Inicia a tela MetodoPagamento
                     Intent intent = new Intent(this, MetodoPagamento.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("USER_ID", sessionManager.getUserId());
+                    bundle.putInt("ROTA_ID", rota.getIdRota());
+                    intent.putExtras(bundle);
                     startActivity(intent);
                 });
             }
@@ -392,86 +375,6 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
         });
     }
 
-//    private void calcularRota() {
-//        if (origemSelecionada.getLatitude() == 0 || destinoSelecionado.getLatitude() == 0) {
-//            Toast.makeText(this, "Por favor, selecione origem e destino", Toast.LENGTH_SHORT).show();
-//            return;
-//        }
-//
-//        CalcularRotaRequestDTO routeRequest = new CalcularRotaRequestDTO(origemSelecionada, destinoSelecionado);
-//        Call<CalcularRotaResponseDTO> call = apiService.calcularRota(routeRequest);
-//
-//        call.enqueue(new Callback<>() {
-//            @Override
-//            public void onResponse(Call<CalcularRotaResponseDTO> call, Response<CalcularRotaResponseDTO> response) {
-//                if (response.isSuccessful()) {
-//                    // Processar resposta de sucesso
-//                    // Você pode armazenar a resposta em um Bundle e passar para a próxima Activity
-//                    Log.d("RESPONSE API", "onResponse: " + response.body());
-//                    ArrayList<RotaModel> rotas = response.body().getRoutes();
-//
-//                    // Solução para remover duplicatas baseada no endereço de destino
-//                    ArrayList<RotaModel> rotasSemDuplicatas = new ArrayList<>();
-//                    java.util.Set<String> enderecosVistos = new java.util.HashSet<>();
-//
-//                    for (RotaModel rota : rotas) {
-//                        // Obter o endereço completo do destino
-//                        String enderecoDestino = rota.getLocalDestino().getLogradouro();
-//
-//                        // Se o endereço ainda não foi visto, adiciona à lista filtrada
-//                        if (!enderecosVistos.contains(enderecoDestino)) {
-//                            enderecosVistos.add(enderecoDestino);
-//                            rotasSemDuplicatas.add(rota);
-//
-//                            // Buscar avaliações e desenhar polyline apenas para rotas únicas
-//                            buscarAvaliacoes(rota);
-//                            desenharPolyline(rota.getPolyline(), Color.BLUE);
-//                        }
-//                    }
-//
-//                    mostrarPopupRecycleView(rotas);
-//                } else {
-//                    // Tratar erro na resposta
-//                    Toast.makeText(IniciarViagem.this,
-//                            "Erro ao calcular rota: " + response.message(),
-//                            Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<CalcularRotaResponseDTO> call, Throwable t) {
-//                // Tratar falha na comunicação
-//                Toast.makeText(IniciarViagem.this,
-//                        "Falha na comunicação: " + t.getMessage(),
-//                        Toast.LENGTH_SHORT).show();
-//            }
-//
-//            private void buscarAvaliacoes(RotaModel rota) {
-//                Call<List<AvaliacoesRotaResponseDTO>> call = apiService.getAvaliacoesRota(rota.getIdRota());
-//
-//                call.enqueue(new Callback<>() {
-//                    @Override
-//                    public void onResponse(Call<List<AvaliacoesRotaResponseDTO>> call, Response<List<AvaliacoesRotaResponseDTO>> response) {
-//                        if (response.isSuccessful()) {
-//                            assert response.body() != null;
-//                            rota.setAvaliacoes(response.body());
-//                            Log.d("ROTAS: ", rota.getDescricao() + response.body());
-//                        } else {
-//                            Toast.makeText(IniciarViagem.this,
-//                                    "Erro ao buscar avaliações da rota: " + response.message(),
-//                                    Toast.LENGTH_SHORT).show();
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onFailure(Call<List<AvaliacoesRotaResponseDTO>> call, Throwable t) {
-//
-//                    }
-//                });
-//            }
-//        });
-//    }
-
     private void calcularRota() {
         if (origemSelecionada.getLatitude() == 0 || destinoSelecionado.getLatitude() == 0) {
             Toast.makeText(this, "Por favor, selecione origem e destino", Toast.LENGTH_SHORT).show();
@@ -489,12 +392,27 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
                     Log.d("RESPONSE API", "onResponse: " + response.body());
                     ArrayList<RotaModel> rotas = response.body().getRoutes();
 
-                    rotas.forEach((rota) -> {
-                        buscarAvaliacoes(rota);
-                        desenharPolyline(rota.getPolyline(), Color.BLUE);
-                    });
+                    final int[] avaliacoesCarregadas = {0};
+                    final int totalRotas = rotas.size();
 
-                    mostrarPopupRecycleView(rotas);
+                    if (totalRotas == 0) {
+                        mostrarPopupRecycleView(rotas);
+                        return;
+                    }
+
+                    rotas.forEach((rota) -> {
+                        desenharPolyline(rota.getPolyline(), Color.BLUE);
+
+                        // Buscar avaliações com callback
+                        buscarAvaliacoesComCallback(rota, () -> {
+                            avaliacoesCarregadas[0]++;
+
+                            // Quando todas as avaliações forem carregadas
+                            if (avaliacoesCarregadas[0] == totalRotas) {
+                                mostrarPopupRecycleView(rotas);
+                            }
+                        });
+                    });
                 } else {
                     // Tratar erro na resposta
                     Toast.makeText(IniciarViagem.this,
@@ -540,6 +458,38 @@ public class IniciarViagem extends AppCompatActivity implements OnMapReadyCallba
 
                     }
                 });
+            }
+        });
+
+    }
+
+    private void buscarAvaliacoesComCallback(RotaModel rota, Runnable onComplete) {
+        Call<List<AvaliacoesRotaResponseDTO>> call = apiService.getAvaliacoesRota(rota.getIdRota());
+
+        call.enqueue(new Callback<>() {
+            @Override
+            public void onResponse(Call<List<AvaliacoesRotaResponseDTO>> call, Response<List<AvaliacoesRotaResponseDTO>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<AvaliacoesRotaResponseDTO> listaAvaliacoes = response.body();
+
+                    ArrayList<FeedbackModel> listaFeedbacks = new ArrayList<>();
+                    listaAvaliacoes.forEach((avaliacao) -> {
+                        listaFeedbacks.addAll(avaliacao.getFeedbacks());
+                    });
+
+                    List<FeedbackModel> feedbacks = contarItensDistintosFeedback(listaFeedbacks);
+                    rota.setFeedbacks(feedbacks);
+                    rota.setAvaliacoes(response.body());
+                }
+
+                // Sempre chamar o callback, mesmo se falhar
+                onComplete.run();
+            }
+
+            @Override
+            public void onFailure(Call<List<AvaliacoesRotaResponseDTO>> call, Throwable t) {
+                Log.e("AVALIACOES", "Erro ao buscar avaliações: " + t.getMessage());
+                onComplete.run();
             }
         });
     }

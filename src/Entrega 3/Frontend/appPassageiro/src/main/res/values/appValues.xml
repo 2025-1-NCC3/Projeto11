@@ -74,7 +74,6 @@
     <string name="app_TextFeedback2Negativo">Local muito escuro.</string>
     <string name="app_TextFeedback3Negativo">Pouca movimentação, ruas desertas.</string>
     <string name="app_TextFeedback4Negativo">Falta de sinalização ou vias mal cuidadas.</string>
-    <string name="app_TextFeedback5Negativo">Presença de moradores de rua ou usuários de drogas.</string>
     <string name="app_TextPositivoFeedback">Positivo</string>
     <string name="app_TextNeutroFeedback">Neutro</string>
     <string name="app_TextNegativoFeedback">Negativo</string>

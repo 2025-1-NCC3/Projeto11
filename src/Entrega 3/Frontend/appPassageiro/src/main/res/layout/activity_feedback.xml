@@ -105,14 +105,6 @@
                         android:textSize="16sp"
                         android:layout_height="wrap_content"
                         android:layout_width="match_parent" />
-                    <CheckBox
-                        android:id="@+id/checkPositivo4"
-                        android:text="@string/app_TextFeedback4Positivo"
-                        app:buttonTint="@color/VerdeEscuro"
-                        android:textColor="@color/VerdeEscuro"
-                        android:textSize="16sp"
-                        android:layout_height="wrap_content"
-                        android:layout_width="match_parent" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -254,14 +246,6 @@
                     <CheckBox
                         android:id="@+id/checkNegativo4"
                         android:text="@string/app_TextFeedback4Negativo"
-                        app:buttonTint="@color/Vermelho"
-                        android:textColor="@color/VerdeEscuro"
-                        android:textSize="16sp"
-                        android:layout_height="wrap_content"
-                        android:layout_width="match_parent"/>
-                    <CheckBox
-                        android:id="@+id/checkNegativo5"
-                        android:text="@string/app_TextFeedback5Negativo"
                         app:buttonTint="@color/Vermelho"
                         android:textColor="@color/VerdeEscuro"
                         android:textSize="16sp"

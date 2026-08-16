@@ -1,65 +1,78 @@
 package br.fecap.pi.saferide_passageiro.dto;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
+
+import br.fecap.pi.saferide_passageiro.Feedback;
+import br.fecap.pi.saferide_passageiro.models.FeedbackModel;
 
 /**
  * DTO para representar o objeto de avaliação de corrida
  */
 public class RegistrarAvaliacaoRequestDTO {
-    private Instant criadoEm;
-    private Instant atualizadoEm;
-    private String idAvaliacao;
-    private String idUsuario;
-    private String idCorrida;
-    private String idRota;
+    @Expose(serialize = false)
+    private Integer idAvaliacao;
+
+    @SerializedName("id_usuario")
+    private Integer idUsuario;
+
+    @SerializedName("id_corrida")
+    private Integer idCorrida;
+
+    @SerializedName("id_rota")
+    @Expose(serialize = true)
+    private Integer idRota;
+
+    @SerializedName("nota")
+    @Expose(serialize = true)
     private Integer nota;
-    private String idTrecho;
-    private String comentario;
-    private List<FeedbackItemDTO> feedbacks;
+
+    @Expose(serialize = false)
+    private Integer idTrecho;
+
+    @SerializedName("comentario")
+    private String comentario = "...";
+
+    @SerializedName("feedbacks")
+    private List<FeedbackModel> feedbacks;
 
     // Construtor padrão
     public RegistrarAvaliacaoRequestDTO() {}
 
     // Construtor com todos os campos
-    public RegistrarAvaliacaoRequestDTO(Instant criadoEm, Instant atualizadoEm,
-                                        String idAvaliacao, String idUsuario,
-                                        String idCorrida, String idRota,
-                                        Integer nota, String idTrecho,
-                                        String comentario,
-                                        List<FeedbackItemDTO> feedbacks) {
-        this.criadoEm = criadoEm;
-        this.atualizadoEm = atualizadoEm;
-        this.idAvaliacao = idAvaliacao;
+    public RegistrarAvaliacaoRequestDTO(Integer idUsuario, Integer idCorrida,
+                                        Integer idRota, Integer nota,
+                                        List<FeedbackModel> feedbacks) {
         this.idUsuario = idUsuario;
         this.idCorrida = idCorrida;
         this.idRota = idRota;
         this.nota = nota;
-        this.idTrecho = idTrecho;
-        this.comentario = comentario;
         this.feedbacks = feedbacks;
     }
 
     // Inner class para representar os feedbacks
     public static class FeedbackItemDTO {
-        private Long idFeedback;
+        private Integer idFeedback;
 
         // Construtor padrão
         public FeedbackItemDTO() {}
 
         // Construtor com idFeedback
-        public FeedbackItemDTO(Long idFeedback) {
+        public FeedbackItemDTO(Integer idFeedback) {
             this.idFeedback = idFeedback;
         }
 
         // Getter para idFeedback
-        public Long getIdFeedback() {
+        public Integer getIdFeedback() {
             return idFeedback;
         }
 
         // Setter para idFeedback
-        public void setIdFeedback(Long idFeedback) {
+        public void setIdFeedback(Integer idFeedback) {
             this.idFeedback = idFeedback;
         }
 
@@ -84,28 +97,19 @@ public class RegistrarAvaliacaoRequestDTO {
         }
     }
 
-    // Getters
-    public Instant getCriadoEm() {
-        return criadoEm;
-    }
-
-    public Instant getAtualizadoEm() {
-        return atualizadoEm;
-    }
-
-    public String getIdAvaliacao() {
+    public Integer getIdAvaliacao() {
         return idAvaliacao;
     }
 
-    public String getIdUsuario() {
+    public Integer getIdUsuario() {
         return idUsuario;
     }
 
-    public String getIdCorrida() {
+    public Integer getIdCorrida() {
         return idCorrida;
     }
 
-    public String getIdRota() {
+    public Integer getIdRota() {
         return idRota;
     }
 
@@ -113,7 +117,7 @@ public class RegistrarAvaliacaoRequestDTO {
         return nota;
     }
 
-    public String getIdTrecho() {
+    public Integer getIdTrecho() {
         return idTrecho;
     }
 
@@ -121,32 +125,23 @@ public class RegistrarAvaliacaoRequestDTO {
         return comentario;
     }
 
-    public List<FeedbackItemDTO> getFeedbacks() {
+    public List<FeedbackModel> getFeedbacks() {
         return feedbacks;
     }
 
-    // Setters
-    public void setCriadoEm(Instant criadoEm) {
-        this.criadoEm = criadoEm;
-    }
-
-    public void setAtualizadoEm(Instant atualizadoEm) {
-        this.atualizadoEm = atualizadoEm;
-    }
-
-    public void setIdAvaliacao(String idAvaliacao) {
+    public void setIdAvaliacao(Integer idAvaliacao) {
         this.idAvaliacao = idAvaliacao;
     }
 
-    public void setIdUsuario(String idUsuario) {
+    public void setIdUsuario(Integer idUsuario) {
         this.idUsuario = idUsuario;
     }
 
-    public void setIdCorrida(String idCorrida) {
+    public void setIdCorrida(Integer idCorrida) {
         this.idCorrida = idCorrida;
     }
 
-    public void setIdRota(String idRota) {
+    public void setIdRota(Integer idRota) {
         this.idRota = idRota;
     }
 
@@ -154,7 +149,7 @@ public class RegistrarAvaliacaoRequestDTO {
         this.nota = nota;
     }
 
-    public void setIdTrecho(String idTrecho) {
+    public void setIdTrecho(Integer idTrecho) {
         this.idTrecho = idTrecho;
     }
 
@@ -162,7 +157,7 @@ public class RegistrarAvaliacaoRequestDTO {
         this.comentario = comentario;
     }
 
-    public void setFeedbacks(List<FeedbackItemDTO> feedbacks) {
+    public void setFeedbacks(List<FeedbackModel> feedbacks) {
         this.feedbacks = feedbacks;
     }
 
@@ -172,9 +167,7 @@ public class RegistrarAvaliacaoRequestDTO {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         RegistrarAvaliacaoRequestDTO that = (RegistrarAvaliacaoRequestDTO) o;
-        return Objects.equals(criadoEm, that.criadoEm) &&
-                Objects.equals(atualizadoEm, that.atualizadoEm) &&
-                Objects.equals(idAvaliacao, that.idAvaliacao) &&
+        return Objects.equals(idAvaliacao, that.idAvaliacao) &&
                 Objects.equals(idUsuario, that.idUsuario) &&
                 Objects.equals(idCorrida, that.idCorrida) &&
                 Objects.equals(idRota, that.idRota) &&
@@ -186,15 +179,13 @@ public class RegistrarAvaliacaoRequestDTO {
 
     @Override
     public int hashCode() {
-        return Objects.hash(criadoEm, atualizadoEm, idAvaliacao, idUsuario,
+        return Objects.hash(idAvaliacao, idUsuario,
                 idCorrida, idRota, nota, idTrecho, comentario, feedbacks);
     }
 
     @Override
     public String toString() {
         return "AvaliacaoCorridaDTO{" +
-                "criadoEm=" + criadoEm +
-                ", atualizadoEm=" + atualizadoEm +
                 ", idAvaliacao='" + idAvaliacao + '\'' +
                 ", idUsuario='" + idUsuario + '\'' +
                 ", idCorrida='" + idCorrida + '\'' +
